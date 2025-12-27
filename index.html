@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPMods Gaming Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* --- GAMING THEME & VARIABLES --- */
+        :root {
+            --bg-dark: #0f0c29;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-grad: linear-gradient(135deg, #302b63, #24243e);
+            --accent-grad: linear-gradient(90deg, #00c6ff, #0072ff); 
+            --purple-grad: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --danger: #ff4b4b;
+            --success: #00e676;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-dark);
+            background-image: linear-gradient(to bottom right, #0f0c29, #302b63, #24243e);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 { font-family: 'Rajdhani', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- ANIMATED HEADER --- */
+        header {
+            background: rgba(15, 12, 41, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .gradient-bar {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(270deg, #00c6ff, #0072ff, #8E2DE2, #4A00E0);
+            background-size: 400% 400%;
+            animation: gradientAnim 8s ease infinite;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        @keyframes gradientAnim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--success);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+        }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        /* --- GLASSMOPRHISM CARDS --- */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #00c6ff;
+        }
+
+        .user-item.expired {
+            border-left-color: var(--danger);
+            opacity: 0.7;
+        }
+
+        .user-info strong { display: block; font-size: 1.2rem; color: #fff; font-family: 'Rajdhani', sans-serif; }
+        .user-info span { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* --- INPUTS & BUTTONS --- */
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: #fff;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00c6ff;
+            box-shadow: 0 0 8px rgba(0, 198, 255, 0.3);
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent-grad);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 198, 255, 0.4);
+        }
+        
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(0, 198, 255, 0.6); transform: translateY(-2px); }
+
+        .btn-danger { background: transparent; color: var(--danger); font-size: 1.2rem; }
+        .btn-edit { background: transparent; color: #00c6ff; font-size: 1.2rem; margin-right: 10px; }
+
+        /* --- GUIDE SECTION --- */
+        .guide-step {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 3px solid #8E2DE2;
+        }
+        code {
+            background: #222;
+            color: #00e676;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; padding: 12px 0;
+            border-top: 1px solid var(--glass-border);
+            z-index: 200;
+        }
+        .nav-item { color: var(--text-muted); text-align: center; font-size: 0.7rem; cursor: pointer; transition: color 0.3s; }
+        .nav-item i { display: block; font-size: 1.4rem; margin-bottom: 4px; }
+        .nav-item.active { color: #00c6ff; text-shadow: 0 0 10px rgba(0, 198, 255, 0.5); }
+        
+        .fab {
+            background: var(--purple-grad);
+            width: 55px; height: 55px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; color: #fff;
+            transform: translateY(-25px);
+            box-shadow: 0 0 20px rgba(142, 45, 226, 0.6);
+            border: 2px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+        }
+        .fab:active { transform: translateY(-25px) scale(0.95); }
+
+        /* --- MODAL --- */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid var(--glass-border);
+            padding: 25px; border-radius: 15px; width: 90%; max-width: 400px;
+            box-shadow: 0 0 30px rgba(0, 114, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h3><span class="status-dot"></span> DPMods Panel</h3>
+        <div class="gradient-bar"></div>
+    </header>
+
+    <div class="container">
+        <div id="pageUsers">
+            <h2 style="color: #00c6ff;">Active Devices</h2>
+            <div id="userList">
+                <div class="glass-card" style="text-align: center;">
+                    <i class="fas fa-circle-notch fa-spin"></i> Connecting...
+                </div>
+            </div>
+        </div>
+
+        <div id="pageSettings" style="display: none;">
+            <h2 style="color: #8E2DE2;">App Config</h2>
+            
+            <div class="glass-card">
+                <label>Admin Contact URL</label>
+                <input type="text" id="confAdminUrl" placeholder="https://t.me/...">
+                
+                <label>Marquee Message</label>
+                <textarea id="confMarquee" rows="3" placeholder="Scrolling text..."></textarea>
+                
+                <button class="btn btn-primary" style="width: 100%;" onclick="saveGlobalSettings()">
+                    Update Config
+                </button>
+            </div>
+        </div>
+
+        <div id="pageGuide" style="display: none;">
+            <h2 style="color: #00e676;">Setup Guide</h2>
+            <div class="glass-card">
+                <p>Simple Setup (REST API Mode):</p>
+                
+                <div class="guide-step">
+                    <strong>Step 1:</strong> Open <code>index.html</code>.
+                </div>
+                
+                <div class="guide-step">
+                    <strong>Step 2:</strong> Find <code>DATABASE_URL</code> in the script below.
+                </div>
+                
+                <div class="guide-step">
+                    <strong>Step 3:</strong> Paste your Firebase link (ending in .com).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle" style="color: #fff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0;">Add User</h3>
+            <input type="hidden" id="editIndex">
+            
+            <label>Device ID / Key</label>
+            <input type="text" id="inpID" placeholder="Enter ID...">
+            
+            <label>Expiry Date</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;" onclick="setExpiry(30)">+30 Days</button>
+                <button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; flex: 1;" onclick="setExpiry(365)">+1 Year</button>
+            </div>
+            <input type="date" id="inpExpiry">
+
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn" style="background: transparent; color: #aaa; margin-right: 10px;" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save Data</button>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <div class="nav-item active" onclick="switchPage('users')" id="navUsers">
+            <i class="fas fa-gamepad"></i> Devices
+        </div>
+        <div class="fab" onclick="openModal()">
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="nav-item" onclick="switchPage('settings')" id="navSettings">
+            <i class="fas fa-sliders-h"></i> Config
+        </div>
+        <div class="nav-item" onclick="switchPage('guide')" id="navGuide">
+            <i class="fas fa-book"></i> Guide
+        </div>
+    </nav>
+
+    <script>
+        // =======================================================
+        // === CONFIGURATION (ONLY LINK NEEDED) ===
+        // =======================================================
+        
+        // Ensure the link ends with NO SLASH. We add .json automatically.
+        const DATABASE_URL = "https://awesome-6004e.firebaseio.com"; 
+
+        // =======================================================
+
+        let dbData = { Users: [], AdminUrl: "", Marquee: "" };
+
+        // --- FETCH DATA (POLLING) ---
+        // Since we removed the SDK, we use fetch() every 2 seconds to mimic realtime
+        async function fetchData() {
+            try {
+                const response = await fetch(`${DATABASE_URL}/.json`);
+                if (!response.ok) throw new Error("Network response was not ok");
+                const val = await response.json();
+
+                if (val) {
+                    let usersList = val.Users || [];
+                    if (typeof usersList === 'object' && !Array.isArray(usersList)) {
+                        usersList = Object.values(usersList);
+                    }
+
+                    dbData = {
+                        Users: usersList,
+                        AdminUrl: val.AdminUrl || "",
+                        Marquee: val.Marquee || ""
+                    };
+                    renderUsers();
+                    fillSettings();
+                } else {
+                    document.getElementById('userList').innerHTML = 
+                        `<div class="glass-card" style="text-align:center; color:#aaa;">Database is empty.</div>`;
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        }
+
+        // Poll every 2 seconds
+        setInterval(fetchData, 2000);
+        fetchData(); // Initial load
+
+        // --- RENDER USERS ---
+        function renderUsers() {
+            const list = document.getElementById('userList');
+            list.innerHTML = "";
+
+            if (dbData.Users.length === 0) {
+                list.innerHTML = `<div class="glass-card" style="text-align:center; color:#aaa;">No users found.</div>`;
+                return;
+            }
+
+            dbData.Users.forEach((u, index) => {
+                const parts = u.Expiry.split('/'); 
+                let isExpired = false;
+                if(parts.length === 3) {
+                    const isoDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    isExpired = new Date(isoDate) < new Date(new Date().setHours(0,0,0,0));
+                }
+
+                const div = document.createElement('div');
+                div.className = `glass-card user-item ${isExpired ? 'expired' : ''}`;
+                div.innerHTML = `
+                    <div class="user-info">
+                        <strong>${u.ID}</strong>
+                        <span>${isExpired ? '<i class="fas fa-times-circle" style="color:var(--danger)"></i> Expired' : '<i class="fas fa-check-circle" style="color:var(--success)"></i> Active'}: ${u.Expiry}</span>
+                    </div>
+                    <div>
+                        <button class="btn-edit" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
+                        <button class="btn-danger" style="background:none; border:none; cursor:pointer;" onclick="deleteUser(${index})"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function fillSettings() {
+            const adminInput = document.getElementById('confAdminUrl');
+            const marqInput = document.getElementById('confMarquee');
+            // Only update if user isn't typing
+            if(document.activeElement !== adminInput) adminInput.value = dbData.AdminUrl;
+            if(document.activeElement !== marqInput) marqInput.value = dbData.Marquee;
+        }
+
+        // --- SAVE / UPDATE DATA ---
+        async function saveData(path, data) {
+            try {
+                // PATCH updates specific fields, PUT replaces the node
+                await fetch(`${DATABASE_URL}/${path}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+                alert("✅ Saved Successfully!");
+                fetchData(); // Refresh immediately
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        async function updateSettings(data) {
+             try {
+                await fetch(`${DATABASE_URL}/.json`, {
+                    method: 'PATCH', // PATCH merges data
+                    body: JSON.stringify(data)
+                });
+                alert("✅ Config Updated!");
+                fetchData();
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        // --- GLOBAL FUNCTIONS ---
+        window.saveGlobalSettings = function() {
+            const newUrl = document.getElementById('confAdminUrl').value;
+            const newMarq = document.getElementById('confMarquee').value;
+            updateSettings({ AdminUrl: newUrl, Marquee: newMarq });
+        };
+
+        window.saveUser = function() {
+            const id = document.getElementById('inpID').value;
+            const dateVal = document.getElementById('inpExpiry').value;
+            const index = document.getElementById('editIndex').value;
+
+            if (!id || !dateVal) return alert("⚠️ Please fill all fields");
+
+            const [year, month, day] = dateVal.split('-');
+            const formattedDate = `${day}/${month}/${year}`;
+
+            const newUser = { ID: id, Expiry: formattedDate };
+            let newUsersList = [...dbData.Users];
+
+            if (index !== "") {
+                newUsersList[parseInt(index)] = newUser;
+            } else {
+                newUsersList.push(newUser);
+            }
+
+            saveData('Users', newUsersList).then(() => closeModal());
+        };
+
+        window.deleteUser = function(index) {
+            if(confirm("❌ Delete this user permanently?")) {
+                let newUsersList = [...dbData.Users];
+                newUsersList.splice(index, 1);
+                saveData('Users', newUsersList);
+            }
+        };
+
+        window.switchPage = function(page) {
+            ['Users', 'Settings', 'Guide'].forEach(p => {
+                document.getElementById('page' + p).style.display = 'none';
+                if(document.getElementById('nav' + p)) document.getElementById('nav' + p).classList.remove('active');
+            });
+            
+            document.getElementById('page' + (page.charAt(0).toUpperCase() + page.slice(1))).style.display = 'block';
+            if(document.getElementById('nav' + page)) document.getElementById('nav' + page).classList.add('active');
+        };
+
+        window.openModal = function(index = null) {
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('modalTitle');
+            const idxInput = document.getElementById('editIndex');
+            const idInput = document.getElementById('inpID');
+            const dateInput = document.getElementById('inpExpiry');
+
+            if (index !== null) {
+                const u = dbData.Users[index];
+                title.innerText = "Edit User";
+                idxInput.value = index;
+                idInput.value = u.ID;
+                const parts = u.Expiry.split('/');
+                if(parts.length === 3) dateInput.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            } else {
+                title.innerText = "Add New User";
+                idxInput.value = "";
+                idInput.value = "";
+                setExpiry(30);
+            }
+            modal.style.display = 'flex';
+        };
+
+        window.closeModal = function() {
+            document.getElementById('userModal').style.display = 'none';
+        };
+
+        window.setExpiry = function(days) {
+            const d = new Date();
+            d.setDate(d.getDate() + days);
+            document.getElementById('inpExpiry').value = d.toISOString().split('T')[0];
+        };
+    </script>
+</body>
+</html>
