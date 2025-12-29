@@ -11,15 +11,14 @@
         /* --- THEME VARIABLES --- */
         :root {
             --bg-body: #050508;
-            --bg-card: #0f0f16;
+            --bg-card: #0e0e14;
             --primary: #00e5ff; 
             --primary-dark: #00b8cc;
-            --primary-glow: rgba(0, 229, 255, 0.25);
             --secondary: #7000ff; 
             --danger: #ff0055;
             --text-main: #ffffff;
-            --text-muted: #8b9bb4;
-            --border-color: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.08);
+            --nav-bg: #161621;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
@@ -30,19 +29,19 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 120px;
+            padding-bottom: 120px; /* Space for Nav */
         }
 
         /* --- HEADER --- */
         header {
-            padding: 18px 20px;
+            padding: 18px 24px;
             background: rgba(5, 5, 8, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
+        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
         .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; transition: 0.3s; }
         .status-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
 
@@ -51,86 +50,80 @@
         /* --- SEARCH & CHIPS --- */
         .search-box { position: relative; margin-bottom: 15px; }
         .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1rem; }
-        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 16px 16px 16px 50px; border-radius: 16px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.95rem; transition: 0.3s; }
+        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 16px 16px 16px 50px; border-radius: 14px; color: white; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
 
-        .chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px; scrollbar-width: none; }
-        .chip { padding: 8px 20px; background: #161620; border-radius: 50px; font-size: 0.85rem; color: #888; border: 1px solid #2a2a35; white-space: nowrap; transition: 0.3s; font-weight: 500; }
-        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); font-weight: 600; }
+        .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px; scrollbar-width: none; }
+        .chip { padding: 8px 20px; background: #1a1a24; border-radius: 50px; font-size: 0.85rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; font-weight: 500; }
+        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
 
         /* --- CARDS --- */
-        .card { background: var(--bg-card); border: 1px solid #222; border-radius: 20px; padding: 20px; margin-bottom: 16px; position: relative; transition: transform 0.2s; overflow: hidden; }
+        .card { background: var(--bg-card); border: 1px solid #222; border-radius: 20px; padding: 20px; margin-bottom: 16px; position: relative; transition: transform 0.2s; }
         .card:active { transform: scale(0.99); }
         
-        /* STATUS INDICATORS */
         .card.active { border-left: 4px solid var(--primary); }
-        .card.banned { border-left: 4px solid var(--danger); }
+        .card.banned { border-left: 4px solid var(--danger); animation: pulse 2s infinite; }
         .card.expired { border-left: 4px solid #ffb700; }
+        
+        @keyframes pulse { 0% { box-shadow: inset 2px 0 0 var(--danger); } 50% { box-shadow: inset 2px 0 15px var(--danger); } 100% { box-shadow: inset 2px 0 0 var(--danger); } }
 
-        /* Pulsing animation only for Banned */
-        @keyframes pulse-red { 0% { box-shadow: inset 3px 0 0 var(--danger); } 50% { box-shadow: inset 3px 0 15px var(--danger); } 100% { box-shadow: inset 3px 0 0 var(--danger); } }
-        .card.banned { animation: pulse-red 2s infinite; }
-
-        .user-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .u-name { font-weight: 700; font-size: 1.3rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
-        .u-status { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-
-        .info-box { background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; font-size: 0.9rem; color: #ccc; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .u-dev { font-family: monospace; font-size: 0.8rem; color: #666; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 15px; display: block; }
-        .u-dev.linked { color: var(--primary); }
-
-        .actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
-
-        /* --- BUTTONS --- */
-        .btn-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.05); border-radius: 12px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+        .user-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .u-name { font-weight: 700; font-size: 1.25rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .info-item { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #ccc; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        
+        .actions { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        .btn-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 12px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: 0.2s; }
         .btn-icon:hover { background: rgba(255,255,255,0.1); }
-        .btn-del { color: #ff4d6d; }
-        .btn-del:hover { background: rgba(255, 0, 85, 0.15); }
         .btn-copy { color: var(--primary); }
-        .btn-copy:hover { background: rgba(0, 229, 255, 0.15); }
+        .btn-del { color: var(--danger); }
+
+        /* --- SETTINGS INPUTS --- */
+        .inp-group { margin-bottom: 15px; }
+        .inp-label { display: block; color: var(--primary); font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        .inp:focus { border-color: var(--secondary); }
 
         /* --- SWITCH --- */
-        .switch { position: relative; width: 44px; height: 24px; }
+        .switch { position: relative; width: 42px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: var(--danger); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- NAV BAR --- */
+        /* --- NAV BAR (Fixed Position) --- */
         .nav-bar { 
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: #161621; border: 1px solid rgba(255,255,255,0.1); 
-            padding: 0 30px; height: 75px; border-radius: 60px; 
+            background: var(--nav-bg); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 0 35px; height: 75px; border-radius: 50px; 
             display: flex; align-items: center; justify-content: space-between; 
             width: 90%; max-width: 400px; z-index: 99; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.7); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
         }
         .nav-item { color: #555; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
         
+        /* Floating Button Centered */
         .fab { 
             width: 65px; height: 65px; 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
             font-size: 1.8rem; color: #000; 
-            position: absolute; left: 50%; top: -30px; transform: translateX(-50%); 
+            position: absolute; left: 50%; top: -25px; transform: translateX(-50%); 
             border: 6px solid var(--bg-body); cursor: pointer; 
-            box-shadow: 0 0 25px var(--primary-glow); 
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4); 
         }
         .fab:active { transform: translateX(-50%) scale(0.95); }
 
         /* --- MODAL --- */
-        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-box { background: #1a1a24; width: 85%; max-width: 360px; padding: 25px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.6); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #1a1a24; width: 85%; max-width: 360px; padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
 
         .tool-bar { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn-tool { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
-        .inp-group { margin-bottom: 15px; }
-        .inp-label { display: block; color: var(--primary); font-size: 0.7rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-        .inp { width: 100%; background: #0f0f15; border: 1px solid #333; padding: 14px; color: white; border-radius: 14px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; }
         .btn-row { display: flex; gap: 12px; margin-top: 25px; }
         .btn-save { flex: 1; padding: 15px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 14px; color: white; cursor: pointer; font-size: 1rem; }
         .btn-cancel { flex: 1; padding: 15px; background: #2a2a35; border: none; font-weight: 600; border-radius: 14px; color: #ccc; cursor: pointer; font-size: 1rem; }
@@ -149,20 +142,19 @@
     <div class="container">
         <div id="loader" style="text-align: center; padding: 80px 0;">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 2.2rem; color: var(--primary);"></i>
-            <p id="loadingText" style="color: #666; margin-top: 15px; font-size: 0.9rem;">Connecting...</p>
+            <p style="color: #666; margin-top: 15px;">Connecting to Firebase...</p>
         </div>
 
         <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 16px; text-align: center; color: var(--danger);">
             <i class="fas fa-wifi" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Connection Failed</strong><br>
-            <small id="errorDetail">Database unreachable</small><br>
-            
-            <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
-                <button onclick="resetUrl()" style="background: #444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Reset URL</button>
-                <button onclick="window.location.reload()" style="background: var(--danger); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer;">Retry</button>
+            <small id="errorDetail">Database Unreachable</small><br>
+            <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                <button onclick="resetUrl()" style="background:#444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Reset URL</button>
+                <button onclick="window.location.reload()" style="background:var(--danger); color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer;">Retry</button>
             </div>
         </div>
 
-        <div id="contentArea" class="hidden">
+        <div id="tabHome" class="hidden">
             <div class="search-box">
                 <i class="fas fa-search"></i>
                 <input type="text" id="search" class="search-input" placeholder="Search..." onkeyup="render()">
@@ -177,13 +169,38 @@
             <div id="list"></div>
         </div>
 
-        <div id="settingsArea" class="hidden">
-            <h2 style="color:white; margin-bottom:20px;">Settings</h2>
+        <div id="tabSettings" class="hidden">
+            <h2 style="color:white; margin-bottom:20px;">Configuration</h2>
             <div class="card" style="border:1px solid #333;">
+                
                 <div class="inp-group">
-                    <label class="inp-label">Firebase Database URL</label>
+                    <label class="inp-label">Firebase URL</label>
                     <input type="text" class="inp" id="confUrl">
                 </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Admin Contact URL</label>
+                    <input type="text" class="inp" id="confAdmin">
+                </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Dialog Timeout</label>
+                    <input type="text" class="inp" id="confTime">
+                </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Announcement</label>
+                    <textarea class="inp" id="confMsg" rows="3"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#111; padding:10px; border-radius:10px;">
+                    <span style="color:#aaa; font-size:0.9rem;">Show Announcement</span>
+                    <label class="switch">
+                        <input type="checkbox" id="confShow">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
                 <button class="btn-save" onclick="saveSettings()">Save Configuration</button>
             </div>
         </div>
@@ -223,37 +240,62 @@
     </div>
 
     <script>
-        // --- CONSTANTS ---
+        // --- 1. CONFIG & DEFAULTS ---
         const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
+        
+        // The default structure you requested
+        const DEFAULT_DB_DATA = {
+            "AdminUrl": "https://t.me/dp_mods",
+            "DialogTimeout": "1m",
+            "ShowAnnouncement": true,
+            "Announcement": "New Update V2.0 is coming soon! Stay tuned.",
+            "Users": [],
+            "BannedDevices": []
+        };
+
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
         let localData = { users: [], banned: [] };
+        let settings = {};
         let currentFilter = 'all';
 
-        // --- CORE FETCH LOGIC (ANTI-STUCK) ---
+        // --- 2. FETCH LOGIC (ANTI-STUCK) ---
         async function fetchData() {
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('contentArea').classList.add('hidden');
+            document.getElementById('tabHome').classList.add('hidden');
+            document.getElementById('tabSettings').classList.add('hidden');
             document.getElementById('errorMsg').classList.add('hidden');
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 Second Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s Timeout
 
             try {
                 const response = await fetch(dbUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
-                if (!response.ok) throw new Error(`Status ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+                
                 const data = await response.json();
+                
+                // AUTO-INITIALIZE: If DB is null, upload defaults
+                if(data === null) {
+                    await uploadDefaults();
+                    return; // Recursion will happen inside uploadDefaults
+                }
+
                 processData(data);
                 
-                // Success: Hide Loader
+                // Show UI
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('contentArea').classList.remove('hidden');
+                if(document.getElementById('navHome').classList.contains('active')){
+                    document.getElementById('tabHome').classList.remove('hidden');
+                } else {
+                    document.getElementById('tabSettings').classList.remove('hidden');
+                }
                 document.getElementById('statusDot').classList.remove('offline');
 
             } catch (error) {
-                console.error("Fetch Error:", error);
-                // SHOW ERROR SCREEN
+                console.error(error);
+                // Force Stop Loading
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('errorMsg').classList.remove('hidden');
                 document.getElementById('errorDetail').innerText = error.name === 'AbortError' ? "Connection Timed Out" : error.message;
@@ -261,29 +303,51 @@
             }
         }
 
+        async function uploadDefaults() {
+            try {
+                await fetch(dbUrl, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(DEFAULT_DB_DATA)
+                });
+                fetchData(); // Reload after init
+            } catch(e) { alert("Failed to Initialize DB"); }
+        }
+
+        // --- 3. DATA PROCESSING ---
         function processData(data) {
-            if (!data) { localData.users = []; localData.banned = []; return; }
+            // 1. Settings
+            settings.AdminUrl = data.AdminUrl || "";
+            settings.DialogTimeout = data.DialogTimeout || "1m";
+            settings.Announcement = data.Announcement || "";
+            settings.ShowAnnouncement = data.ShowAnnouncement || false;
 
-            // Safe Parse Banned
-            let bans = data.BannedDevices;
+            // Update Settings UI
+            document.getElementById('confUrl').value = dbUrl;
+            document.getElementById('confAdmin').value = settings.AdminUrl;
+            document.getElementById('confTime').value = settings.DialogTimeout;
+            document.getElementById('confMsg').value = settings.Announcement;
+            document.getElementById('confShow').checked = settings.ShowAnnouncement;
+
+            // 2. Users & Bans
+            let bans = data.BannedDevices || [];
             if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
-            localData.banned = bans ? bans.filter(x => x) : [];
+            localData.banned = bans.filter(x => x);
 
-            // Safe Parse Users
-            let users = data.Users;
+            let users = data.Users || [];
             if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
-            localData.users = users ? users.map(u => ({
+            
+            localData.users = users.map(u => ({
                 username: u.Username || u.name || "Unknown",
                 password: u.Password || u.pass || "---",
                 deviceID: u.DeviceID || u.ID || u.id || "",
                 expiry: u.Expiry || u.expiry || ""
-            })) : [];
+            }));
 
-            document.getElementById('confUrl').value = dbUrl;
             render();
         }
 
-        // --- RENDER LOGIC ---
+        // --- 4. RENDER UI ---
         function render() {
             const list = document.getElementById('list');
             list.innerHTML = "";
@@ -294,15 +358,16 @@
                 const hasID = u.deviceID && u.deviceID.length > 2;
                 const isExpired = checkExpired(u.expiry);
                 
-                // FILTER: Active = NOT EXPIRED (Per User Request)
+                // FILTER: Active = Check Date Only
                 if (currentFilter === 'active' && isExpired) return;
                 
-                // FILTER: Banned = Only Banned users
+                // FILTER: Banned
                 if (currentFilter === 'banned' && !isBanned) return;
 
+                // Search
                 if (search && !u.username.toLowerCase().includes(search)) return;
 
-                // STYLING
+                // VISUALS
                 let cardClass = 'active'; 
                 let statusTxt = 'ACTIVE';
                 let statusColor = '#00ff9d';
@@ -322,7 +387,7 @@
 
                 const html = `
                 <div class="card ${cardClass}">
-                    <div class="user-top">
+                    <div class="user-head">
                         <div class="u-name">${u.username}</div>
                         <label class="switch">
                             <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
@@ -330,15 +395,17 @@
                         </label>
                     </div>
                     
-                    <span class="u-dev ${devClass}">${devText}</span>
+                    <span class="u-dev" style="font-family:monospace; color:${hasID ? 'var(--primary)' : '#555'}; display:block; margin-bottom:10px;">
+                        ${devText}
+                    </span>
 
-                    <div class="info-box">
-                        <span><i class="fas fa-key"></i> ${u.password}</span>
-                        <span><i class="far fa-clock"></i> ${u.expiry}</span>
+                    <div class="info-grid">
+                        <div class="info-item"><i class="fas fa-key"></i> ${u.password}</div>
+                        <div class="info-item"><i class="far fa-clock"></i> ${u.expiry}</div>
                     </div>
 
                     <div class="actions">
-                        <span class="u-status" style="color:${statusColor}; margin-right:auto;">${statusTxt}</span>
+                        <span style="color:${statusColor}; font-weight:bold; font-size:0.8rem; margin-right:auto; align-self:center;">${statusTxt}</span>
                         <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
                         <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
                         <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
@@ -350,38 +417,25 @@
             if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px;'>No Users Found</div>";
         }
 
-        // --- ACTIONS ---
-        function randomGen() {
-            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('uName').value = rnd;
-            document.getElementById('uPass').value = rnd;
-        }
-
-        function makeSame() {
-            document.getElementById('uPass').value = document.getElementById('uName').value;
-        }
-
-        function copyCreds(user, pass) {
-            navigator.clipboard.writeText(`${user}:${pass}`).then(() => {
-                const t = document.getElementById('toast');
-                t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 2000);
-            });
-        }
-
-        // --- DATABASE WRITES ---
+        // --- 5. ACTIONS & SAVING ---
         async function saveData() {
+            // Reconstruct full JSON
             const payload = {
+                AdminUrl: document.getElementById('confAdmin').value,
+                DialogTimeout: document.getElementById('confTime').value,
+                Announcement: document.getElementById('confMsg').value,
+                ShowAnnouncement: document.getElementById('confShow').checked,
                 BannedDevices: localData.banned,
                 Users: localData.users.map(u => ({
                     Username: u.username, Password: u.password,
                     DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
                 }))
             };
+
             try {
                 await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
                 fetchData();
-            } catch (e) { alert("Save Failed: " + e.message); }
+            } catch (e) { alert("Save Failed"); }
         }
 
         function toggleBan(id) {
@@ -393,7 +447,7 @@
         }
 
         function delUser(idx) {
-            if(confirm("Delete this user?")) {
+            if(confirm("Delete User?")) {
                 localData.users.splice(idx, 1);
                 saveData();
             }
@@ -423,27 +477,43 @@
             saveData();
         }
 
-        // --- UTILS ---
-        function resetUrl() {
-            localStorage.removeItem("dbUrl");
-            dbUrl = DEFAULT_URL;
-            window.location.reload();
-        }
-
         function saveSettings() {
             const newUrl = document.getElementById('confUrl').value;
             if(newUrl) {
                 dbUrl = newUrl;
                 localStorage.setItem("dbUrl", newUrl);
-                fetchData();
-                alert("URL Updated");
             }
+            saveData(); // Saves specific settings + Users
+        }
+
+        // --- 6. UTILITIES ---
+        function randomGen() {
+            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('uName').value = rnd;
+            document.getElementById('uPass').value = rnd;
+        }
+        function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
+        
+        function copyCreds(u, p) {
+            navigator.clipboard.writeText(`${u}:${p}`).then(() => {
+                const t = document.getElementById('toast');
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2000);
+            });
         }
 
         function checkExpired(dateStr) {
             if(!dateStr) return false;
             const [d, m, y] = dateStr.split('/');
             return new Date(`${y}-${m}-${d}`) < new Date();
+        }
+
+        function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
+
+        function formatDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
         }
 
         function setFilter(f, el) {
@@ -454,16 +524,17 @@
         }
 
         function switchTab(t) {
-            const home = document.getElementById('contentArea');
-            const sett = document.getElementById('settingsArea');
+            const home = document.getElementById('tabHome');
+            const sett = document.getElementById('tabSettings');
+            const navH = document.getElementById('navHome');
+            const navS = document.getElementById('navSet');
+
             if(t === 'home') { 
                 home.classList.remove('hidden'); sett.classList.add('hidden'); 
-                document.getElementById('navHome').classList.add('active');
-                document.getElementById('navSet').classList.remove('active');
+                navH.classList.add('active'); navS.classList.remove('active');
             } else { 
                 home.classList.add('hidden'); sett.classList.remove('hidden'); 
-                document.getElementById('navHome').classList.remove('active');
-                document.getElementById('navSet').classList.add('active');
+                navH.classList.remove('active'); navS.classList.add('active');
             }
         }
 
@@ -487,18 +558,11 @@
                 }
             }
         }
-
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
-        function formatDate(dateStr) {
-            if(!dateStr) return "";
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
-        }
 
-        // START
+        // INIT
         fetchData();
-        // Background Refresh
-        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 15000);
+        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 10000);
     </script>
 </body>
 </html>
