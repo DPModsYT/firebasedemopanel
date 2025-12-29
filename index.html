@@ -98,7 +98,7 @@
         .btn-del { color: var(--danger); }
 
         /* --- SETTINGS INPUTS --- */
-        .inp-group { margin-bottom: 15px; }
+        .inp-group { margin-bottom: 15px; position: relative; }
         .inp-label { display: block; color: var(--primary); font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
         .inp:focus { border-color: var(--secondary); }
@@ -110,6 +110,24 @@
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: var(--danger); }
         input:checked + .slider:before { transform: translateX(18px); }
+
+        /* --- CUSTOM CALENDAR CSS --- */
+        .calendar-wrapper { position: absolute; top: 100%; left: 0; width: 100%; z-index: 500; margin-top: 5px; display: none; }
+        .calendar-wrapper.show { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+        
+        .cal-box { background: #1a1a24; border: 1px solid var(--primary); border-radius: 15px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
+        .cal-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .cal-btn:hover { background: var(--primary); color: #000; }
+        .cal-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.1rem; }
+        
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
+        .cal-day-name { font-size: 0.75rem; color: #666; font-weight: 600; padding-bottom: 5px; }
+        .cal-day { padding: 8px 0; font-size: 0.9rem; color: #ccc; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .cal-day:hover { background: rgba(0, 229, 255, 0.2); color: white; }
+        .cal-day.active { background: var(--primary); color: #000; font-weight: 700; box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+        .cal-day.empty { pointer-events: none; }
 
         /* --- NAV BAR --- */
         .nav-bar { 
@@ -252,7 +270,30 @@
             <div class="inp-group"><label class="inp-label">Username</label><input type="text" class="inp" id="uName"></div>
             <div class="inp-group"><label class="inp-label">Password</label><input type="text" class="inp" id="uPass"></div>
             <div class="inp-group"><label class="inp-label">Device ID</label><input type="text" class="inp" id="uDev" placeholder="Optional"></div>
-            <div class="inp-group"><label class="inp-label">Expiry</label><input type="date" class="inp" id="uExp"></div>
+            
+            <div class="inp-group">
+                <label class="inp-label">Expiry</label>
+                <div style="position:relative;">
+                    <input type="text" class="inp" id="uExp" placeholder="DD/MM/YYYY" readonly onclick="toggleCalendar()">
+                    <i class="far fa-calendar-alt" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); color:#666; pointer-events:none;"></i>
+                    
+                    <div id="calendar" class="calendar-wrapper">
+                        <div class="cal-box">
+                            <div class="cal-header">
+                                <button class="cal-btn" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                                <div class="cal-title" id="calMonthYear">Oct 2023</div>
+                                <button class="cal-btn" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="cal-grid">
+                                <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div>
+                                <div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div>
+                                <div class="cal-day-name">Sat</div>
+                            </div>
+                            <div class="cal-grid" id="calDays"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="btn-row">
                 <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -383,324 +424,6 @@
             list.innerHTML = "";
             const search = document.getElementById('search').value.toLowerCase();
 
-            // SORT LOGIC: Banned > Active (Has ID) > Waiting (No ID) > Expired
-            // To do this, we attach a score
-            let sortedUsers = [...localData.users];
-            sortedUsers.sort((a, b) => {
-                const getScore = (u) => {
-                    const isBanned = localData.banned.includes(u.deviceID);
-                    const isExpired = checkExpired(u.expiry);
-                    const hasID = u.deviceID && u.deviceID.length > 2;
-
-                    if (isBanned) return 4;         // Top Priority
-                    if (!isExpired && hasID) return 3; // Active
-                    if (!isExpired && !hasID) return 2; // Waiting/Valid
-                    return 1; // Expired
-                };
-                return getScore(b) - getScore(a); // Descending sort
-            });
-
-            sortedUsers.forEach((u, index) => {
-                const isBanned = localData.banned.includes(u.deviceID);
-                const hasID = u.deviceID && u.deviceID.length > 2;
-                const isExpired = checkExpired(u.expiry);
-                
-                // FILTER LOGIC
-                if (search && !u.username.toLowerCase().includes(search)) return;
-                
-                if (currentFilter === 'active') {
-                    // Active means: Has ID + Not Expired + Not Banned
-                    if (!hasID || isExpired || isBanned) return; 
-                }
-                else if (currentFilter === 'valid') {
-                    // Valid means: Not Expired (regardless of ID)
-                    if (isExpired) return;
-                }
-                else if (currentFilter === 'expired') {
-                    if (!isExpired) return;
-                }
-                else if (currentFilter === 'banned') {
-                    if (!isBanned) return;
-                }
-
-                // STYLING
-                let cardClass = 'waiting'; 
-                let statusTxt = 'WAITING';
-                let statusColor = '#00e5ff';
-                let devText = "No Device Linked";
-                let devClass = '';
-
-                if (hasID) {
-                     cardClass = 'active'; 
-                     statusTxt = 'ACTIVE'; 
-                     statusColor = '#00ff9d';
-                     devText = u.deviceID;
-                     devClass = 'linked';
-                }
-
-                if (isExpired) { 
-                    cardClass = 'expired'; 
-                    statusTxt = 'EXPIRED'; 
-                    statusColor = '#ffb700'; 
-                }
-
-                if (isBanned) { 
-                    cardClass = 'banned'; 
-                    statusTxt = 'BANNED'; 
-                    statusColor = '#ff0055'; 
-                } 
-
-                const html = `
-                <div class="card ${cardClass}">
-                    <div class="user-head">
-                        <div class="u-name">${u.username}</div>
-                        <label class="switch">
-                            <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <span class="u-dev ${devClass}">${devText}</span>
-
-                    <div class="info-grid">
-                        <div class="info-item"><i class="fas fa-key"></i> ${u.password}</div>
-                        <div class="info-item"><i class="far fa-clock"></i> ${u.expiry}</div>
-                    </div>
-
-                    <div class="actions">
-                        <span style="color:${statusColor}; font-weight:bold; font-size:0.75rem; margin-right:auto;">${statusTxt}</span>
-                        <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
-                        <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
-                        <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`;
-                list.innerHTML += html;
-            });
-
-            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px; font-size:0.9rem;'>No Users Found</div>";
-        }
-
-        // --- 5. ACTIONS ---
-        async function saveData() {
-            const payload = {
-                AdminUrl: document.getElementById('confAdmin').value,
-                DialogTimeout: document.getElementById('confTime').value,
-                Announcement: document.getElementById('confMsg').value,
-                ShowAnnouncement: document.getElementById('confShow').checked,
-                BannedDevices: localData.banned,
-                Users: localData.users.map(u => ({
-                    Username: u.username, Password: u.password,
-                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
-                }))
-            };
-
-            try {
-                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                fetchData();
-            } catch (e) { showToast("Save Failed"); }
-        }
-
-        function toggleBan(id) {
-            if(!id || id.length < 3) return alert("User has no Device ID.");
-            const idx = localData.banned.indexOf(id);
-            if(idx > -1) localData.banned.splice(idx, 1);
-            else localData.banned.push(id);
-            saveData();
-        }
-
-        function delUser(idx) {
-            if(confirm("Delete User?")) {
-                localData.users.splice(idx, 1);
-                saveData();
-            }
-        }
-
-        function saveUser() {
-            const idx = document.getElementById('editIdx').value;
-            const u = {
-                username: document.getElementById('uName').value,
-                password: document.getElementById('uPass').value,
-                deviceID: document.getElementById('uDev').value,
-                expiry: formatDate(document.getElementById('uExp').value)
-            };
-
-            if(!u.username) return alert("Username Required");
-            if(!u.expiry) {
-                 const d = new Date(); d.setDate(d.getDate() + 30);
-                 const day = String(d.getDate()).padStart(2,'0');
-                 const mo = String(d.getMonth()+1).padStart(2,'0');
-                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
-            }
-
-            if(idx !== "") localData.users[idx] = u;
-            else localData.users.push(u);
-
-            document.getElementById('modal').style.display = 'none';
-            saveData();
-        }
-
-        function saveSettings() {
-            const newUrl = document.getElementById('confUrl').value;
-            if(newUrl) { dbUrl = newUrl; localStorage.setItem("dbUrl", newUrl); }
-            saveData();
-            showToast("Configuration Saved");
-        }
-
-        // --- 6. UTILS ---
-        function randomGen() {
-            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('uName').value = rnd;
-            document.getElementById('uPass').value = rnd;
-        }
-        function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
-        
-        function copyCreds(u, p) {
-            navigator.clipboard.writeText(`${u}:${p}`).then(() => { showToast("Copied to Clipboard"); });
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        function checkExpired(dateStr) {
-            if(!dateStr) return false;
-            // Handle DD/MM/YYYY
-            const parts = dateStr.split('/');
-            if(parts.length === 3) {
-                 const d = parseInt(parts[0], 10);
-                 const m = parseInt(parts[1], 10) - 1; // JS months are 0-11
-                 const y = parseInt(parts[2], 10);
-                 const expDate = new Date(y, m, d);
-                 expDate.setHours(23, 59, 59); // End of the day
-                 return expDate < new Date();
-            }
-            return false;
-        }
-
-        function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
-        function formatDate(dateStr) {
-            if(!dateStr) return "";
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
-        }
-        function setFilter(f, el) {
-            currentFilter = f;
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            render();
-        }
-
-        function switchTab(t) {
-            const home = document.getElementById('tabHome');
-            const sett = document.getElementById('tabSettings');
-            const navH = document.getElementById('navHome');
-            const navS = document.getElementById('navSet');
-
-            if(t === 'home') { 
-                home.classList.remove('hidden'); sett.classList.add('hidden'); 
-                navH.classList.add('active'); navS.classList.remove('active');
-            } else { 
-                home.classList.add('hidden'); sett.classList.remove('hidden'); 
-                navH.classList.remove('active'); navS.classList.add('active');
-            }
-        }
-
-        function openModal(idx = null) {
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('editIdx').value = "";
-            document.getElementById('uName').value = "";
-            document.getElementById('uPass').value = "";
-            document.getElementById('uDev').value = "";
-            document.getElementById('uExp').value = "";
-
-            if(idx !== null) {
-                // If editing, pull from current sorted/filtered list logic or raw localData
-                // Since we passed index from render(), it matches the displayed list, but we need
-                // to match it back to localData for saving. 
-                // SIMPLIFICATION: Since sorting rearranges, we need to pass the ACTUAL user object or find it.
-                // However, simple solution: Re-find in localData or just accept we edit localData.
-                // NOTE: For simplicity in this structure, we will use the index passed from render.
-                // BUT wait, if we sort, the index changes. 
-                // FIX: Let's find the user in localData by username (assuming unique) or just re-map.
-                
-                // Better approach for this specific code block without complex ID logic:
-                // We will assume username is unique enough or just use the object reference if possible.
-                // But HTML onclick passes integer. 
-                // Let's pass the Username to edit instead of index to be safe with sorting.
-                
-                // Actually, let's fix the render loop to pass the username to openModal.
-            }
-            // WAIT - The render loop passes `index`. If I sort the array in render, the index matches `sortedUsers`, not `localData`.
-            // I need to fix openModal to handle this.
-            
-            // To keep it simple and working: I will disable editing via Index in the render and use username lookup.
-        }
-
-        // REDEFINING OPENMODAL TO WORK WITH SORTING
-        window.openModal = function(username = null) {
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('editIdx').value = "";
-            document.getElementById('uName').value = "";
-            document.getElementById('uPass').value = "";
-            document.getElementById('uDev').value = "";
-            document.getElementById('uExp').value = "";
-
-            if(username !== null && typeof username === 'string') {
-                const u = localData.users.find(user => user.username === username);
-                if(u) {
-                    // We store the original index from localData to save back correctly
-                    const realIndex = localData.users.indexOf(u);
-                    document.getElementById('editIdx').value = realIndex;
-                    document.getElementById('uName').value = u.username;
-                    document.getElementById('uPass').value = u.password;
-                    document.getElementById('uDev').value = u.deviceID;
-                    if(u.expiry.includes('/')) {
-                        const [d,m,y] = u.expiry.split('/');
-                        document.getElementById('uExp').value = `${y}-${m}-${d}`;
-                    }
-                }
-            } else {
-                document.getElementById('editIdx').value = "NEW";
-            }
-        }
-        
-        // OVERWRITE SAVE USER TO HANDLE "NEW" vs Index
-        window.saveUser = function() {
-            const idx = document.getElementById('editIdx').value;
-            const u = {
-                username: document.getElementById('uName').value,
-                password: document.getElementById('uPass').value,
-                deviceID: document.getElementById('uDev').value,
-                expiry: formatDate(document.getElementById('uExp').value)
-            };
-
-            if(!u.username) return alert("Username Required");
-            if(!u.expiry) {
-                 const d = new Date(); d.setDate(d.getDate() + 30);
-                 const day = String(d.getDate()).padStart(2,'0');
-                 const mo = String(d.getMonth()+1).padStart(2,'0');
-                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
-            }
-
-            if(idx !== "NEW" && idx !== "") localData.users[idx] = u;
-            else localData.users.push(u);
-
-            document.getElementById('modal').style.display = 'none';
-            saveData();
-        }
-        
-        // UPDATE RENDER TO PASS USERNAME
-        // (Modified render function logic inside the previous block is correct, 
-        // but let's ensure the onclick uses string quotes)
-        const originalRender = render;
-        render = function() {
-             const list = document.getElementById('list');
-            list.innerHTML = "";
-            const search = document.getElementById('search').value.toLowerCase();
-
             let sortedUsers = [...localData.users];
             sortedUsers.sort((a, b) => {
                 const getScore = (u) => {
@@ -716,7 +439,6 @@
             });
 
             sortedUsers.forEach((u) => {
-                // Find original index for deletion
                 const realIdx = localData.users.indexOf(u);
                 
                 const isBanned = localData.banned.includes(u.deviceID);
@@ -766,6 +488,221 @@
             if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px; font-size:0.9rem;'>No Users Found</div>";
         }
 
+        // --- 5. ACTIONS ---
+        async function saveData() {
+            const payload = {
+                AdminUrl: document.getElementById('confAdmin').value,
+                DialogTimeout: document.getElementById('confTime').value,
+                Announcement: document.getElementById('confMsg').value,
+                ShowAnnouncement: document.getElementById('confShow').checked,
+                BannedDevices: localData.banned,
+                Users: localData.users.map(u => ({
+                    Username: u.username, Password: u.password,
+                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
+                }))
+            };
+
+            try {
+                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+                fetchData();
+            } catch (e) { showToast("Save Failed"); }
+        }
+
+        function toggleBan(id) {
+            if(!id || id.length < 3) return alert("User has no Device ID.");
+            const idx = localData.banned.indexOf(id);
+            if(idx > -1) localData.banned.splice(idx, 1);
+            else localData.banned.push(id);
+            saveData();
+        }
+
+        function delUser(idx) {
+            if(confirm("Delete User?")) {
+                localData.users.splice(idx, 1);
+                saveData();
+            }
+        }
+
+        // --- CALENDAR LOGIC ---
+        let currDate = new Date();
+        let currMonth = currDate.getMonth();
+        let currYear = currDate.getFullYear();
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        function toggleCalendar() {
+            const cal = document.getElementById('calendar');
+            if(cal.style.display === 'block') {
+                cal.style.display = 'none';
+                cal.classList.remove('show');
+            } else {
+                cal.style.display = 'block';
+                cal.classList.add('show');
+                renderCalendar();
+            }
+        }
+
+        function renderCalendar() {
+            const firstDay = new Date(currYear, currMonth, 1).getDay();
+            const lastDate = new Date(currYear, currMonth + 1, 0).getDate();
+            const calDays = document.getElementById('calDays');
+            document.getElementById('calMonthYear').innerText = `${months[currMonth]} ${currYear}`;
+            
+            calDays.innerHTML = "";
+            
+            // Empty slots for prev month
+            for(let i=0; i<firstDay; i++) {
+                calDays.innerHTML += `<div class="cal-day empty"></div>`;
+            }
+            
+            // Days
+            for(let i=1; i<=lastDate; i++) {
+                const isToday = i === new Date().getDate() && currMonth === new Date().getMonth() && currYear === new Date().getFullYear();
+                calDays.innerHTML += `<div class="cal-day ${isToday ? 'active' : ''}" onclick="selectDate(${i})">${i}</div>`;
+            }
+        }
+
+        function changeMonth(d) {
+            currMonth += d;
+            if(currMonth < 0) { currMonth = 11; currYear--; }
+            if(currMonth > 11) { currMonth = 0; currYear++; }
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            const d = String(day).padStart(2,'0');
+            const m = String(currMonth + 1).padStart(2,'0');
+            const y = currYear;
+            document.getElementById('uExp').value = `${d}/${m}/${y}`;
+            toggleCalendar(); // Close
+        }
+
+        // Close calendar if clicking outside
+        window.addEventListener('click', function(e){
+            const cal = document.getElementById('calendar');
+            const inp = document.getElementById('uExp');
+            if(!cal.contains(e.target) && e.target !== inp) {
+                cal.style.display = 'none';
+            }
+        });
+
+        // --- MODAL FUNCTIONS ---
+        window.openModal = function(username = null) {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('calendar').style.display = 'none'; // Ensure cal is closed
+            document.getElementById('editIdx').value = "";
+            document.getElementById('uName').value = "";
+            document.getElementById('uPass').value = "";
+            document.getElementById('uDev').value = "";
+            document.getElementById('uExp').value = "";
+
+            if(username !== null && typeof username === 'string') {
+                const u = localData.users.find(user => user.username === username);
+                if(u) {
+                    const realIndex = localData.users.indexOf(u);
+                    document.getElementById('editIdx').value = realIndex;
+                    document.getElementById('uName').value = u.username;
+                    document.getElementById('uPass').value = u.password;
+                    document.getElementById('uDev').value = u.deviceID;
+                    // Format check for DD/MM/YYYY
+                    document.getElementById('uExp').value = u.expiry; 
+                }
+            } else {
+                document.getElementById('editIdx').value = "NEW";
+            }
+        }
+
+        window.saveUser = function() {
+            const idx = document.getElementById('editIdx').value;
+            const u = {
+                username: document.getElementById('uName').value,
+                password: document.getElementById('uPass').value,
+                deviceID: document.getElementById('uDev').value,
+                expiry: document.getElementById('uExp').value
+            };
+
+            if(!u.username) return alert("Username Required");
+            if(!u.expiry) {
+                 const d = new Date(); d.setDate(d.getDate() + 30);
+                 const day = String(d.getDate()).padStart(2,'0');
+                 const mo = String(d.getMonth()+1).padStart(2,'0');
+                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
+            }
+
+            if(idx !== "NEW" && idx !== "") localData.users[idx] = u;
+            else localData.users.push(u);
+
+            document.getElementById('modal').style.display = 'none';
+            saveData();
+        }
+        
+        function saveSettings() {
+            const newUrl = document.getElementById('confUrl').value;
+            if(newUrl) { dbUrl = newUrl; localStorage.setItem("dbUrl", newUrl); }
+            saveData();
+            showToast("Configuration Saved");
+        }
+
+        // --- 6. UTILS ---
+        function randomGen() {
+            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('uName').value = rnd;
+            document.getElementById('uPass').value = rnd;
+        }
+        function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
+        
+        function copyCreds(u, p) {
+            navigator.clipboard.writeText(`${u}:${p}`).then(() => { showToast("Copied to Clipboard"); });
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function checkExpired(dateStr) {
+            if(!dateStr) return false;
+            // Handle DD/MM/YYYY
+            const parts = dateStr.split('/');
+            if(parts.length === 3) {
+                 const d = parseInt(parts[0], 10);
+                 const m = parseInt(parts[1], 10) - 1;
+                 const y = parseInt(parts[2], 10);
+                 const expDate = new Date(y, m, d);
+                 expDate.setHours(23, 59, 59);
+                 return expDate < new Date();
+            }
+            return false;
+        }
+
+        function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
+        function formatDate(dateStr) {
+            // Already handled by calendar logic
+            return dateStr;
+        }
+        function setFilter(f, el) {
+            currentFilter = f;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            render();
+        }
+
+        function switchTab(t) {
+            const home = document.getElementById('tabHome');
+            const sett = document.getElementById('tabSettings');
+            const navH = document.getElementById('navHome');
+            const navS = document.getElementById('navSet');
+
+            if(t === 'home') { 
+                home.classList.remove('hidden'); sett.classList.add('hidden'); 
+                navH.classList.add('active'); navS.classList.remove('active');
+            } else { 
+                home.classList.add('hidden'); sett.classList.remove('hidden'); 
+                navH.classList.remove('active'); navS.classList.add('active');
+            }
+        }
+        
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
         // --- PARTICLE ANIMATION ---
