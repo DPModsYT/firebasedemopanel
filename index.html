@@ -2,410 +2,584 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DPMods V9 Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- VARIABLES --- */
+        /* --- THEME VARIABLES --- */
         :root {
-            --bg-deep: #050505;
+            --bg-body: #050508;
+            --bg-card: #0e0e14;
             --primary: #00e5ff; 
+            --primary-dark: #00b8cc;
             --secondary: #7000ff; 
-            --accent: #ff0055;
+            --danger: #ff0055;
             --text-main: #ffffff;
-            --glass-bg: rgba(20, 20, 35, 0.9);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.08);
+            --nav-bg: #161621;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
 
         body {
             margin: 0; padding: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-deep);
+            background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 110px; /* Space for Nav */
         }
 
         /* --- HEADER --- */
         header {
-            padding: 20px;
-            background: rgba(10, 10, 20, 0.95);
-            border-bottom: var(--glass-border);
+            padding: 15px 20px;
+            background: rgba(5, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
-        .status-dot { height: 10px; width: 10px; background-color: #00ff88; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #00ff88; }
+        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
+        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; transition: 0.3s; }
+        .status-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
 
-        /* --- CONTAINER --- */
-        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
 
-        /* --- CARDS --- */
-        .card {
-            background: var(--glass-bg);
-            border: var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
+        /* --- SEARCH & CHIPS --- */
+        .search-box { position: relative; margin-bottom: 12px; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1rem; }
+        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 12px 12px 12px 40px; border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem; transition: 0.3s; }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
 
-        /* --- USER ITEM --- */
-        .user-item { border-left: 4px solid var(--primary); }
-        .user-item.banned { border-left-color: var(--accent); opacity: 0.8; }
+        .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
+        .chip { padding: 6px 16px; background: #1a1a24; border-radius: 50px; font-size: 0.8rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; font-weight: 500; }
+        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+
+        /* --- COMPACT CARDS --- */
+        .card { background: var(--bg-card); border: 1px solid #222; border-radius: 16px; padding: 14px; margin-bottom: 10px; position: relative; transition: transform 0.2s; }
+        .card:active { transform: scale(0.98); }
         
-        .user-top { display: flex; justify-content: space-between; align-items: center; }
-        .user-name { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; }
-        .user-device { font-family: monospace; font-size: 0.85rem; color: var(--primary); margin-top: 4px; display: block; }
+        .card.active { border-left: 3px solid var(--primary); }
+        .card.banned { border-left: 3px solid var(--danger); animation: pulse 2s infinite; }
+        .card.expired { border-left: 3px solid #ffb700; }
         
-        .badges { display: flex; gap: 10px; margin-top: 10px; }
-        .badge { background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; color: #ccc; }
+        @keyframes pulse { 0% { box-shadow: inset 2px 0 0 var(--danger); } 50% { box-shadow: inset 2px 0 10px var(--danger); } 100% { box-shadow: inset 2px 0 0 var(--danger); } }
 
-        /* --- CONTROLS --- */
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .user-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .u-name { font-weight: 700; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
         
-        .btn-icon { background: rgba(255,255,255,0.1); border: none; color: white; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-icon:hover { background: var(--primary); color: #000; }
-        .btn-del:hover { background: var(--accent); color: #fff; }
+        .u-dev { font-family: monospace; font-size: 0.75rem; color: #555; margin-bottom: 8px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .u-dev.linked { color: var(--primary); }
 
-        /* --- TOGGLE --- */
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .info-grid { display: flex; gap: 8px; margin-bottom: 10px; }
+        .info-item { flex: 1; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; font-size: 0.8rem; color: #ccc; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .info-item i { font-size: 0.7rem; color: #888; }
+        
+        .actions { display: flex; justify-content: flex-end; gap: 6px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; align-items: center; }
+        
+        /* Smaller Action Buttons */
+        .btn-icon { width: 34px; height: 34px; background: rgba(255,255,255,0.05); border-radius: 10px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+        .btn-icon:hover { background: rgba(255,255,255,0.1); }
+        .btn-copy { color: var(--primary); }
+        .btn-del { color: var(--danger); }
+
+        /* --- SETTINGS INPUTS --- */
+        .inp-group { margin-bottom: 15px; }
+        .inp-label { display: block; color: var(--primary); font-size: 0.75rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+        .inp:focus { border-color: var(--secondary); }
+
+        /* --- SWITCH --- */
+        .switch { position: relative; width: 38px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: var(--danger); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        /* --- NAV --- */
-        nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111; border: 1px solid #333; padding: 10px 30px; border-radius: 50px; display: flex; gap: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 99; }
-        .nav-item { color: #666; font-size: 1.4rem; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
+        /* --- NAV BAR --- */
+        .nav-bar { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
+            background: var(--nav-bg); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 0 30px; height: 65px; border-radius: 40px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            width: 85%; max-width: 380px; z-index: 99; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+        }
+        .nav-item { color: #555; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        
+        .fab { 
+            width: 55px; height: 55px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.6rem; color: #000; 
+            position: absolute; left: 50%; top: -20px; transform: translateX(-50%); 
+            border: 5px solid var(--bg-body); cursor: pointer; 
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
+        }
+        .fab:active { transform: translateX(-50%) scale(0.95); }
 
         /* --- MODAL --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; }
-        .modal-content { background: #1a1a2e; padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--secondary); }
-        
-        input, textarea { width: 100%; background: #0f0f15; border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; margin-top: 5px; margin-bottom: 15px; }
-        label { font-size: 0.8rem; color: var(--primary); font-weight: bold; }
-        
-        .btn-main { width: 100%; padding: 12px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
 
-        /* --- DEBUG CONSOLE --- */
-        #debug-box {
-            font-family: monospace; font-size: 0.8rem; color: #00ff88; 
-            background: #000; padding: 15px; border-radius: 8px; 
-            height: 150px; overflow-y: scroll; margin-top: 20px;
-            border: 1px solid #333; display: none;
+        .tool-bar { display: flex; gap: 8px; margin-bottom: 15px; }
+        .btn-tool { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-save { flex: 1; padding: 12px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 12px; color: white; cursor: pointer; font-size: 0.9rem; }
+        .btn-cancel { flex: 1; padding: 12px; background: #2a2a35; border: none; font-weight: 600; border-radius: 12px; color: #ccc; cursor: pointer; font-size: 0.9rem; }
+
+        .hidden { display: none !important; }
+        
+        /* --- NOTIFICATIONS --- */
+        .toast { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: rgba(16, 16, 24, 0.95); border: 1px solid var(--primary);
+            color: white; padding: 12px 20px; border-radius: 12px; font-size: 0.85rem; 
+            z-index: 300; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast i { color: var(--primary); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo"><span class="status-dot"></span> DPMODS V9</div>
+        <div class="logo"><div id="statusDot" class="status-dot"></div> DPMODS V9</div>
     </header>
 
     <div class="container">
-        <div id="tabDevices">
-            <h2 style="color: white; margin-bottom: 15px;">User Database</h2>
-            
-            <div id="loadingState" class="card" style="text-align: center;">
-                <i class="fas fa-satellite-dish fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 15px;"></i>
-                <h3 style="margin: 0;">Connecting...</h3>
-                <p id="statusText" style="color: #888; font-size: 0.9rem;">Initializing System</p>
-                <div id="debug-box"></div>
-                <button onclick="window.location.reload()" style="background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-top: 10px; cursor: pointer;">Force Refresh</button>
-            </div>
-
-            <div id="userList" style="display: none;"></div>
+        <div id="loader" style="text-align: center; padding: 80px 0;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="color: #666; margin-top: 15px; font-size: 0.9rem;">Initializing System...</p>
         </div>
 
-        <div id="tabSettings" style="display: none;">
-            <h2 style="color: white; margin-bottom: 15px;">Configuration</h2>
-            <div class="card">
-                <label>Admin Contact URL</label>
-                <input type="text" id="confAdminUrl">
+        <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 16px; text-align: center; color: var(--danger);">
+            <i class="fas fa-wifi" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Connection Failed</strong><br>
+            <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
+                <button onclick="resetUrl()" style="background:#444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Reset</button>
+                <button onclick="window.location.reload()" style="background:var(--danger); color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer;">Retry</button>
+            </div>
+        </div>
 
-                <label>Dialog Timeout</label>
-                <input type="text" id="confTimeout">
+        <div id="tabHome" class="hidden">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search" class="search-input" placeholder="Search..." onkeyup="render()">
+            </div>
 
-                <label>Announcement Message</label>
-                <textarea id="confAnnounceMsg" rows="3"></textarea>
+            <div class="chips">
+                <div class="chip active" onclick="setFilter('all', this)">All</div>
+                <div class="chip" onclick="setFilter('active', this)">Active</div>
+                <div class="chip" onclick="setFilter('banned', this)">Banned</div>
+            </div>
+
+            <div id="list"></div>
+        </div>
+
+        <div id="tabSettings" class="hidden">
+            <h2 style="color:white; margin-bottom:15px; font-size:1.2rem;">Configuration</h2>
+            <div class="card" style="border:1px solid #333;">
                 
-                <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                    <label class="switch" style="margin-right: 10px;">
-                        <input type="checkbox" id="confShowAnnounce">
-                        <span class="slider"></span>
-                    </label>
-                    <span style="color: white; font-size: 0.9rem;">Show Announcement</span>
+                <div class="inp-group">
+                    <label class="inp-label">Firebase URL</label>
+                    <input type="text" class="inp" id="confUrl">
                 </div>
 
-                <button class="btn-main" onclick="saveSettings()">Save Config</button>
+                <div class="inp-group">
+                    <label class="inp-label">Admin Contact URL</label>
+                    <input type="text" class="inp" id="confAdmin">
+                </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Dialog Timeout</label>
+                    <input type="text" class="inp" id="confTime">
+                </div>
+
+                <div class="inp-group">
+                    <label class="inp-label">Announcement</label>
+                    <textarea class="inp" id="confMsg" rows="2"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#111; padding:10px; border-radius:10px;">
+                    <span style="color:#aaa; font-size:0.8rem;">Show Announcement</span>
+                    <label class="switch">
+                        <input type="checkbox" id="confShow">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <button class="btn-save" onclick="saveSettings()">Save Configuration</button>
             </div>
         </div>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h3 style="color: white; margin-top: 0;">User Details</h3>
-            <input type="hidden" id="editIndex">
+    <div id="modal" class="modal-wrap">
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <h3 style="margin:0; font-family:'Rajdhani', sans-serif; color:white;">User Details</h3>
+                <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
+            </div>
             
-            <label>Username</label> <input type="text" id="inpUser">
-            <label>Password</label> <input type="text" id="inpPass">
-            <label>Device ID</label> <input type="text" id="inpDevice">
-            <label>Expiry Date</label> <input type="date" id="inpExpiry">
+            <input type="hidden" id="editIdx">
+            <div class="tool-bar">
+                <button class="btn-tool" onclick="randomGen()"><i class="fas fa-dice"></i> Random</button>
+                <button class="btn-tool" onclick="makeSame()"><i class="fas fa-clone"></i> Same</button>
+            </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-main" style="background: #333;" onclick="closeModal()">Cancel</button>
-                <button class="btn-main" onclick="saveUser()">Save</button>
+            <div class="inp-group"><label class="inp-label">Username</label><input type="text" class="inp" id="uName"></div>
+            <div class="inp-group"><label class="inp-label">Password</label><input type="text" class="inp" id="uPass"></div>
+            <div class="inp-group"><label class="inp-label">Device ID</label><input type="text" class="inp" id="uDev" placeholder="Optional"></div>
+            <div class="inp-group"><label class="inp-label">Expiry</label><input type="date" class="inp" id="uExp"></div>
+
+            <div class="btn-row">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-save" onclick="saveUser()">Save</button>
             </div>
         </div>
     </div>
 
-    <nav>
-        <div class="nav-item active" onclick="switchTab('Devices')" id="navDevices"><i class="fas fa-users"></i></div>
-        <div class="nav-item" onclick="openModal()"><i class="fas fa-plus-circle" style="color: var(--primary); transform: scale(1.3);"></i></div>
-        <div class="nav-item" onclick="switchTab('Settings')" id="navSettings"><i class="fas fa-sliders-h"></i></div>
-    </nav>
+    <div id="toast" class="toast">
+        <i class="fas fa-bell"></i>
+        <span id="toastMsg">Notification</span>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" id="navHome" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
+        <div class="fab" onclick="openModal()"><i class="fas fa-plus"></i></div>
+        <div class="nav-item" id="navSet" onclick="switchTab('settings')"><i class="fas fa-cog"></i></div>
+    </div>
 
     <script>
-        // ==========================================
-        // 1. CONFIGURATION
-        // ==========================================
-        const FIREBASE_URL = "https://awesome-6004e.firebaseio.com/.json";
+        // --- 1. CONFIG & DEFAULTS ---
+        const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
         
-        let dbData = { Users: [], BannedDevices: [], AdminUrl: "", DialogTimeout: "1m" };
-        let isModalOpen = false;
+        const DEFAULT_DB_DATA = {
+            "AdminUrl": "https://t.me/dp_mods",
+            "DialogTimeout": "1m",
+            "ShowAnnouncement": true,
+            "Announcement": "New Update V2.0 is coming soon! Stay tuned.",
+            "Users": [],
+            "BannedDevices": []
+        };
 
-        // ==========================================
-        // 2. DEBUG LOGGING
-        // ==========================================
-        function log(msg) {
-            const box = document.getElementById('debug-box');
-            const status = document.getElementById('statusText');
-            box.style.display = 'block';
-            box.innerHTML += `> ${msg}<br>`;
-            box.scrollTop = box.scrollHeight;
-            if(status) status.innerText = msg;
-            console.log(msg);
-        }
+        let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
+        let localData = { users: [], banned: [] };
+        let prevUserMap = {}; // To store previous DeviceIDs for diffing
+        let isFirstLoad = true;
+        let currentFilter = 'all';
 
-        // ==========================================
-        // 3. CORE LOGIC
-        // ==========================================
+        // --- 2. FETCH LOGIC ---
         async function fetchData() {
-            if(isModalOpen) return;
+            // Only show full loader on first load to avoid flicker
+            if(isFirstLoad) {
+                document.getElementById('loader').style.display = 'block';
+                document.getElementById('tabHome').classList.add('hidden');
+            }
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
             try {
-                // log("Fetching data..."); 
-                const res = await fetch(FIREBASE_URL);
+                const response = await fetch(dbUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
                 
-                if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                const data = await response.json();
                 
-                const val = await res.json();
+                // AUTO-INITIALIZE if null
+                if(data === null) { await uploadDefaults(); return; }
+
+                processData(data);
                 
-                if(!val) {
-                    log("Database empty. Initializing...");
-                    renderUI();
-                    return;
+                // UI Ready
+                document.getElementById('loader').style.display = 'none';
+                if(document.getElementById('navHome').classList.contains('active')){
+                    document.getElementById('tabHome').classList.remove('hidden');
                 }
+                document.getElementById('statusDot').classList.remove('offline');
+                isFirstLoad = false;
 
-                // --- SAFE PARSING ---
-                dbData.AdminUrl = val.AdminUrl || "";
-                dbData.DialogTimeout = val.DialogTimeout || "1m";
-                dbData.ShowAnnouncement = val.ShowAnnouncement || false;
-                dbData.Announcement = val.Announcement || "";
-
-                // Fix BannedDevices (Object -> Array)
-                let bans = val.BannedDevices || [];
-                if(typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
-                dbData.BannedDevices = bans.filter(x => x); // remove nulls
-
-                // Fix Users (Object -> Array)
-                let users = val.Users || [];
-                if(typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
-
-                dbData.Users = users.map(u => ({
-                    Username: u.Username || "Unknown",
-                    Password: u.Password || "---",
-                    DeviceID: u.DeviceID || u.ID || "", // Handle empty ID gracefully
-                    Expiry: u.Expiry || ""
-                }));
-
-                // If successful, hide loader and show list
-                document.getElementById('loadingState').style.display = 'none';
-                document.getElementById('userList').style.display = 'block';
-                
-                renderUI();
-
-            } catch (e) {
-                log(`ERROR: ${e.message}`);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('errorMsg').classList.remove('hidden');
+                document.getElementById('statusDot').classList.add('offline');
             }
         }
 
-        function renderUI() {
-            const list = document.getElementById('userList');
-            list.innerHTML = "";
+        async function uploadDefaults() {
+            try {
+                await fetch(dbUrl, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(DEFAULT_DB_DATA)
+                });
+                fetchData(); 
+            } catch(e) { alert("Init Failed"); }
+        }
+
+        // --- 3. DATA PROCESSING & NOTIFICATIONS ---
+        function processData(data) {
+            // Settings
+            document.getElementById('confUrl').value = dbUrl;
+            document.getElementById('confAdmin').value = data.AdminUrl || "";
+            document.getElementById('confTime').value = data.DialogTimeout || "1m";
+            document.getElementById('confMsg').value = data.Announcement || "";
+            document.getElementById('confShow').checked = data.ShowAnnouncement || false;
+
+            // Banned
+            let bans = data.BannedDevices || [];
+            if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
+            localData.banned = bans.filter(x => x);
+
+            // Users
+            let users = data.Users || [];
+            if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
             
-            // Fill Settings Form
-            if(document.activeElement.tagName !== 'INPUT') {
-                document.getElementById('confAdminUrl').value = dbData.AdminUrl;
-                document.getElementById('confTimeout').value = dbData.DialogTimeout;
-                document.getElementById('confShowAnnounce').checked = dbData.ShowAnnouncement;
-                document.getElementById('confAnnounceMsg').value = dbData.Announcement;
+            localData.users = users.map(u => ({
+                username: u.Username || u.name || "Unknown",
+                password: u.Password || u.pass || "---",
+                deviceID: u.DeviceID || u.ID || u.id || "",
+                expiry: u.Expiry || u.expiry || ""
+            }));
+
+            // CHECK FOR NEW LOGINS (Notification Logic)
+            if (!isFirstLoad) {
+                localData.users.forEach(u => {
+                    const oldDevID = prevUserMap[u.username];
+                    const newDevID = u.deviceID;
+
+                    // If user had no ID before, and now has one -> They just logged in
+                    if ((!oldDevID || oldDevID === "") && (newDevID && newDevID.length > 2)) {
+                        showToast(`New Device Linked: ${u.username}`);
+                    }
+                });
             }
 
-            if(dbData.Users.length === 0) {
-                list.innerHTML = `<div class="card" style="text-align:center; color:#666;">No Users Found. Click + to add.</div>`;
-                return;
-            }
+            // Update Map for next cycle
+            prevUserMap = {};
+            localData.users.forEach(u => { prevUserMap[u.username] = u.deviceID; });
 
-            dbData.Users.forEach((u, idx) => {
-                const isBanned = dbData.BannedDevices.includes(u.DeviceID);
-                const displayID = u.DeviceID ? u.DeviceID : "NO DEVICE ID";
+            render();
+        }
+
+        // --- 4. RENDER UI (Compact) ---
+        function render() {
+            const list = document.getElementById('list');
+            list.innerHTML = "";
+            const search = document.getElementById('search').value.toLowerCase();
+
+            localData.users.forEach((u, index) => {
+                const isBanned = localData.banned.includes(u.deviceID);
+                const hasID = u.deviceID && u.deviceID.length > 2;
+                const isExpired = checkExpired(u.expiry);
                 
+                if (currentFilter === 'active' && isExpired) return;
+                if (currentFilter === 'banned' && !isBanned) return;
+                if (search && !u.username.toLowerCase().includes(search)) return;
+
+                // STYLING
+                let cardClass = 'active'; 
+                let statusTxt = 'ACTIVE';
+                let statusColor = '#00ff9d';
+                let devText = u.deviceID || "NO ID";
+                let devClass = hasID ? 'linked' : '';
+
+                if (isBanned) { 
+                    cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; 
+                } 
+                else if (!hasID) { 
+                    statusTxt = 'WAITING'; statusColor = '#00e5ff'; 
+                } 
+                if (isExpired) { 
+                    cardClass = 'expired'; statusTxt = 'EXPIRED'; statusColor = '#ffb700'; 
+                }
+
                 const html = `
-                <div class="card user-item ${isBanned ? 'banned' : ''}">
-                    <div class="user-top">
-                        <div>
-                            <div class="user-name">${u.Username}</div>
-                            <span class="user-device">${displayID}</span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <label class="switch">
-                                <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.DeviceID}')">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+                <div class="card ${cardClass}">
+                    <div class="user-head">
+                        <div class="u-name">${u.username}</div>
+                        <label class="switch">
+                            <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
+                            <span class="slider"></span>
+                        </label>
                     </div>
                     
-                    <div class="badges">
-                        <span class="badge"><i class="fas fa-key"></i> ${u.Password}</span>
-                        <span class="badge"><i class="far fa-clock"></i> ${u.Expiry}</span>
+                    <span class="u-dev ${devClass}">${devText}</span>
+
+                    <div class="info-grid">
+                        <div class="info-item"><i class="fas fa-key"></i> ${u.password}</div>
+                        <div class="info-item"><i class="far fa-clock"></i> ${u.expiry}</div>
                     </div>
 
-                    <div class="controls">
-                        <span style="font-size:0.75rem; color:#666; font-weight:bold;">${isBanned ? 'BANNED' : 'ACTIVE'}</span>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn-icon" onclick="openModal(${idx})"><i class="fas fa-pen"></i></button>
-                            <button class="btn-icon btn-del" onclick="deleteUser(${idx})"><i class="fas fa-trash"></i></button>
-                        </div>
+                    <div class="actions">
+                        <span style="color:${statusColor}; font-weight:bold; font-size:0.75rem; margin-right:auto;">${statusTxt}</span>
+                        <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
+                        <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
+                        <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>`;
                 list.innerHTML += html;
             });
+
+            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px; font-size:0.9rem;'>No Users Found</div>";
         }
 
-        // ==========================================
-        // 4. ACTIONS
-        // ==========================================
+        // --- 5. ACTIONS ---
         async function saveData() {
+            const payload = {
+                AdminUrl: document.getElementById('confAdmin').value,
+                DialogTimeout: document.getElementById('confTime').value,
+                Announcement: document.getElementById('confMsg').value,
+                ShowAnnouncement: document.getElementById('confShow').checked,
+                BannedDevices: localData.banned,
+                Users: localData.users.map(u => ({
+                    Username: u.username, Password: u.password,
+                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
+                }))
+            };
+
             try {
-                // Save simplified structure back to Firebase
-                await fetch(FIREBASE_URL, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(dbData)
-                });
-                fetchData(); // Refresh
-            } catch (e) { alert("Save Error: " + e); }
+                // Background save, no flicker
+                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+                // We don't call fetchData here immediately to avoid UI jumps, let the interval handle it or do silent update
+                // But for instant feedback on buttons, we can just let UI update locally mostly.
+                // However, let's call it to be safe.
+                fetchData();
+            } catch (e) { showToast("Save Failed"); }
         }
 
         function toggleBan(id) {
-            if(!id) return alert("Cannot ban user with no Device ID");
-            const idx = dbData.BannedDevices.indexOf(id);
-            if(idx > -1) dbData.BannedDevices.splice(idx, 1);
-            else dbData.BannedDevices.push(id);
+            if(!id || id.length < 3) return alert("User has no Device ID.");
+            const idx = localData.banned.indexOf(id);
+            if(idx > -1) localData.banned.splice(idx, 1);
+            else localData.banned.push(id);
             saveData();
         }
 
-        function saveSettings() {
-            dbData.AdminUrl = document.getElementById('confAdminUrl').value;
-            dbData.DialogTimeout = document.getElementById('confTimeout').value;
-            dbData.ShowAnnouncement = document.getElementById('confShowAnnounce').checked;
-            dbData.Announcement = document.getElementById('confAnnounceMsg').value;
-            saveData();
-            alert("Settings Saved!");
-        }
-
-        function saveUser() {
-            const user = document.getElementById('inpUser').value;
-            const pass = document.getElementById('inpPass').value;
-            const device = document.getElementById('inpDevice').value;
-            const expiry = document.getElementById('inpExpiry').value;
-            const editIdx = document.getElementById('editIndex').value;
-
-            if(!user || !expiry) return alert("Username & Expiry Required");
-
-            // Format Date YYYY-MM-DD -> DD/MM/YYYY
-            const [y, m, d] = expiry.split('-');
-            const fmtDate = `${d}/${m}/${y}`;
-
-            const newUser = {
-                Username: user,
-                Password: pass,
-                DeviceID: device,
-                ID: device, // Maintain compatibility
-                Expiry: fmtDate
-            };
-
-            if(editIdx !== "") dbData.Users[editIdx] = newUser;
-            else dbData.Users.push(newUser);
-
-            saveData();
-            closeModal();
-        }
-
-        function deleteUser(idx) {
-            if(confirm("Delete this user?")) {
-                dbData.Users.splice(idx, 1);
+        function delUser(idx) {
+            if(confirm("Delete User?")) {
+                localData.users.splice(idx, 1);
                 saveData();
             }
         }
 
-        // ==========================================
-        // 5. NAVIGATION & UTILS
-        // ==========================================
-        function switchTab(tab) {
-            document.getElementById('tabDevices').style.display = tab === 'Devices' ? 'block' : 'none';
-            document.getElementById('tabSettings').style.display = tab === 'Settings' ? 'block' : 'none';
-            document.getElementById('navDevices').classList.toggle('active', tab === 'Devices');
-            document.getElementById('navSettings').classList.toggle('active', tab === 'Settings');
+        function saveUser() {
+            const idx = document.getElementById('editIdx').value;
+            const u = {
+                username: document.getElementById('uName').value,
+                password: document.getElementById('uPass').value,
+                deviceID: document.getElementById('uDev').value,
+                expiry: formatDate(document.getElementById('uExp').value)
+            };
+
+            if(!u.username) return alert("Username Required");
+            if(!u.expiry) {
+                 const d = new Date(); d.setDate(d.getDate() + 30);
+                 const day = String(d.getDate()).padStart(2,'0');
+                 const mo = String(d.getMonth()+1).padStart(2,'0');
+                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
+            }
+
+            if(idx !== "") localData.users[idx] = u;
+            else localData.users.push(u);
+
+            document.getElementById('modal').style.display = 'none';
+            saveData();
         }
 
-        function openModal(idx = null) {
-            isModalOpen = true;
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('editIndex').value = "";
-            document.getElementById('inpUser').value = "";
-            document.getElementById('inpPass').value = "";
-            document.getElementById('inpDevice').value = "";
-            document.getElementById('inpExpiry').value = "";
+        function saveSettings() {
+            const newUrl = document.getElementById('confUrl').value;
+            if(newUrl) { dbUrl = newUrl; localStorage.setItem("dbUrl", newUrl); }
+            saveData();
+            showToast("Configuration Saved");
+        }
 
-            if(idx !== null) {
-                const u = dbData.Users[idx];
-                document.getElementById('editIndex').value = idx;
-                document.getElementById('inpUser').value = u.Username;
-                document.getElementById('inpPass').value = u.Password;
-                document.getElementById('inpDevice').value = u.DeviceID;
-                
-                // DD/MM/YYYY -> YYYY-MM-DD
-                const parts = u.Expiry.split('/');
-                if(parts.length === 3) document.getElementById('inpExpiry').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // --- 6. UTILS ---
+        function randomGen() {
+            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('uName').value = rnd;
+            document.getElementById('uPass').value = rnd;
+        }
+        function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
+        
+        function copyCreds(u, p) {
+            navigator.clipboard.writeText(`${u}:${p}`).then(() => { showToast("Copied to Clipboard"); });
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function checkExpired(dateStr) {
+            if(!dateStr) return false;
+            const [d, m, y] = dateStr.split('/');
+            return new Date(`${y}-${m}-${d}`) < new Date();
+        }
+
+        function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
+        function formatDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+        function setFilter(f, el) {
+            currentFilter = f;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            render();
+        }
+
+        function switchTab(t) {
+            const home = document.getElementById('tabHome');
+            const sett = document.getElementById('tabSettings');
+            const navH = document.getElementById('navHome');
+            const navS = document.getElementById('navSet');
+
+            if(t === 'home') { 
+                home.classList.remove('hidden'); sett.classList.add('hidden'); 
+                navH.classList.add('active'); navS.classList.remove('active');
+            } else { 
+                home.classList.add('hidden'); sett.classList.remove('hidden'); 
+                navH.classList.remove('active'); navS.classList.add('active');
             }
         }
 
-        function closeModal() {
-            isModalOpen = false;
-            document.getElementById('modal').style.display = 'none';
-        }
+        function openModal(idx = null) {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('editIdx').value = "";
+            document.getElementById('uName').value = "";
+            document.getElementById('uPass').value = "";
+            document.getElementById('uDev').value = "";
+            document.getElementById('uExp').value = "";
 
-        // Start
-        log("System Started. Connecting...");
-        setInterval(fetchData, 4000); // Check every 4s
+            if(idx !== null) {
+                const u = localData.users[idx];
+                document.getElementById('editIdx').value = idx;
+                document.getElementById('uName').value = u.username;
+                document.getElementById('uPass').value = u.password;
+                document.getElementById('uDev').value = u.deviceID;
+                if(u.expiry.includes('/')) {
+                    const [d,m,y] = u.expiry.split('/');
+                    document.getElementById('uExp').value = `${y}-${m}-${d}`;
+                }
+            }
+        }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        // INIT
         fetchData();
+        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 5000);
     </script>
 </body>
 </html>
