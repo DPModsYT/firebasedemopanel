@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPMods V9 Admin</title>
+    <title>DPMods Admin V9 (Stable)</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- 1. THEME VARIABLES --- */
+        /* --- THEME --- */
         :root {
             --bg-body: #050508;
-            --bg-glass: rgba(20, 20, 30, 0.7);
-            --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+            --bg-card: #0f0f16;
             --primary: #00e5ff; 
             --secondary: #7000ff; 
-            --accent: #ff0055;
+            --danger: #ff0055;
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
-            --status-active: #00ff9d;
-            --status-banned: #ff0055;
-            --status-expired: #ffb700;
         }
-
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             margin: 0; padding: 0;
@@ -31,364 +25,414 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 100px; /* Space for floating nav */
-            overflow-x: hidden;
+            padding-bottom: 100px;
         }
 
-        /* --- 2. HEADER --- */
+        /* --- HEADER --- */
         header {
             padding: 15px 20px;
             background: rgba(5, 5, 8, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: var(--border-glass);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { 
-            font-family: 'Rajdhani', sans-serif; 
-            font-size: 1.5rem; 
-            font-weight: 700; 
-            letter-spacing: 1px;
-            background: linear-gradient(90deg, #fff, var(--primary)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            display: flex; align-items: center; gap: 10px;
-        }
-        .live-dot { height: 8px; width: 8px; background: var(--status-active); border-radius: 50%; box-shadow: 0 0 10px var(--status-active); transition:0.3s; }
-        .live-dot.offline { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 10px #00ff9d; }
+        .status-dot.error { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 
-        /* --- 3. UI ELEMENTS --- */
+        /* --- CONTAINER --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-        /* Status Bar */
-        .status-bar {
-            background: rgba(255, 0, 85, 0.1); border: 1px solid var(--accent); color: var(--accent);
-            padding: 10px 15px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 15px;
-            display: none; align-items: center; gap: 10px;
-        }
+        /* --- SEARCH & CHIPS --- */
+        .search-box { position: relative; margin-bottom: 15px; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
+        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 15px 15px 15px 45px; border-radius: 12px; color: white; outline: none; }
+        .search-input:focus { border-color: var(--primary); }
 
-        /* Search */
-        .search-wrapper { position: relative; margin-bottom: 15px; }
-        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input {
-            width: 100%; background: #12121a; border: var(--border-glass);
-            padding: 16px 16px 16px 45px; border-radius: 14px; color: white;
-            font-size: 1rem; transition: 0.3s;
-        }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); }
+        .chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+        .chip { padding: 6px 16px; background: #1a1a24; border-radius: 20px; font-size: 0.8rem; color: #888; border: 1px solid #333; white-space: nowrap; }
+        .chip.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); }
 
-        /* Chips */
-        .chips-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px; scrollbar-width: none; }
-        .chips-scroll::-webkit-scrollbar { display: none; }
-        .chip {
-            white-space: nowrap; padding: 8px 18px; background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 50px;
-            font-size: 0.85rem; color: var(--text-muted); transition: 0.3s; cursor: pointer;
-        }
-        .chip.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        /* --- CARDS --- */
+        .card { background: #101018; border: 1px solid #222; border-radius: 16px; padding: 18px; margin-bottom: 15px; position: relative; }
+        .card.active { border-left: 3px solid #00ff9d; }
+        .card.banned { border-left: 3px solid #ff0055; }
+        .card.expired { border-left: 3px solid #ffb700; }
+        .card.noid { border-left: 3px solid #555; }
 
-        /* --- 4. CARDS --- */
-        .card {
-            background: var(--bg-glass); border: var(--border-glass); border-radius: 18px;
-            padding: 20px; margin-bottom: 15px; position: relative; backdrop-filter: blur(5px);
-            animation: fadeIn 0.4s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .u-name { font-weight: 700; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; }
+        .u-id { font-size: 0.75rem; color: var(--primary); font-family: monospace; }
         
-        .card::before { content: ''; position: absolute; left: 0; top: 15px; bottom: 15px; width: 4px; border-radius: 0 4px 4px 0; }
-        .st-active::before { background: var(--status-active); box-shadow: 0 0 10px var(--status-active); }
-        .st-banned::before { background: var(--status-banned); box-shadow: 0 0 10px var(--status-banned); }
-        .st-expired::before { background: var(--status-expired); }
-        .st-null::before { background: #333; }
-
-        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-left: 10px; }
-        .u-name { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; }
-        .u-id { font-family: monospace; font-size: 0.8rem; color: var(--primary); opacity: 0.8; }
-
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-left: 10px; margin-bottom: 15px; }
-        .info-item { background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .info-row { background: #08080c; padding: 8px; border-radius: 8px; font-size: 0.8rem; color: #aaa; margin-bottom: 12px; display: flex; gap: 15px; }
         
-        .card-footer { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; margin-left: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .status-badge { font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+        .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 10px; }
+        .status-text { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-        .btn-mini { width: 36px; height: 36px; border-radius: 10px; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-edit:hover { background: var(--primary); color: #000; }
-        .btn-del:hover { background: var(--accent); }
+        /* --- BUTTONS --- */
+        .btn-icon { width: 32px; height: 32px; background: #222; border-radius: 8px; color: white; border: none; display: flex; align-items: center; justify-content: center; margin-left: 8px; }
+        
+        /* --- SWITCH --- */
+        .switch { position: relative; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background: var(--danger); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        /* --- 5. TOGGLE & NAV --- */
-        .toggle-switch { position: relative; width: 40px; height: 22px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(18px); }
+        /* --- NAV & MODAL --- */
+        .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #151520; border: 1px solid #333; padding: 0 30px; height: 60px; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; width: 85%; max-width: 350px; z-index: 99; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .nav-item { color: #555; font-size: 1.2rem; }
+        .nav-item.active { color: var(--primary); }
+        
+        .fab { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #000; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); border: 4px solid var(--bg-body); cursor: pointer; }
 
-        .nav-container {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 400px; height: 70px; background: rgba(18, 18, 24, 0.95);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 50px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 0 40px;
-        }
-        .nav-item { font-size: 1.4rem; color: #555; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #1a1a24; width: 80%; max-width: 300px; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+        .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 10px; color: white; border-radius: 8px; margin-bottom: 10px; }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); border: none; font-weight: bold; border-radius: 8px; margin-top: 10px; cursor: pointer; }
 
-        .fab-wrapper { position: absolute; left: 50%; top: -25px; transform: translateX(-50%); }
-        .fab-btn { width: 65px; height: 65px; background: linear-gradient(135deg, var(--primary), #00baff); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); border: 5px solid var(--bg-body); cursor: pointer; transition: transform 0.2s; }
-        .fab-btn:active { transform: scale(0.9); }
-        .fab-btn i { font-size: 1.6rem; color: #000; }
-
-        /* --- 6. MODAL --- */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; backdrop-filter: blur(8px); align-items: center; justify-content: center; }
-        .modal-box { background: #15151e; width: 85%; max-width: 350px; padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        .inp-label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .inp-field { width: 100%; background: #0a0a0e; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; }
-        .inp-field:focus { border-color: var(--secondary); }
-        .btn-save { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; font-weight: 700; border-radius: 14px; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         .hidden { display: none !important; }
+        
+        /* DEBUG TEXT */
+        #debug-log { font-family: monospace; font-size: 10px; color: #555; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <span class="live-dot" id="liveIndicator"></span> DPMODS V9
-        </div>
+        <div class="logo"><div id="statusDot" class="status-dot"></div> DPMODS V9</div>
     </header>
 
     <div class="container">
-        
-        <div id="statusMsg" class="status-bar">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Database Unreachable. Using Offline Mode.</span>
+        <div id="loader" style="text-align: center; padding: 50px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="color: #666; margin-top: 10px;">Connecting...</p>
         </div>
 
-        <div id="tabDevices">
-            <div class="search-wrapper">
+        <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 10px; text-align: center; color: var(--danger);">
+            <i class="fas fa-wifi"></i><br>Connection Failed<br>
+            <small id="errorDetail">Check URL or Internet</small>
+            <button onclick="window.location.reload()" style="background: #333; color: white; border: none; padding: 5px 10px; margin-top: 10px; border-radius: 5px;">Retry</button>
+        </div>
+
+        <div id="contentArea" class="hidden">
+            <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search..." onkeyup="handleSearch()">
+                <input type="text" id="search" class="search-input" placeholder="Search..." onkeyup="render()">
             </div>
 
-            <div class="chips-scroll">
+            <div class="chips">
                 <div class="chip active" onclick="setFilter('all', this)">All</div>
                 <div class="chip" onclick="setFilter('active', this)">Active</div>
-                <div class="chip" onclick="setFilter('expired', this)">Expired</div>
                 <div class="chip" onclick="setFilter('banned', this)">Banned</div>
             </div>
 
-            <div id="loader" style="text-align: center; padding: 40px 0;">
-                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                <p style="color: #666; margin-top: 15px;">Syncing...</p>
-            </div>
-
-            <div id="userList"></div>
-            <div id="emptyState" style="display:none; text-align:center; color:#555; padding: 40px;">No users found.</div>
+            <div id="list"></div>
         </div>
 
-        <div id="tabSettings" class="hidden">
-            <h2 style="color: white; margin-bottom:20px;">Configuration</h2>
-            <div class="card" style="border-left:none;">
-                <label class="inp-label">Firebase URL</label>
-                <input type="text" class="inp-field" id="confAdminUrl" value="https://awesome-6004e.firebaseio.com/.json">
-
-                <label class="inp-label">Dialog Timeout</label>
-                <input type="text" class="inp-field" id="confTimeout" placeholder="1m">
-                
-                <button class="btn-save" onclick="saveSettings()">Save Settings</button>
+        <div id="settingsArea" class="hidden">
+            <h3 style="color:white">Config</h3>
+            <div class="card">
+                <label style="font-size:0.8rem; color:var(--primary);">Firebase URL</label>
+                <input type="text" class="inp" id="confUrl">
+                <label style="font-size:0.8rem; color:var(--primary);">Timeout</label>
+                <input type="text" class="inp" id="confTime">
+                <button class="btn-main" onclick="saveSettings()">Save</button>
             </div>
         </div>
+
+        <div id="debug-log">System Ready</div>
     </div>
 
-    <div class="nav-container">
-        <div class="nav-item active" id="navDev" onclick="switchTab('Devices')"><i class="fas fa-users"></i></div>
-        <div class="fab-wrapper"><div class="fab-btn" onclick="openModal()"><i class="fas fa-plus"></i></div></div>
-        <div class="nav-item" id="navSet" onclick="switchTab('Settings')"><i class="fas fa-sliders-h"></i></div>
-    </div>
-
-    <div id="modal" class="modal-overlay">
+    <div id="modal" class="modal-wrap">
         <div class="modal-box">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <h3 style="margin:0; color:white;">User Details</h3>
-                <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
-            </div>
-            <input type="hidden" id="editIndex">
-            <label class="inp-label">Username</label> <input type="text" class="inp-field" id="inpUser">
-            <label class="inp-label">Password</label> <input type="text" class="inp-field" id="inpPass">
-            <label class="inp-label">Device ID</label> <input type="text" class="inp-field" id="inpDevice">
-            <label class="inp-label">Expiry Date</label> <input type="date" class="inp-field" id="inpExpiry">
-            <button class="btn-save" onclick="saveUser()">Save User</button>
+            <h3 style="margin-top:0; color:white;">User</h3>
+            <input type="hidden" id="editIdx">
+            <input type="text" class="inp" id="uName" placeholder="Username">
+            <input type="text" class="inp" id="uPass" placeholder="Password">
+            <input type="text" class="inp" id="uDev" placeholder="Device ID">
+            <input type="date" class="inp" id="uExp">
+            <button class="btn-main" onclick="saveUser()">Save</button>
+            <button class="btn-main" style="background:#333; color:white;" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
         </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
+        <div class="fab" onclick="openModal()"><i class="fas fa-plus"></i></div>
+        <div class="nav-item" onclick="switchTab('settings')"><i class="fas fa-cog"></i></div>
     </div>
 
     <script>
-        // CONFIG
-        let DB_URL = "https://awesome-6004e.firebaseio.com/.json";
+        // --- 1. CONFIG & STATE ---
+        // DEFAULT URL (Change this if needed, but this one is from your file)
+        const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
         
-        let state = { users: [], banned: [], timeout: "1m" };
-        let ui = { filter: 'all', search: '' };
-        let isEditing = false;
-        let isOffline = false;
+        let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
+        let localData = { users: [], banned: [] };
+        let currentFilter = 'all';
 
-        // DUMMY DATA FOR DEMO MODE
-        const DEMO_DATA = [
-            { name: "DemoUser1", pass: "1234", id: "a1b2c3d4", expiry: "25/12/2025" },
-            { name: "BannedPlayer", pass: "xyz", id: "banned_id_1", expiry: "01/01/2026" },
-            { name: "ExpiredUser", pass: "pass", id: "old_device", expiry: "01/01/2023" }
-        ];
-
-        // --- CORE LOGIC ---
-        async function loadData() {
-            if(isEditing) return;
-
-            const controller = new AbortController();
-            // TIMEOUT FIX: Forces the app to load if fetch takes > 3 seconds
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
+        // --- 2. ROBUST DATA FETCHING ---
+        async function fetchData() {
+            log("Fetching...");
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('statusDot').classList.remove('error');
 
             try {
-                const res = await fetch(DB_URL, { signal: controller.signal });
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s Timeout
+
+                const response = await fetch(dbUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
-                if(!res.ok) throw new Error("Server Error");
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const data = await response.json();
+                processData(data); // Parse whatever we get
                 
-                const data = await res.json();
-                isOffline = false;
-                processData(data);
-                
-            } catch (err) {
-                // FALLBACK TO OFFLINE MODE
-                console.log("Connection failed, using demo data");
-                isOffline = true;
-                if(state.users.length === 0) {
-                    processData({ Users: DEMO_DATA, BannedDevices: ["banned_id_1"] }); // Load dummy data
-                }
-            } finally {
-                // ALWAYS HIDE LOADER
+                // Success: Show Content
                 document.getElementById('loader').style.display = 'none';
-                updateStatus();
-                render();
+                document.getElementById('contentArea').classList.remove('hidden');
+                document.getElementById('errorMsg').classList.add('hidden');
+                log("Sync Complete");
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('contentArea').classList.add('hidden');
+                document.getElementById('errorMsg').classList.remove('hidden');
+                document.getElementById('errorDetail').innerText = error.message;
+                document.getElementById('statusDot').classList.add('error');
+                log("Error: " + error.message);
             }
         }
 
+        // --- 3. BULLETPROOF PARSING (Fixes the Array Issue) ---
         function processData(data) {
-            if(!data) return;
-            
-            // Parse Bans
-            let bans = data.BannedDevices || [];
-            if(!Array.isArray(bans)) bans = Object.values(bans);
-            state.banned = bans.filter(x => x);
-
-            // Parse Users
-            let users = data.Users || [];
-            if(!Array.isArray(users)) users = Object.values(users);
-            
-            state.users = users.map(u => ({
-                name: u.Username || u.name || "Unknown",
-                pass: u.Password || u.pass || "---",
-                id: u.DeviceID || u.ID || u.id || "",
-                expiry: u.Expiry || u.expiry || ""
-            }));
-        }
-
-        function updateStatus() {
-            const dot = document.getElementById('liveIndicator');
-            const msg = document.getElementById('statusMsg');
-            
-            if(isOffline) {
-                dot.classList.add('offline');
-                msg.style.display = 'flex';
-            } else {
-                dot.classList.remove('offline');
-                msg.style.display = 'none';
+            if (!data) {
+                localData.users = [];
+                localData.banned = [];
+                return;
             }
+
+            // 1. Fix Banned Devices (Ensure Array)
+            let bans = data.BannedDevices;
+            if (bans) {
+                // If it's an object {id1: "val", id2: "val"}, convert to array ["val", "val"]
+                if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
+                // Filter out nulls
+                localData.banned = bans.filter(item => item != null);
+            } else {
+                localData.banned = [];
+            }
+
+            // 2. Fix Users (Ensure Array)
+            let users = data.Users;
+            if (users) {
+                // If it's an object {key1: {User...}, key2: {User...}}, convert to Array
+                if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
+                
+                // Map cleanly
+                localData.users = users.map(u => ({
+                    username: u.Username || u.name || "Unknown",
+                    password: u.Password || u.pass || "---",
+                    deviceID: u.DeviceID || u.ID || u.id || "",
+                    expiry: u.Expiry || u.expiry || ""
+                }));
+            } else {
+                localData.users = [];
+            }
+
+            // Update Inputs in Settings
+            document.getElementById('confUrl').value = dbUrl;
+            
+            render();
         }
 
-        // --- RENDER ---
+        // --- 4. RENDER UI ---
         function render() {
-            const list = document.getElementById('userList');
-            const empty = document.getElementById('emptyState');
+            const list = document.getElementById('list');
             list.innerHTML = "";
+            const search = document.getElementById('search').value.toLowerCase();
 
-            let processed = state.users.map((u, idx) => {
-                const isBanned = state.banned.includes(u.id);
-                const hasId = u.id && u.id.length > 2;
-                const isExpired = checkExpired(u.expiry);
+            localData.users.forEach((u, index) => {
+                // Determine Status
+                const isBanned = localData.banned.includes(u.deviceID);
+                const hasID = u.deviceID && u.deviceID.length > 2;
                 
-                let type = 'st-active';
-                if(isBanned) type = 'st-banned';
-                else if(!hasId) type = 'st-null';
-                else if(isExpired) type = 'st-expired';
+                // Filter Logic
+                if (currentFilter === 'banned' && !isBanned) return;
+                if (currentFilter === 'active' && (isBanned || !hasID)) return;
+                
+                // Search Logic
+                if (search && !u.username.toLowerCase().includes(search)) return;
 
-                return { ...u, idx, isBanned, hasId, isExpired, type };
+                // Styling Classes
+                let cardClass = 'active';
+                let statusTxt = 'ACTIVE';
+                let statusColor = '#00ff9d';
+
+                if (isBanned) { cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; }
+                else if (!hasID) { cardClass = 'noid'; statusTxt = 'NO ID'; statusColor = '#555'; }
+
+                const html = `
+                <div class="card ${cardClass}">
+                    <div class="user-row">
+                        <div>
+                            <div class="u-name">${u.username}</div>
+                            <div class="u-id">${u.deviceID || "Waiting..."}</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="info-row">
+                        <span><i class="fas fa-key"></i> ${u.password}</span>
+                        <span><i class="fas fa-clock"></i> ${u.expiry}</span>
+                    </div>
+
+                    <div class="actions">
+                        <span class="status-text" style="color:${statusColor}">${statusTxt}</span>
+                        <div style="display:flex">
+                            <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
+                            <button class="btn-icon" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+                list.innerHTML += html;
             });
 
-            // Search & Filter
-            if(ui.search) {
-                const term = ui.search.toLowerCase();
-                processed = processed.filter(u => u.name.toLowerCase().includes(term) || u.id.toLowerCase().includes(term));
-            }
-
-            if(ui.filter !== 'all') {
-                processed = processed.filter(u => {
-                    if(ui.filter === 'active') return !u.isBanned && !u.isExpired && u.hasId;
-                    if(ui.filter === 'banned') return u.isBanned;
-                    if(ui.filter === 'expired') return u.isExpired && !u.isBanned;
-                });
-            }
-
-            if(processed.length === 0) empty.style.display = 'block';
-            else {
-                empty.style.display = 'none';
-                processed.forEach(u => {
-                    let badgeT = "ACTIVE", badgeC = "#00ff9d";
-                    if(u.isBanned) { badgeT="BANNED"; badgeC="#ff0055"; }
-                    else if(!u.hasId) { badgeT="NO ID"; badgeC="#555"; }
-                    else if(u.isExpired) { badgeT="EXPIRED"; badgeC="#ffb700"; }
-
-                    list.innerHTML += `
-                    <div class="card ${u.type}">
-                        <div class="user-header">
-                            <div><div class="u-name">${u.name}</div><span class="u-id">${u.id}</span></div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" ${u.isBanned ? 'checked' : ''} onchange="toggleBan('${u.id}')">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="info-grid">
-                            <div class="info-item"><i class="fas fa-key"></i> ${u.pass}</div>
-                            <div class="info-item"><i class="far fa-clock"></i> ${u.expiry}</div>
-                        </div>
-                        <div class="card-footer">
-                            <span class="status-badge" style="color:${badgeC}">${badgeT}</span>
-                            <div style="display:flex; gap:10px;">
-                                <button class="btn-mini btn-edit" onclick="openModal(${u.idx})"><i class="fas fa-pen"></i></button>
-                                <button class="btn-mini btn-del" onclick="deleteUser(${u.idx})"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-            }
+            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:20px;'>No Users Found</div>";
         }
 
-        // --- ACTIONS ---
-        async function pushDB() {
-            if(isOffline) { alert("Offline Mode: Changes won't save to server."); return; }
-            
+        // --- 5. ACTIONS ---
+        async function saveData() {
+            log("Saving...");
+            // Convert back to Firebase Structure
             const payload = {
-                BannedDevices: state.banned,
-                Users: state.users.map(u => ({ Username: u.name, Password: u.pass, DeviceID: u.id, ID: u.id, Expiry: u.expiry }))
+                BannedDevices: localData.banned,
+                Users: localData.users.map(u => ({
+                    Username: u.username,
+                    Password: u.password,
+                    DeviceID: u.deviceID,
+                    ID: u.deviceID, // Backwards compatibility
+                    Expiry: u.expiry
+                }))
             };
 
             try {
-                await fetch(DB_URL, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                loadData();
-            } catch(e) { alert("Save Failed"); }
+                await fetch(dbUrl, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                fetchData(); // Refresh on success
+            } catch (e) {
+                alert("Save Failed: " + e.message);
+            }
         }
 
         function toggleBan(id) {
-            const idx = state.banned.indexOf(id);
-            if(idx > -1) state.banned.splice(idx, 1); else state.banned.push(id);
-            pushDB(); render();
+            if(!id) return alert("No Device ID");
+            const idx = localData.banned.indexOf(id);
+            if(idx > -1) localData.banned.splice(idx, 1);
+            else localData.banned.push(id);
+            saveData();
         }
 
-    
+        function delUser(idx) {
+            if(confirm("Delete User?")) {
+                localData.users.splice(idx, 1);
+                saveData();
+            }
+        }
+
+        function saveUser() {
+            const idx = document.getElementById('editIdx').value;
+            const u = {
+                username: document.getElementById('uName').value,
+                password: document.getElementById('uPass').value,
+                deviceID: document.getElementById('uDev').value,
+                expiry: formatDate(document.getElementById('uExp').value)
+            };
+
+            if(!u.username) return alert("Username Required");
+
+            if(idx !== "") localData.users[idx] = u;
+            else localData.users.push(u);
+
+            document.getElementById('modal').style.display = 'none';
+            saveData();
+        }
+
+        function saveSettings() {
+            const newUrl = document.getElementById('confUrl').value;
+            if(newUrl) {
+                dbUrl = newUrl;
+                localStorage.setItem("dbUrl", newUrl);
+                fetchData();
+                alert("URL Saved");
+            }
+        }
+
+        // --- 6. UTILS ---
+        function setFilter(f, el) {
+            currentFilter = f;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            render();
+        }
+
+        function switchTab(t) {
+            const home = document.getElementById('contentArea');
+            const sett = document.getElementById('settingsArea');
+            if(t === 'home') { home.classList.remove('hidden'); sett.classList.add('hidden'); }
+            else { home.classList.add('hidden'); sett.classList.remove('hidden'); }
+        }
+
+        function openModal(idx = null) {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('editIdx').value = "";
+            document.getElementById('uName').value = "";
+            document.getElementById('uPass').value = "";
+            document.getElementById('uDev').value = "";
+            document.getElementById('uExp').value = "";
+
+            if(idx !== null) {
+                const u = localData.users[idx];
+                document.getElementById('editIdx').value = idx;
+                document.getElementById('uName').value = u.username;
+                document.getElementById('uPass').value = u.password;
+                document.getElementById('uDev').value = u.deviceID;
+                // Parse date for input (DD/MM/YYYY -> YYYY-MM-DD)
+                if(u.expiry.includes('/')) {
+                    const [d,m,y] = u.expiry.split('/');
+                    document.getElementById('uExp').value = `${y}-${m}-${d}`;
+                }
+            }
+        }
+
+        function formatDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function log(msg) {
+            document.getElementById('debug-log').innerText = msg;
+            console.log(msg);
+        }
+
+        // Init
+        fetchData();
+        // Auto-refresh every 10s
+        setInterval(() => {
+            if(document.getElementById('modal').style.display === 'none') fetchData();
+        }, 10000);
+
+    </script>
+</body>
+</html>
