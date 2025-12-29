@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPMods V10 Admin</title>
+    <title>DPMods V11 Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -15,8 +15,8 @@
             --secondary: #7000ff; 
             --accent: #ff0055;
             --text-main: #ffffff;
-            --glass-bg: rgba(20, 20, 35, 0.8);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(20, 20, 35, 0.9);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
             --grad-main: linear-gradient(135deg, #7000ff 0%, #00e5ff 100%);
         }
 
@@ -26,7 +26,8 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 110px;
+            padding-bottom: 120px;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- PARTICLES --- */
@@ -47,24 +48,22 @@
 
         .container { max-width: 700px; margin: 0 auto; padding: 15px; }
 
-        /* --- SEARCH & FILTERS --- */
+        /* --- SEARCH & FILTER --- */
+        .search-container { position: relative; margin-bottom: 15px; }
         .search-box {
-            position: relative; margin-bottom: 10px;
-        }
-        .search-box input {
             width: 100%; background: rgba(255,255,255,0.05); border: var(--glass-border);
-            padding: 12px 12px 12px 40px; border-radius: 12px; color: white;
-            font-family: 'Poppins', sans-serif; transition: 0.3s;
+            padding: 12px 12px 12px 45px; border-radius: 12px; color: white;
+            font-family: 'Poppins', sans-serif; font-size: 0.9rem; transition: 0.3s;
         }
-        .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
-        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
+        .search-box:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #888; }
 
         .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
         .filter-chip {
-            white-space: nowrap; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem;
+            white-space: nowrap; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem;
             background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #aaa; cursor: pointer; transition: 0.3s;
         }
-        .filter-chip.active { background: rgba(0, 229, 255, 0.15); border-color: var(--primary); color: var(--primary); }
+        .filter-chip.active { background: rgba(0, 229, 255, 0.15); border-color: var(--primary); color: var(--primary); font-weight: 600; }
         .filter-chip.banned-filter.active { background: rgba(255, 0, 85, 0.15); border-color: var(--accent); color: var(--accent); }
 
         /* --- CARDS --- */
@@ -75,12 +74,12 @@
         }
         
         .user-item { border-left: 3px solid var(--primary); }
-        .user-item.banned { border-left-color: var(--accent); opacity: 0.85; }
+        .user-item.banned { border-left-color: var(--accent); opacity: 0.9; }
         
         .user-top { display: flex; justify-content: space-between; align-items: flex-start; }
         .user-name { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; }
-        .user-device { font-family: monospace; font-size: 0.8rem; color: var(--primary); margin-top: 2px; display: block; opacity: 0.8; }
-        .user-item.banned .user-device { color: var(--accent); }
+        .user-device { font-family: monospace; font-size: 0.8rem; color: var(--primary); margin-top: 2px; display: block; opacity: 0.8; word-break: break-all; }
+        .user-item.banned .user-device { color: var(--accent); text-decoration: line-through; }
         
         .badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .badge { background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 5px; font-size: 0.75rem; color: #ccc; display: flex; align-items: center; gap: 5px; }
@@ -111,7 +110,6 @@
         .nav-item { color: #666; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--primary); transform: translateY(-3px); text-shadow: 0 0 10px var(--primary); }
 
-        /* --- ANIMATED FAB --- */
         .fab-wrapper { position: relative; width: 75px; height: 75px; margin-top: -45px; }
         .fab-btn {
             width: 100%; height: 100%; border-radius: 50%;
@@ -128,18 +126,16 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: #151520; border: 1px solid rgba(112, 0, 255, 0.3); width: 90%; max-width: 380px; padding: 25px; border-radius: 20px; }
         
-        .input-group { position: relative; margin-bottom: 12px; }
         label { font-size: 0.75rem; color: var(--primary); font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; font-family: monospace; }
+        input, textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 12px; color: white; border-radius: 8px; font-family: monospace; margin-bottom: 15px; }
         
         .tool-row { display: flex; gap: 8px; margin-bottom: 15px; }
         .btn-tool {
-            flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #333;
-            background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.75rem; cursor: pointer;
+            flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #333;
+            background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.8rem; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s;
         }
         .btn-tool:hover { background: var(--secondary); color: white; border-color: var(--secondary); }
-
         .btn-main { width: 100%; padding: 14px; background: var(--grad-main); border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; font-size: 1rem; }
     </style>
 </head>
@@ -148,8 +144,8 @@
     <canvas id="particles"></canvas>
 
     <header>
-        <div class="logo"><span class="status-dot"></span> DPMODS V10</div>
-        <div style="font-size: 0.7rem; color: #666; font-weight: bold;">ULTIMATE</div>
+        <div class="logo"><span class="status-dot"></span> DPMODS V11</div>
+        <div style="font-size: 0.7rem; color: #666; font-weight: bold;">ADMIN</div>
     </header>
 
     <div class="container">
@@ -157,13 +153,13 @@
         <div id="tabDevices">
             <h2 style="color: white; margin-bottom: 15px; font-size: 1.2rem;">User Database</h2>
             
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search username or device ID..." onkeyup="filterUsers()">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search username, ID..." onkeyup="filterUsers()">
             </div>
-            
+
             <div class="filter-row">
-                <div class="filter-chip active" onclick="setFilter('all', this)">All Users</div>
+                <div class="filter-chip active" onclick="setFilter('all', this)">All</div>
                 <div class="filter-chip" onclick="setFilter('active', this)">Active</div>
                 <div class="filter-chip banned-filter" onclick="setFilter('banned', this)">Banned</div>
                 <div class="filter-chip" onclick="setFilter('nodevice', this)">No Device</div>
@@ -171,7 +167,7 @@
 
             <div id="loadingState" style="text-align: center; padding: 40px; color: #666;">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
-                <div>Connecting to Firebase...</div>
+                <div id="loadingText">Connecting to Firebase...</div>
             </div>
 
             <div id="userList"></div>
@@ -203,23 +199,16 @@
             <input type="hidden" id="editIndex">
             
             <div class="tool-row">
-                <button class="btn-tool" onclick="generateRandom()"><i class="fas fa-dice"></i> Random Keys</button>
-                <button class="btn-tool" onclick="copyUserToPass()"><i class="fas fa-copy"></i> User = Pass</button>
+                <button class="btn-tool" onclick="generateRandom()"><i class="fas fa-dice"></i> Random</button>
+                <button class="btn-tool" onclick="copyUserToPass()"><i class="fas fa-copy"></i> Same Pass</button>
             </div>
 
-            <label>Username</label> 
-            <input type="text" id="inpUser" placeholder="Username">
-            
-            <label>Password</label> 
-            <input type="text" id="inpPass" placeholder="Password">
-            
-            <label>Device ID</label> 
-            <input type="text" id="inpDevice" placeholder="Hardware ID">
-            
-            <label>Expiry Date</label> 
-            <input type="date" id="inpExpiry">
+            <label>Username</label> <input type="text" id="inpUser" placeholder="Enter Username">
+            <label>Password</label> <input type="text" id="inpPass" placeholder="Enter Password">
+            <label>Device ID</label> <input type="text" id="inpDevice" placeholder="Hardware ID (Optional)">
+            <label>Expiry Date</label> <input type="date" id="inpExpiry">
 
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button class="btn-main" style="background: #222;" onclick="closeModal()">Cancel</button>
                 <button class="btn-main" onclick="saveUser()">Save</button>
             </div>
@@ -228,29 +217,25 @@
 
     <nav>
         <div class="nav-item active" onclick="switchTab('Devices')" id="navDevices"><i class="fas fa-users"></i></div>
-        
-        <div class="fab-wrapper" onclick="openModal()">
-            <div class="fab-btn"><i class="fas fa-plus"></i></div>
-        </div>
-
-        <div class="nav-item" onclick="switchTab('Settings')" id="navSettings"><i class="fas fa-cog"></i></div>
+        <div class="fab-wrapper" onclick="openModal()"><div class="fab-btn"><i class="fas fa-plus"></i></div></div>
+        <div class="nav-item" onclick="switchTab('Settings')" id="navSettings"><i class="fas fa-sliders-h"></i></div>
     </nav>
 
     <script>
-        // --- CONFIG ---
         const API_URL = "https://awesome-6004e.firebaseio.com/.json";
         
         let dbData = { Users: [], BannedDevices: [], AdminUrl: "", DialogTimeout: "1m" };
         let isModalOpen = false;
         let currentFilter = 'all';
 
-        // --- FETCH ---
+        // --- FETCH (ANTI-CRASH) ---
         async function fetchData() {
             if(isModalOpen) return;
             try {
                 const res = await fetch(API_URL);
-                const val = await res.json();
+                if (!res.ok) throw new Error("Net Error");
                 
+                const val = await res.json();
                 if(!val) { renderUI(); return; }
 
                 dbData.AdminUrl = val.AdminUrl || "";
@@ -258,30 +243,34 @@
                 dbData.ShowAnnouncement = val.ShowAnnouncement || false;
                 dbData.Announcement = val.Announcement || "";
 
+                // SAFE PARSE: BannedDevices (Force Array)
                 let bans = val.BannedDevices || [];
-                if(typeof bans === 'object') bans = Object.values(bans);
+                if(typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
                 dbData.BannedDevices = bans.filter(x => x);
 
+                // SAFE PARSE: Users (Force Array)
                 let users = val.Users || [];
-                if(typeof users === 'object') users = Object.values(users);
+                if(typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
                 
                 dbData.Users = users.map(u => ({
-                    Username: u.Username || "User",
+                    Username: u.Username || "Unknown",
                     Password: u.Password || "---",
-                    DeviceID: u.DeviceID || u.ID || "", 
+                    DeviceID: u.DeviceID || u.ID || "", // Handle missing IDs without crashing
                     Expiry: u.Expiry || ""
                 }));
 
                 document.getElementById('loadingState').style.display = 'none';
                 renderUI();
-
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                document.getElementById('loadingText').innerText = "Retrying... " + e.message;
+            }
         }
 
-        setInterval(fetchData, 4000);
+        setInterval(fetchData, 3000);
         fetchData();
 
-        // --- RENDER & FILTER ---
+        // --- RENDER ---
         function setFilter(filter, el) {
             currentFilter = filter;
             document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
@@ -289,16 +278,14 @@
             renderUI();
         }
 
-        function filterUsers() {
-            renderUI(); // Triggers re-render with search logic
-        }
+        function filterUsers() { renderUI(); }
 
         function renderUI() {
             const list = document.getElementById('userList');
             const search = document.getElementById('searchInput').value.toLowerCase();
             list.innerHTML = "";
-            
-            // Fill Settings
+
+            // Settings Sync
             if(document.activeElement.tagName !== 'INPUT') {
                 document.getElementById('confAdminUrl').value = dbData.AdminUrl;
                 document.getElementById('confTimeout').value = dbData.DialogTimeout;
@@ -306,31 +293,28 @@
                 document.getElementById('confAnnounceMsg').value = dbData.Announcement;
             }
 
-            // Filtering Logic
+            // Filter Logic
             let filtered = dbData.Users.filter(u => {
+                const id = u.DeviceID ? u.DeviceID.toLowerCase() : "";
+                const name = u.Username ? u.Username.toLowerCase() : "";
                 const isBanned = dbData.BannedDevices.includes(u.DeviceID);
-                const hasDevice = u.DeviceID && u.DeviceID !== "";
                 
-                // 1. Text Search
-                const matchesSearch = u.Username.toLowerCase().includes(search) || 
-                                      u.DeviceID.toLowerCase().includes(search);
-                if(!matchesSearch) return false;
+                // Search
+                if(!name.includes(search) && !id.includes(search)) return false;
 
-                // 2. Category Filter
-                if(currentFilter === 'active') return !isBanned && hasDevice;
+                // Category
+                if(currentFilter === 'active') return !isBanned && u.DeviceID;
                 if(currentFilter === 'banned') return isBanned;
-                if(currentFilter === 'nodevice') return !hasDevice;
-                
-                return true; // 'all'
+                if(currentFilter === 'nodevice') return !u.DeviceID;
+                return true;
             });
 
             if(filtered.length === 0) {
-                list.innerHTML = `<div class="card" style="text-align:center; color:#666;">No matching users found.</div>`;
+                list.innerHTML = `<div class="card" style="text-align:center; color:#666;">No users found.</div>`;
                 return;
             }
 
             filtered.forEach((u) => {
-                // Find original index for editing/deleting
                 const originalIdx = dbData.Users.indexOf(u);
                 const isBanned = dbData.BannedDevices.includes(u.DeviceID);
                 const displayID = u.DeviceID ? u.DeviceID : "NO DEVICE ID";
@@ -374,7 +358,7 @@
         }
 
         function toggleBan(id) {
-            if(!id) return alert("No Device ID");
+            if(!id) return alert("User has no Device ID to ban.");
             const idx = dbData.BannedDevices.indexOf(id);
             if(idx > -1) dbData.BannedDevices.splice(idx, 1);
             else dbData.BannedDevices.push(id);
@@ -402,8 +386,4 @@
         }
 
         function deleteUser(idx) {
-            if(confirm("Delete user?")) { dbData.Users.splice(idx, 1); saveData(); }
-        }
-
-        function saveSettings() {
-            d
+            if(confirm("Delete user?")) { dbData.Users.s
