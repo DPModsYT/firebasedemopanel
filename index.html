@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPMods V11 Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DPMods V12 Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -15,10 +15,13 @@
             --secondary: #7000ff; 
             --accent: #ff0055;
             --text-main: #ffffff;
-            --glass-bg: rgba(20, 20, 35, 0.9);
+            --glass-bg: rgba(20, 20, 35, 0.95);
             --glass-border: 1px solid rgba(255, 255, 255, 0.1);
             --grad-main: linear-gradient(135deg, #7000ff 0%, #00e5ff 100%);
+            --nav-height: 80px;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
             margin: 0; padding: 0;
@@ -26,8 +29,8 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 120px;
-            -webkit-font-smoothing: antialiased;
+            padding-bottom: calc(var(--nav-height) + 20px);
+            overflow-x: hidden;
         }
 
         /* --- PARTICLES --- */
@@ -41,6 +44,7 @@
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
         .status-dot { height: 8px; width: 8px; background-color: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
@@ -52,7 +56,7 @@
         .search-container { position: relative; margin-bottom: 15px; }
         .search-box {
             width: 100%; background: rgba(255,255,255,0.05); border: var(--glass-border);
-            padding: 12px 12px 12px 45px; border-radius: 12px; color: white;
+            padding: 14px 14px 14px 45px; border-radius: 12px; color: white;
             font-family: 'Poppins', sans-serif; font-size: 0.9rem; transition: 0.3s;
         }
         .search-box:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
@@ -60,7 +64,7 @@
 
         .filter-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
         .filter-chip {
-            white-space: nowrap; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem;
+            white-space: nowrap; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem;
             background: rgba(255,255,255,0.05); border: 1px solid transparent; color: #aaa; cursor: pointer; transition: 0.3s;
         }
         .filter-chip.active { background: rgba(0, 229, 255, 0.15); border-color: var(--primary); color: var(--primary); font-weight: 600; }
@@ -87,7 +91,7 @@
         /* --- CONTROLS --- */
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
         
-        .btn-icon { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; background: rgba(255,255,255,0.08); color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-icon { width: 36px; height: 36px; border-radius: 8px; border: none; cursor: pointer; background: rgba(255,255,255,0.08); color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-edit:hover { background: var(--primary); color: #000; } 
         .btn-del:hover { background: var(--accent); color: #fff; }
 
@@ -99,28 +103,31 @@
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(18px); background-color: #fff; }
 
-        /* --- NAV & FAB --- */
+        /* --- NAV & FAB (Mobile Optimized) --- */
         nav {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
             background: rgba(15, 15, 25, 0.95); border: 1px solid rgba(255,255,255,0.15);
-            padding: 0 30px; border-radius: 40px; height: 70px;
-            display: flex; gap: 60px; align-items: center; justify-content: center;
+            border-radius: 25px; height: 70px;
+            display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 99; backdrop-filter: blur(10px);
+            padding: 0 40px;
         }
-        .nav-item { color: #666; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
+        .nav-item { color: #666; font-size: 1.5rem; cursor: pointer; transition: 0.3s; width: 50px; text-align: center; }
         .nav-item.active { color: var(--primary); transform: translateY(-3px); text-shadow: 0 0 10px var(--primary); }
 
-        .fab-wrapper { position: relative; width: 75px; height: 75px; margin-top: -45px; }
+        .fab-wrapper { 
+            position: absolute; left: 50%; top: -30px; transform: translateX(-50%);
+            width: 70px; height: 70px;
+        }
         .fab-btn {
             width: 100%; height: 100%; border-radius: 50%;
-            background: var(--grad-main); border: 4px solid var(--bg-deep);
+            background: var(--grad-main); border: 5px solid var(--bg-deep);
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.2rem; color: #fff; cursor: pointer;
-            box-shadow: 0 0 30px rgba(112, 0, 255, 0.5);
-            animation: float 3s ease-in-out infinite; transition: 0.3s;
+            font-size: 2rem; color: #fff; cursor: pointer;
+            box-shadow: 0 0 25px rgba(112, 0, 255, 0.6);
+            transition: 0.3s;
         }
         .fab-btn:active { transform: scale(0.9); }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
         /* --- MODAL --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
@@ -137,6 +144,13 @@
         }
         .btn-tool:hover { background: var(--secondary); color: white; border-color: var(--secondary); }
         .btn-main { width: 100%; padding: 14px; background: var(--grad-main); border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; font-size: 1rem; }
+
+        /* --- ERROR BOX --- */
+        #errorBox {
+            display: none; background: rgba(255, 0, 85, 0.1); border: 1px solid var(--accent);
+            color: var(--accent); padding: 15px; border-radius: 10px; margin-top: 20px;
+            font-size: 0.8rem; font-family: monospace; word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -144,7 +158,7 @@
     <canvas id="particles"></canvas>
 
     <header>
-        <div class="logo"><span class="status-dot"></span> DPMODS V11</div>
+        <div class="logo"><span class="status-dot"></span> DPMODS V12</div>
         <div style="font-size: 0.7rem; color: #666; font-weight: bold;">ADMIN</div>
     </header>
 
@@ -166,8 +180,10 @@
             </div>
 
             <div id="loadingState" style="text-align: center; padding: 40px; color: #666;">
-                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;"></i>
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary); margin-bottom: 15px;"></i>
                 <div id="loadingText">Connecting to Firebase...</div>
+                <div id="errorBox"></div>
+                <button onclick="fetchData()" style="margin-top: 15px; padding: 8px 16px; background: #333; color: white; border: none; border-radius: 6px;">Retry Connection</button>
             </div>
 
             <div id="userList"></div>
@@ -228,47 +244,62 @@
         let isModalOpen = false;
         let currentFilter = 'all';
 
-        // --- FETCH (ANTI-CRASH) ---
+        // --- ROBUST FETCH ---
         async function fetchData() {
             if(isModalOpen) return;
             try {
                 const res = await fetch(API_URL);
-                if (!res.ok) throw new Error("Net Error");
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 
                 const val = await res.json();
-                if(!val) { renderUI(); return; }
+                
+                // If DB is empty or null, initialize defaults
+                if(!val) {
+                    console.log("DB is empty");
+                    document.getElementById('loadingState').style.display = 'none';
+                    renderUI(); 
+                    return; 
+                }
 
+                // --- DATA SANITIZATION (THE FIX) ---
+                // Force everything to be valid arrays, handling Firebase Objects
+                
                 dbData.AdminUrl = val.AdminUrl || "";
                 dbData.DialogTimeout = val.DialogTimeout || "1m";
                 dbData.ShowAnnouncement = val.ShowAnnouncement || false;
                 dbData.Announcement = val.Announcement || "";
 
-                // SAFE PARSE: BannedDevices (Force Array)
+                // Fix BannedDevices: Convert Object {"0":"id"} to Array ["id"]
                 let bans = val.BannedDevices || [];
                 if(typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
-                dbData.BannedDevices = bans.filter(x => x);
+                dbData.BannedDevices = bans.filter(x => x != null && x !== ""); // Remove nulls/empties
 
-                // SAFE PARSE: Users (Force Array)
+                // Fix Users: Convert Object {"0":{...}} to Array [{...}]
                 let users = val.Users || [];
                 if(typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
                 
+                // Map Users safely (Handle missing fields)
                 dbData.Users = users.map(u => ({
                     Username: u.Username || "Unknown",
                     Password: u.Password || "---",
-                    DeviceID: u.DeviceID || u.ID || "", // Handle missing IDs without crashing
+                    DeviceID: u.DeviceID || u.ID || "", // Handle empty ID
                     Expiry: u.Expiry || ""
                 }));
 
                 document.getElementById('loadingState').style.display = 'none';
                 renderUI();
+
             } catch (e) { 
                 console.error(e); 
-                document.getElementById('loadingText').innerText = "Retrying... " + e.message;
+                document.getElementById('loadingText').innerText = "Connection Failed";
+                const errBox = document.getElementById('errorBox');
+                errBox.style.display = 'block';
+                errBox.innerText = e.message + "\nCheck Internet & Database Rules";
             }
         }
 
-        setInterval(fetchData, 3000);
-        fetchData();
+        setInterval(fetchData, 4000); // Poll every 4s
+        fetchData(); // Initial load
 
         // --- RENDER ---
         function setFilter(filter, el) {
@@ -285,32 +316,31 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             list.innerHTML = "";
 
-            // Settings Sync
-            if(document.activeElement.tagName !== 'INPUT') {
+            // Fill Settings inputs
+            if(document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 document.getElementById('confAdminUrl').value = dbData.AdminUrl;
                 document.getElementById('confTimeout').value = dbData.DialogTimeout;
                 document.getElementById('confShowAnnounce').checked = dbData.ShowAnnouncement;
                 document.getElementById('confAnnounceMsg').value = dbData.Announcement;
             }
 
-            // Filter Logic
+            // Filtering
             let filtered = dbData.Users.filter(u => {
                 const id = u.DeviceID ? u.DeviceID.toLowerCase() : "";
                 const name = u.Username ? u.Username.toLowerCase() : "";
                 const isBanned = dbData.BannedDevices.includes(u.DeviceID);
+                const hasDevice = u.DeviceID && u.DeviceID !== "";
                 
-                // Search
                 if(!name.includes(search) && !id.includes(search)) return false;
 
-                // Category
-                if(currentFilter === 'active') return !isBanned && u.DeviceID;
+                if(currentFilter === 'active') return !isBanned && hasDevice;
                 if(currentFilter === 'banned') return isBanned;
-                if(currentFilter === 'nodevice') return !u.DeviceID;
+                if(currentFilter === 'nodevice') return !hasDevice;
                 return true;
             });
 
             if(filtered.length === 0) {
-                list.innerHTML = `<div class="card" style="text-align:center; color:#666;">No users found.</div>`;
+                list.innerHTML = `<div class="card" style="text-align:center; color:#666;">No matching users found.</div>`;
                 return;
             }
 
@@ -343,47 +373,4 @@
                         <span style="font-size:0.7rem; color:#666; font-weight:bold;">${isBanned ? 'BANNED' : 'ACTIVE'}</span>
                         <div style="display:flex; gap:10px;">
                             <button class="btn-icon btn-edit" onclick="openModal(${originalIdx})"><i class="fas fa-pen"></i></button>
-                            <button class="btn-icon btn-del" onclick="deleteUser(${originalIdx})"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>`;
-                list.innerHTML += html;
-            });
-        }
-
-        // --- ACTIONS ---
-        async function saveData() {
-            await fetch(API_URL, { method: 'PUT', body: JSON.stringify(dbData) });
-            fetchData();
-        }
-
-        function toggleBan(id) {
-            if(!id) return alert("User has no Device ID to ban.");
-            const idx = dbData.BannedDevices.indexOf(id);
-            if(idx > -1) dbData.BannedDevices.splice(idx, 1);
-            else dbData.BannedDevices.push(id);
-            saveData();
-        }
-
-        function saveUser() {
-            const user = document.getElementById('inpUser').value;
-            const pass = document.getElementById('inpPass').value;
-            const device = document.getElementById('inpDevice').value;
-            const expiry = document.getElementById('inpExpiry').value;
-            const idx = document.getElementById('editIndex').value;
-
-            if(!user || !expiry) return alert("Username & Expiry Required");
-            const [y, m, d] = expiry.split('-');
-            const fmtDate = `${d}/${m}/${y}`;
-
-            const newUser = { Username: user, Password: pass, DeviceID: device, ID: device, Expiry: fmtDate };
-            
-            if(idx !== "") dbData.Users[idx] = newUser;
-            else dbData.Users.push(newUser);
-            
-            saveData();
-            closeModal();
-        }
-
-        function deleteUser(idx) {
-            if(confirm("Delete user?")) { dbData.Users.s
+                            <button class="btn-icon btn-del" onclick="deleteUser(${originalIdx})"><i class="fas fa-tr
