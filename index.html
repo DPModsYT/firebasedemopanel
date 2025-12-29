@@ -29,52 +29,58 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 120px; /* Space for Nav */
+            padding-bottom: 110px; /* Space for Nav */
         }
 
         /* --- HEADER --- */
         header {
-            padding: 18px 24px;
+            padding: 15px 20px;
             background: rgba(5, 5, 8, 0.95);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
+        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; }
         .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; transition: 0.3s; }
         .status-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
 
         /* --- SEARCH & CHIPS --- */
-        .search-box { position: relative; margin-bottom: 15px; }
-        .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1rem; }
-        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 16px 16px 16px 50px; border-radius: 14px; color: white; font-family: 'Poppins', sans-serif; transition: 0.3s; }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
+        .search-box { position: relative; margin-bottom: 12px; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1rem; }
+        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 12px 12px 12px 40px; border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem; transition: 0.3s; }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
 
-        .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px; scrollbar-width: none; }
-        .chip { padding: 8px 20px; background: #1a1a24; border-radius: 50px; font-size: 0.85rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; font-weight: 500; }
-        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
+        .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
+        .chip { padding: 6px 16px; background: #1a1a24; border-radius: 50px; font-size: 0.8rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; font-weight: 500; }
+        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
 
-        /* --- CARDS --- */
-        .card { background: var(--bg-card); border: 1px solid #222; border-radius: 20px; padding: 20px; margin-bottom: 16px; position: relative; transition: transform 0.2s; }
-        .card:active { transform: scale(0.99); }
+        /* --- COMPACT CARDS --- */
+        .card { background: var(--bg-card); border: 1px solid #222; border-radius: 16px; padding: 14px; margin-bottom: 10px; position: relative; transition: transform 0.2s; }
+        .card:active { transform: scale(0.98); }
         
-        .card.active { border-left: 4px solid var(--primary); }
-        .card.banned { border-left: 4px solid var(--danger); animation: pulse 2s infinite; }
-        .card.expired { border-left: 4px solid #ffb700; }
+        .card.active { border-left: 3px solid var(--primary); }
+        .card.banned { border-left: 3px solid var(--danger); animation: pulse 2s infinite; }
+        .card.expired { border-left: 3px solid #ffb700; }
         
-        @keyframes pulse { 0% { box-shadow: inset 2px 0 0 var(--danger); } 50% { box-shadow: inset 2px 0 15px var(--danger); } 100% { box-shadow: inset 2px 0 0 var(--danger); } }
+        @keyframes pulse { 0% { box-shadow: inset 2px 0 0 var(--danger); } 50% { box-shadow: inset 2px 0 10px var(--danger); } 100% { box-shadow: inset 2px 0 0 var(--danger); } }
 
-        .user-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .u-name { font-weight: 700; font-size: 1.25rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
+        .user-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .u-name { font-weight: 700; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
         
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .info-item { background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; font-size: 0.85rem; color: #ccc; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .u-dev { font-family: monospace; font-size: 0.75rem; color: #555; margin-bottom: 8px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .u-dev.linked { color: var(--primary); }
+
+        .info-grid { display: flex; gap: 8px; margin-bottom: 10px; }
+        .info-item { flex: 1; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; font-size: 0.8rem; color: #ccc; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .info-item i { font-size: 0.7rem; color: #888; }
         
-        .actions { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
-        .btn-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 12px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .actions { display: flex; justify-content: flex-end; gap: 6px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; align-items: center; }
+        
+        /* Smaller Action Buttons */
+        .btn-icon { width: 34px; height: 34px; background: rgba(255,255,255,0.05); border-radius: 10px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
         .btn-icon:hover { background: rgba(255,255,255,0.1); }
         .btn-copy { color: var(--primary); }
         .btn-del { color: var(--danger); }
@@ -86,51 +92,59 @@
         .inp:focus { border-color: var(--secondary); }
 
         /* --- SWITCH --- */
-        .switch { position: relative; width: 42px; height: 22px; }
+        .switch { position: relative; width: 38px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: var(--danger); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        /* --- NAV BAR (Fixed Position) --- */
+        /* --- NAV BAR --- */
         .nav-bar { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
             background: var(--nav-bg); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 0 35px; height: 75px; border-radius: 50px; 
+            padding: 0 30px; height: 65px; border-radius: 40px; 
             display: flex; align-items: center; justify-content: space-between; 
-            width: 90%; max-width: 400px; z-index: 99; 
+            width: 85%; max-width: 380px; z-index: 99; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
         }
-        .nav-item { color: #555; font-size: 1.5rem; cursor: pointer; transition: 0.3s; }
+        .nav-item { color: #555; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
         
-        /* Floating Button Centered */
         .fab { 
-            width: 65px; height: 65px; 
+            width: 55px; height: 55px; 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.8rem; color: #000; 
-            position: absolute; left: 50%; top: -25px; transform: translateX(-50%); 
-            border: 6px solid var(--bg-body); cursor: pointer; 
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4); 
+            font-size: 1.6rem; color: #000; 
+            position: absolute; left: 50%; top: -20px; transform: translateX(-50%); 
+            border: 5px solid var(--bg-body); cursor: pointer; 
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
         }
         .fab:active { transform: translateX(-50%) scale(0.95); }
 
         /* --- MODAL --- */
         .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a1a24; width: 85%; max-width: 360px; padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
 
-        .tool-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-tool { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .tool-bar { display: flex; gap: 8px; margin-bottom: 15px; }
+        .btn-tool { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
         
-        .btn-row { display: flex; gap: 12px; margin-top: 25px; }
-        .btn-save { flex: 1; padding: 15px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 14px; color: white; cursor: pointer; font-size: 1rem; }
-        .btn-cancel { flex: 1; padding: 15px; background: #2a2a35; border: none; font-weight: 600; border-radius: 14px; color: #ccc; cursor: pointer; font-size: 1rem; }
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-save { flex: 1; padding: 12px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 12px; color: white; cursor: pointer; font-size: 0.9rem; }
+        .btn-cancel { flex: 1; padding: 12px; background: #2a2a35; border: none; font-weight: 600; border-radius: 12px; color: #ccc; cursor: pointer; font-size: 0.9rem; }
 
         .hidden { display: none !important; }
-        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 300; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .toast.show { opacity: 1; bottom: 130px; }
+        
+        /* --- NOTIFICATIONS --- */
+        .toast { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: rgba(16, 16, 24, 0.95); border: 1px solid var(--primary);
+            color: white; padding: 12px 20px; border-radius: 12px; font-size: 0.85rem; 
+            z-index: 300; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast i { color: var(--primary); }
     </style>
 </head>
 <body>
@@ -141,15 +155,14 @@
 
     <div class="container">
         <div id="loader" style="text-align: center; padding: 80px 0;">
-            <i class="fas fa-circle-notch fa-spin" style="font-size: 2.2rem; color: var(--primary);"></i>
-            <p style="color: #666; margin-top: 15px;">Connecting to Firebase...</p>
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="color: #666; margin-top: 15px; font-size: 0.9rem;">Initializing System...</p>
         </div>
 
         <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 16px; text-align: center; color: var(--danger);">
             <i class="fas fa-wifi" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Connection Failed</strong><br>
-            <small id="errorDetail">Database Unreachable</small><br>
             <div style="margin-top:15px; display:flex; gap:10px; justify-content:center;">
-                <button onclick="resetUrl()" style="background:#444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Reset URL</button>
+                <button onclick="resetUrl()" style="background:#444; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;">Reset</button>
                 <button onclick="window.location.reload()" style="background:var(--danger); color:white; border:none; padding:8px 20px; border-radius:8px; cursor:pointer;">Retry</button>
             </div>
         </div>
@@ -170,7 +183,7 @@
         </div>
 
         <div id="tabSettings" class="hidden">
-            <h2 style="color:white; margin-bottom:20px;">Configuration</h2>
+            <h2 style="color:white; margin-bottom:15px; font-size:1.2rem;">Configuration</h2>
             <div class="card" style="border:1px solid #333;">
                 
                 <div class="inp-group">
@@ -190,11 +203,11 @@
 
                 <div class="inp-group">
                     <label class="inp-label">Announcement</label>
-                    <textarea class="inp" id="confMsg" rows="3"></textarea>
+                    <textarea class="inp" id="confMsg" rows="2"></textarea>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#111; padding:10px; border-radius:10px;">
-                    <span style="color:#aaa; font-size:0.9rem;">Show Announcement</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background:#111; padding:10px; border-radius:10px;">
+                    <span style="color:#aaa; font-size:0.8rem;">Show Announcement</span>
                     <label class="switch">
                         <input type="checkbox" id="confShow">
                         <span class="slider"></span>
@@ -208,14 +221,14 @@
 
     <div id="modal" class="modal-wrap">
         <div class="modal-box">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
                 <h3 style="margin:0; font-family:'Rajdhani', sans-serif; color:white;">User Details</h3>
                 <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
             </div>
             
             <input type="hidden" id="editIdx">
             <div class="tool-bar">
-                <button class="btn-tool" onclick="randomGen()"><i class="fas fa-dice"></i> Randomize</button>
+                <button class="btn-tool" onclick="randomGen()"><i class="fas fa-dice"></i> Random</button>
                 <button class="btn-tool" onclick="makeSame()"><i class="fas fa-clone"></i> Same</button>
             </div>
 
@@ -231,7 +244,10 @@
         </div>
     </div>
 
-    <div id="toast" class="toast">Copied to clipboard</div>
+    <div id="toast" class="toast">
+        <i class="fas fa-bell"></i>
+        <span id="toastMsg">Notification</span>
+    </div>
 
     <div class="nav-bar">
         <div class="nav-item active" id="navHome" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
@@ -243,7 +259,6 @@
         // --- 1. CONFIG & DEFAULTS ---
         const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
         
-        // The default structure you requested
         const DEFAULT_DB_DATA = {
             "AdminUrl": "https://t.me/dp_mods",
             "DialogTimeout": "1m",
@@ -255,18 +270,20 @@
 
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
         let localData = { users: [], banned: [] };
-        let settings = {};
+        let prevUserMap = {}; // To store previous DeviceIDs for diffing
+        let isFirstLoad = true;
         let currentFilter = 'all';
 
-        // --- 2. FETCH LOGIC (ANTI-STUCK) ---
+        // --- 2. FETCH LOGIC ---
         async function fetchData() {
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('tabHome').classList.add('hidden');
-            document.getElementById('tabSettings').classList.add('hidden');
-            document.getElementById('errorMsg').classList.add('hidden');
+            // Only show full loader on first load to avoid flicker
+            if(isFirstLoad) {
+                document.getElementById('loader').style.display = 'block';
+                document.getElementById('tabHome').classList.add('hidden');
+            }
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3500); // 3.5s Timeout
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
 
             try {
                 const response = await fetch(dbUrl, { signal: controller.signal });
@@ -276,29 +293,23 @@
                 
                 const data = await response.json();
                 
-                // AUTO-INITIALIZE: If DB is null, upload defaults
-                if(data === null) {
-                    await uploadDefaults();
-                    return; // Recursion will happen inside uploadDefaults
-                }
+                // AUTO-INITIALIZE if null
+                if(data === null) { await uploadDefaults(); return; }
 
                 processData(data);
                 
-                // Show UI
+                // UI Ready
                 document.getElementById('loader').style.display = 'none';
                 if(document.getElementById('navHome').classList.contains('active')){
                     document.getElementById('tabHome').classList.remove('hidden');
-                } else {
-                    document.getElementById('tabSettings').classList.remove('hidden');
                 }
                 document.getElementById('statusDot').classList.remove('offline');
+                isFirstLoad = false;
 
             } catch (error) {
                 console.error(error);
-                // Force Stop Loading
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('errorMsg').classList.remove('hidden');
-                document.getElementById('errorDetail').innerText = error.name === 'AbortError' ? "Connection Timed Out" : error.message;
                 document.getElementById('statusDot').classList.add('offline');
             }
         }
@@ -310,30 +321,25 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(DEFAULT_DB_DATA)
                 });
-                fetchData(); // Reload after init
-            } catch(e) { alert("Failed to Initialize DB"); }
+                fetchData(); 
+            } catch(e) { alert("Init Failed"); }
         }
 
-        // --- 3. DATA PROCESSING ---
+        // --- 3. DATA PROCESSING & NOTIFICATIONS ---
         function processData(data) {
-            // 1. Settings
-            settings.AdminUrl = data.AdminUrl || "";
-            settings.DialogTimeout = data.DialogTimeout || "1m";
-            settings.Announcement = data.Announcement || "";
-            settings.ShowAnnouncement = data.ShowAnnouncement || false;
-
-            // Update Settings UI
+            // Settings
             document.getElementById('confUrl').value = dbUrl;
-            document.getElementById('confAdmin').value = settings.AdminUrl;
-            document.getElementById('confTime').value = settings.DialogTimeout;
-            document.getElementById('confMsg').value = settings.Announcement;
-            document.getElementById('confShow').checked = settings.ShowAnnouncement;
+            document.getElementById('confAdmin').value = data.AdminUrl || "";
+            document.getElementById('confTime').value = data.DialogTimeout || "1m";
+            document.getElementById('confMsg').value = data.Announcement || "";
+            document.getElementById('confShow').checked = data.ShowAnnouncement || false;
 
-            // 2. Users & Bans
+            // Banned
             let bans = data.BannedDevices || [];
             if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
             localData.banned = bans.filter(x => x);
 
+            // Users
             let users = data.Users || [];
             if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
             
@@ -344,10 +350,27 @@
                 expiry: u.Expiry || u.expiry || ""
             }));
 
+            // CHECK FOR NEW LOGINS (Notification Logic)
+            if (!isFirstLoad) {
+                localData.users.forEach(u => {
+                    const oldDevID = prevUserMap[u.username];
+                    const newDevID = u.deviceID;
+
+                    // If user had no ID before, and now has one -> They just logged in
+                    if ((!oldDevID || oldDevID === "") && (newDevID && newDevID.length > 2)) {
+                        showToast(`New Device Linked: ${u.username}`);
+                    }
+                });
+            }
+
+            // Update Map for next cycle
+            prevUserMap = {};
+            localData.users.forEach(u => { prevUserMap[u.username] = u.deviceID; });
+
             render();
         }
 
-        // --- 4. RENDER UI ---
+        // --- 4. RENDER UI (Compact) ---
         function render() {
             const list = document.getElementById('list');
             list.innerHTML = "";
@@ -358,16 +381,11 @@
                 const hasID = u.deviceID && u.deviceID.length > 2;
                 const isExpired = checkExpired(u.expiry);
                 
-                // FILTER: Active = Check Date Only
                 if (currentFilter === 'active' && isExpired) return;
-                
-                // FILTER: Banned
                 if (currentFilter === 'banned' && !isBanned) return;
-
-                // Search
                 if (search && !u.username.toLowerCase().includes(search)) return;
 
-                // VISUALS
+                // STYLING
                 let cardClass = 'active'; 
                 let statusTxt = 'ACTIVE';
                 let statusColor = '#00ff9d';
@@ -380,7 +398,6 @@
                 else if (!hasID) { 
                     statusTxt = 'WAITING'; statusColor = '#00e5ff'; 
                 } 
-                
                 if (isExpired) { 
                     cardClass = 'expired'; statusTxt = 'EXPIRED'; statusColor = '#ffb700'; 
                 }
@@ -395,9 +412,7 @@
                         </label>
                     </div>
                     
-                    <span class="u-dev" style="font-family:monospace; color:${hasID ? 'var(--primary)' : '#555'}; display:block; margin-bottom:10px;">
-                        ${devText}
-                    </span>
+                    <span class="u-dev ${devClass}">${devText}</span>
 
                     <div class="info-grid">
                         <div class="info-item"><i class="fas fa-key"></i> ${u.password}</div>
@@ -405,7 +420,7 @@
                     </div>
 
                     <div class="actions">
-                        <span style="color:${statusColor}; font-weight:bold; font-size:0.8rem; margin-right:auto; align-self:center;">${statusTxt}</span>
+                        <span style="color:${statusColor}; font-weight:bold; font-size:0.75rem; margin-right:auto;">${statusTxt}</span>
                         <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
                         <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
                         <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
@@ -414,12 +429,11 @@
                 list.innerHTML += html;
             });
 
-            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px;'>No Users Found</div>";
+            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px; font-size:0.9rem;'>No Users Found</div>";
         }
 
-        // --- 5. ACTIONS & SAVING ---
+        // --- 5. ACTIONS ---
         async function saveData() {
-            // Reconstruct full JSON
             const payload = {
                 AdminUrl: document.getElementById('confAdmin').value,
                 DialogTimeout: document.getElementById('confTime').value,
@@ -433,9 +447,13 @@
             };
 
             try {
+                // Background save, no flicker
                 await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+                // We don't call fetchData here immediately to avoid UI jumps, let the interval handle it or do silent update
+                // But for instant feedback on buttons, we can just let UI update locally mostly.
+                // However, let's call it to be safe.
                 fetchData();
-            } catch (e) { alert("Save Failed"); }
+            } catch (e) { showToast("Save Failed"); }
         }
 
         function toggleBan(id) {
@@ -479,14 +497,12 @@
 
         function saveSettings() {
             const newUrl = document.getElementById('confUrl').value;
-            if(newUrl) {
-                dbUrl = newUrl;
-                localStorage.setItem("dbUrl", newUrl);
-            }
-            saveData(); // Saves specific settings + Users
+            if(newUrl) { dbUrl = newUrl; localStorage.setItem("dbUrl", newUrl); }
+            saveData();
+            showToast("Configuration Saved");
         }
 
-        // --- 6. UTILITIES ---
+        // --- 6. UTILS ---
         function randomGen() {
             const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
             document.getElementById('uName').value = rnd;
@@ -495,11 +511,14 @@
         function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
         
         function copyCreds(u, p) {
-            navigator.clipboard.writeText(`${u}:${p}`).then(() => {
-                const t = document.getElementById('toast');
-                t.classList.add('show');
-                setTimeout(() => t.classList.remove('show'), 2000);
-            });
+            navigator.clipboard.writeText(`${u}:${p}`).then(() => { showToast("Copied to Clipboard"); });
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
 
         function checkExpired(dateStr) {
@@ -509,13 +528,11 @@
         }
 
         function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
-
         function formatDate(dateStr) {
             if(!dateStr) return "";
             const [y, m, d] = dateStr.split('-');
             return `${d}/${m}/${y}`;
         }
-
         function setFilter(f, el) {
             currentFilter = f;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -562,7 +579,7 @@
 
         // INIT
         fetchData();
-        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 10000);
+        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 5000);
     </script>
 </body>
 </html>
