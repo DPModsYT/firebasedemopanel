@@ -111,11 +111,34 @@
         input:checked + .slider { background: var(--danger); }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* --- CUSTOM CALENDAR CSS --- */
-        .calendar-wrapper { position: absolute; top: 100%; left: 0; width: 100%; z-index: 500; margin-top: 5px; display: none; }
-        .calendar-wrapper.show { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+        /* --- CUSTOM CALENDAR CSS (SIDE & CENTERED) --- */
+        .calendar-wrapper { 
+            position: absolute; 
+            top: 0; 
+            left: 105%; /* Push to the RIGHT SIDE by default */
+            z-index: 500; 
+            display: none; 
+            width: 280px;
+        }
         
+        /* Responsive Calendar for Android/Mobile */
+        @media (max-width: 700px) {
+            .calendar-wrapper {
+                position: fixed; /* Fix to screen center so keyboard can't cut it */
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                width: 300px;
+                box-shadow: 0 0 100px rgba(0,0,0,0.9);
+            }
+        }
+
+        .calendar-wrapper.show { display: block; animation: zoomIn 0.2s; }
+        @keyframes zoomIn { from{opacity:0; transform: scale(0.9) translate(-50%, -50%);} to{opacity:1; transform: scale(1) translate(-50%, -50%);} }
+        /* Reset Animation for Desktop */
+        @media (min-width: 701px) {
+             @keyframes zoomIn { from{opacity:0; transform: translateX(-10px);} to{opacity:1; transform: translateX(0);} }
+        }
+
         .cal-box { background: #1a1a24; border: 1px solid var(--primary); border-radius: 15px; padding: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: white; }
         .cal-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
@@ -155,7 +178,8 @@
 
         /* --- MODAL --- */
         .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+        /* IMPORTANT: Overflow visible allows calendar to pop out side */
+        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); overflow: visible; position: relative; }
 
         .tool-bar { display: flex; gap: 8px; margin-bottom: 15px; }
         .btn-tool { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -603,7 +627,6 @@
                     document.getElementById('uName').value = u.username;
                     document.getElementById('uPass').value = u.password;
                     document.getElementById('uDev').value = u.deviceID;
-                    // Format check for DD/MM/YYYY
                     document.getElementById('uExp').value = u.expiry; 
                 }
             } else {
@@ -663,7 +686,6 @@
 
         function checkExpired(dateStr) {
             if(!dateStr) return false;
-            // Handle DD/MM/YYYY
             const parts = dateStr.split('/');
             if(parts.length === 3) {
                  const d = parseInt(parts[0], 10);
@@ -677,10 +699,7 @@
         }
 
         function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
-        function formatDate(dateStr) {
-            // Already handled by calendar logic
-            return dateStr;
-        }
+        function formatDate(dateStr) { return dateStr; }
         function setFilter(f, el) {
             currentFilter = f;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
