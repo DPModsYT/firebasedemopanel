@@ -29,7 +29,7 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 110px; /* Space for Nav */
+            padding-bottom: 110px;
         }
 
         /* --- HEADER --- */
@@ -96,35 +96,12 @@
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
         .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
-        input:checked + .slider { background: var(--danger); }
+        input:checked + .slider { background: var(--primary); }
         input:checked + .slider:before { transform: translateX(18px); }
-
-        /* --- NAV BAR --- */
-        .nav-bar { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
-            background: var(--nav-bg); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 0 30px; height: 65px; border-radius: 40px; 
-            display: flex; align-items: center; justify-content: space-between; 
-            width: 85%; max-width: 380px; z-index: 99; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
-        }
-        .nav-item { color: #555; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
-        
-        .fab { 
-            width: 55px; height: 55px; 
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.6rem; color: #000; 
-            position: absolute; left: 50%; top: -20px; transform: translateX(-50%); 
-            border: 5px solid var(--bg-body); cursor: pointer; 
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
-        }
-        .fab:active { transform: translateX(-50%) scale(0.95); }
 
         /* --- MODAL --- */
         .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+        .modal-box { background: #1a1a24; width: 85%; max-width: 340px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto; }
 
         .tool-bar { display: flex; gap: 8px; margin-bottom: 15px; }
         .btn-tool { flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.75rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -133,6 +110,12 @@
         .btn-save { flex: 1; padding: 12px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 12px; color: white; cursor: pointer; font-size: 0.9rem; }
         .btn-cancel { flex: 1; padding: 12px; background: #2a2a35; border: none; font-weight: 600; border-radius: 12px; color: #ccc; cursor: pointer; font-size: 0.9rem; }
 
+        /* DEVICE LIST STYLES */
+        .dev-list-box { background: #0a0a10; border: 1px solid #333; border-radius: 12px; padding: 10px; max-height: 150px; overflow-y: auto; }
+        .dev-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .dev-item:last-child { margin-bottom: 0; }
+        .dev-txt { font-family: monospace; font-size: 0.75rem; color: #ccc; word-break: break-all; margin-right: 10px; }
+        
         .hidden { display: none !important; }
         
         /* --- NOTIFICATIONS --- */
@@ -145,6 +128,34 @@
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast i { color: var(--primary); }
+        
+        
+                /* --- NAV BAR (Original Compact Style) --- */
+        .nav-bar { 
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
+            background: var(--nav-bg); border: 1px solid rgba(255,255,255,0.1); 
+            padding: 0 30px; height: 65px; border-radius: 40px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            width: 85%; max-width: 380px; z-index: 99; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+        }
+
+        .nav-item { color: #555; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        
+        /* --- FAB BUTTON (Back to Normal) --- */
+        .fab { 
+            width: 55px; height: 55px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.6rem; color: #000; 
+            position: absolute; left: 50%; top: -20px; transform: translateX(-50%); 
+            border: 5px solid var(--bg-body); cursor: pointer; 
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
+            transition: 0.2s;
+        }
+        .fab:active { transform: translateX(-50%) scale(0.95); }
+        
     </style>
 </head>
 <body>
@@ -234,8 +245,17 @@
 
             <div class="inp-group"><label class="inp-label">Username</label><input type="text" class="inp" id="uName"></div>
             <div class="inp-group"><label class="inp-label">Password</label><input type="text" class="inp" id="uPass"></div>
-            <div class="inp-group"><label class="inp-label">Device ID</label><input type="text" class="inp" id="uDev" placeholder="Optional"></div>
             <div class="inp-group"><label class="inp-label">Expiry</label><input type="date" class="inp" id="uExp"></div>
+            
+            <div class="inp-group">
+                <label class="inp-label">Linked Devices</label>
+                <div id="deviceListContainer" class="dev-list-box">
+                    </div>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                    <input type="text" id="newDevInput" class="inp" placeholder="Add new Device ID" style="padding:10px; font-size:0.8rem;">
+                    <button class="btn-tool" style="flex:0 0 40px;" onclick="addNewDeviceRow()"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
 
             <div class="btn-row">
                 <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -270,13 +290,12 @@
 
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
         let localData = { users: [], banned: [] };
-        let prevUserMap = {}; // To store previous DeviceIDs for diffing
+        let prevUserMap = {}; 
         let isFirstLoad = true;
         let currentFilter = 'all';
 
         // --- 2. FETCH LOGIC ---
         async function fetchData() {
-            // Only show full loader on first load to avoid flicker
             if(isFirstLoad) {
                 document.getElementById('loader').style.display = 'block';
                 document.getElementById('tabHome').classList.add('hidden');
@@ -292,13 +311,10 @@
                 if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
                 
                 const data = await response.json();
-                
-                // AUTO-INITIALIZE if null
                 if(data === null) { await uploadDefaults(); return; }
 
                 processData(data);
                 
-                // UI Ready
                 document.getElementById('loader').style.display = 'none';
                 if(document.getElementById('navHome').classList.contains('active')){
                     document.getElementById('tabHome').classList.remove('hidden');
@@ -325,21 +341,18 @@
             } catch(e) { alert("Init Failed"); }
         }
 
-        // --- 3. DATA PROCESSING & NOTIFICATIONS ---
+        // --- 3. DATA PROCESSING ---
         function processData(data) {
-            // Settings
             document.getElementById('confUrl').value = dbUrl;
             document.getElementById('confAdmin').value = data.AdminUrl || "";
             document.getElementById('confTime').value = data.DialogTimeout || "1m";
             document.getElementById('confMsg').value = data.Announcement || "";
             document.getElementById('confShow').checked = data.ShowAnnouncement || false;
 
-            // Banned
             let bans = data.BannedDevices || [];
             if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
             localData.banned = bans.filter(x => x);
 
-            // Users
             let users = data.Users || [];
             if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
             
@@ -350,236 +363,8 @@
                 expiry: u.Expiry || u.expiry || ""
             }));
 
-            // CHECK FOR NEW LOGINS (Notification Logic)
             if (!isFirstLoad) {
                 localData.users.forEach(u => {
                     const oldDevID = prevUserMap[u.username];
                     const newDevID = u.deviceID;
-
-                    // If user had no ID before, and now has one -> They just logged in
-                    if ((!oldDevID || oldDevID === "") && (newDevID && newDevID.length > 2)) {
-                        showToast(`New Device Linked: ${u.username}`);
-                    }
-                });
-            }
-
-            // Update Map for next cycle
-            prevUserMap = {};
-            localData.users.forEach(u => { prevUserMap[u.username] = u.deviceID; });
-
-            render();
-        }
-
-        // --- 4. RENDER UI (Compact) ---
-        function render() {
-            const list = document.getElementById('list');
-            list.innerHTML = "";
-            const search = document.getElementById('search').value.toLowerCase();
-
-            localData.users.forEach((u, index) => {
-                const isBanned = localData.banned.includes(u.deviceID);
-                const hasID = u.deviceID && u.deviceID.length > 2;
-                const isExpired = checkExpired(u.expiry);
-                
-                if (currentFilter === 'active' && isExpired) return;
-                if (currentFilter === 'banned' && !isBanned) return;
-                if (search && !u.username.toLowerCase().includes(search)) return;
-
-                // STYLING
-                let cardClass = 'active'; 
-                let statusTxt = 'ACTIVE';
-                let statusColor = '#00ff9d';
-                let devText = u.deviceID || "NO ID";
-                let devClass = hasID ? 'linked' : '';
-
-                if (isBanned) { 
-                    cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; 
-                } 
-                else if (!hasID) { 
-                    statusTxt = 'WAITING'; statusColor = '#00e5ff'; 
-                } 
-                if (isExpired) { 
-                    cardClass = 'expired'; statusTxt = 'EXPIRED'; statusColor = '#ffb700'; 
-                }
-
-                const html = `
-                <div class="card ${cardClass}">
-                    <div class="user-head">
-                        <div class="u-name">${u.username}</div>
-                        <label class="switch">
-                            <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    
-                    <span class="u-dev ${devClass}">${devText}</span>
-
-                    <div class="info-grid">
-                        <div class="info-item"><i class="fas fa-key"></i> ${u.password}</div>
-                        <div class="info-item"><i class="far fa-clock"></i> ${u.expiry}</div>
-                    </div>
-
-                    <div class="actions">
-                        <span style="color:${statusColor}; font-weight:bold; font-size:0.75rem; margin-right:auto;">${statusTxt}</span>
-                        <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
-                        <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
-                        <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`;
-                list.innerHTML += html;
-            });
-
-            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px; font-size:0.9rem;'>No Users Found</div>";
-        }
-
-        // --- 5. ACTIONS ---
-        async function saveData() {
-            const payload = {
-                AdminUrl: document.getElementById('confAdmin').value,
-                DialogTimeout: document.getElementById('confTime').value,
-                Announcement: document.getElementById('confMsg').value,
-                ShowAnnouncement: document.getElementById('confShow').checked,
-                BannedDevices: localData.banned,
-                Users: localData.users.map(u => ({
-                    Username: u.username, Password: u.password,
-                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
-                }))
-            };
-
-            try {
-                // Background save, no flicker
-                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                // We don't call fetchData here immediately to avoid UI jumps, let the interval handle it or do silent update
-                // But for instant feedback on buttons, we can just let UI update locally mostly.
-                // However, let's call it to be safe.
-                fetchData();
-            } catch (e) { showToast("Save Failed"); }
-        }
-
-        function toggleBan(id) {
-            if(!id || id.length < 3) return alert("User has no Device ID.");
-            const idx = localData.banned.indexOf(id);
-            if(idx > -1) localData.banned.splice(idx, 1);
-            else localData.banned.push(id);
-            saveData();
-        }
-
-        function delUser(idx) {
-            if(confirm("Delete User?")) {
-                localData.users.splice(idx, 1);
-                saveData();
-            }
-        }
-
-        function saveUser() {
-            const idx = document.getElementById('editIdx').value;
-            const u = {
-                username: document.getElementById('uName').value,
-                password: document.getElementById('uPass').value,
-                deviceID: document.getElementById('uDev').value,
-                expiry: formatDate(document.getElementById('uExp').value)
-            };
-
-            if(!u.username) return alert("Username Required");
-            if(!u.expiry) {
-                 const d = new Date(); d.setDate(d.getDate() + 30);
-                 const day = String(d.getDate()).padStart(2,'0');
-                 const mo = String(d.getMonth()+1).padStart(2,'0');
-                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
-            }
-
-            if(idx !== "") localData.users[idx] = u;
-            else localData.users.push(u);
-
-            document.getElementById('modal').style.display = 'none';
-            saveData();
-        }
-
-        function saveSettings() {
-            const newUrl = document.getElementById('confUrl').value;
-            if(newUrl) { dbUrl = newUrl; localStorage.setItem("dbUrl", newUrl); }
-            saveData();
-            showToast("Configuration Saved");
-        }
-
-        // --- 6. UTILS ---
-        function randomGen() {
-            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('uName').value = rnd;
-            document.getElementById('uPass').value = rnd;
-        }
-        function makeSame() { document.getElementById('uPass').value = document.getElementById('uName').value; }
-        
-        function copyCreds(u, p) {
-            navigator.clipboard.writeText(`${u}:${p}`).then(() => { showToast("Copied to Clipboard"); });
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        function checkExpired(dateStr) {
-            if(!dateStr) return false;
-            const [d, m, y] = dateStr.split('/');
-            return new Date(`${y}-${m}-${d}`) < new Date();
-        }
-
-        function resetUrl() { localStorage.removeItem("dbUrl"); window.location.reload(); }
-        function formatDate(dateStr) {
-            if(!dateStr) return "";
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
-        }
-        function setFilter(f, el) {
-            currentFilter = f;
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            render();
-        }
-
-        function switchTab(t) {
-            const home = document.getElementById('tabHome');
-            const sett = document.getElementById('tabSettings');
-            const navH = document.getElementById('navHome');
-            const navS = document.getElementById('navSet');
-
-            if(t === 'home') { 
-                home.classList.remove('hidden'); sett.classList.add('hidden'); 
-                navH.classList.add('active'); navS.classList.remove('active');
-            } else { 
-                home.classList.add('hidden'); sett.classList.remove('hidden'); 
-                navH.classList.remove('active'); navS.classList.add('active');
-            }
-        }
-
-        function openModal(idx = null) {
-            document.getElementById('modal').style.display = 'flex';
-            document.getElementById('editIdx').value = "";
-            document.getElementById('uName').value = "";
-            document.getElementById('uPass').value = "";
-            document.getElementById('uDev').value = "";
-            document.getElementById('uExp').value = "";
-
-            if(idx !== null) {
-                const u = localData.users[idx];
-                document.getElementById('editIdx').value = idx;
-                document.getElementById('uName').value = u.username;
-                document.getElementById('uPass').value = u.password;
-                document.getElementById('uDev').value = u.deviceID;
-                if(u.expiry.includes('/')) {
-                    const [d,m,y] = u.expiry.split('/');
-                    document.getElementById('uExp').value = `${y}-${m}-${d}`;
-                }
-            }
-        }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-        // INIT
-        fetchData();
-        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 5000);
-    </script>
-</body>
-</html>
+       
