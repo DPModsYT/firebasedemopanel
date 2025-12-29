@@ -4,25 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DPMods V9 Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- 1. THEME VARIABLES --- */
         :root {
-            --bg-deep: #08080c;
-            --card-bg: #13131f;
+            --bg-body: #050508;
+            --bg-card: #0f0f16;
+            --bg-glass: rgba(20, 20, 30, 0.6);
+            --border-glass: 1px solid rgba(255, 255, 255, 0.08);
+            
             --primary: #00e5ff; 
-            --primary-glow: rgba(0, 229, 255, 0.4);
             --secondary: #7000ff; 
-            --danger: #ff0055;
-            --warning: #ffb700;
-            --success: #00ff9d;
+            --accent: #ff0055;
+            
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
-            --glass-bg: rgba(23, 23, 35, 0.7);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-            --radius: 16px;
+            
+            --status-active: #00ff9d;
+            --status-banned: #ff0055;
+            --status-expired: #ffb700;
         }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -30,406 +32,410 @@
         body {
             margin: 0; padding: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-deep);
+            background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 120px; /* Space for nav */
+            padding-bottom: 130px; /* Space for floating nav */
             overflow-x: hidden;
         }
 
-        /* --- HEADER --- */
+        /* --- 2. HEADER --- */
         header {
-            padding: 20px 24px;
-            background: rgba(8, 8, 12, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: var(--glass-border);
+            padding: 15px 20px;
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: var(--border-glass);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: 1px; background: linear-gradient(to right, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .status-dot { height: 8px; width: 8px; background-color: var(--success); border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px var(--success); }
-
-        /* --- CONTAINER --- */
-        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-
-        /* --- SEARCH & FILTERS --- */
-        .search-box {
-            position: relative;
-            margin-bottom: 15px;
+        .logo { 
+            font-family: 'Rajdhani', sans-serif; 
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, var(--primary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            display: flex; align-items: center; gap: 10px;
         }
-        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .live-dot { height: 8px; width: 8px; background: var(--status-active); border-radius: 50%; box-shadow: 0 0 10px var(--status-active); }
+
+        /* --- 3. SEARCH & FILTERS --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        .search-wrapper { position: relative; margin-bottom: 15px; }
+        .search-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        
         .search-input {
             width: 100%;
-            background: var(--card-bg);
-            border: var(--glass-border);
-            padding: 14px 14px 14px 45px;
-            border-radius: 12px;
+            background: #12121a;
+            border: var(--border-glass);
+            padding: 16px 16px 16px 45px;
+            border-radius: 14px;
             color: white;
-            font-size: 0.95rem;
+            font-size: 1rem;
             transition: 0.3s;
         }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.1); }
+        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 229, 255, 0.15); }
 
-        .filter-scroll {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px;
-            scrollbar-width: none; /* Firefox */
+        .chips-scroll {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 25px;
+            scrollbar-width: none;
         }
-        .filter-scroll::-webkit-scrollbar { display: none; }
+        .chips-scroll::-webkit-scrollbar { display: none; }
         
-        .filter-chip {
+        .chip {
             white-space: nowrap;
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.05);
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            font-size: 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            cursor: pointer;
             transition: 0.3s;
+            cursor: pointer;
         }
-        .filter-chip.active {
+        .chip.active {
             background: var(--primary);
             color: #000;
             font-weight: 600;
             border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
 
-        /* --- USER CARDS --- */
+        /* --- 4. CARDS --- */
         .card {
-            background: var(--glass-bg);
-            border: var(--glass-border);
-            border-radius: var(--radius);
-            padding: 18px;
+            background: var(--bg-glass);
+            border: var(--border-glass);
+            border-radius: 18px;
+            padding: 20px;
             margin-bottom: 15px;
             position: relative;
-            overflow: hidden;
-            transition: transform 0.2s;
+            backdrop-filter: blur(5px);
         }
-        .card:active { transform: scale(0.98); }
-
-        /* Status Borders */
-        .card.status-active { border-left: 4px solid var(--success); }
-        .card.status-banned { border-left: 4px solid var(--danger); }
-        .card.status-expired { border-left: 4px solid var(--warning); }
-        .card.status-nodevice { border-left: 4px solid var(--text-muted); }
         
-        .user-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .user-name { font-family: 'Rajdhani', sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; }
-        .user-device { font-family: monospace; font-size: 0.8rem; color: var(--primary); margin-top: 4px; display: block; opacity: 0.9; }
-        
-        .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .badge { background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        /* Status Lines */
+        .card::before { content: ''; position: absolute; left: 0; top: 15px; bottom: 15px; width: 4px; border-radius: 0 4px 4px 0; }
+        .st-active::before { background: var(--status-active); box-shadow: 0 0 10px var(--status-active); }
+        .st-banned::before { background: var(--status-banned); box-shadow: 0 0 10px var(--status-banned); }
+        .st-expired::before { background: var(--status-expired); }
+        .st-null::before { background: #333; }
 
-        /* --- CONTROLS --- */
-        .controls { 
+        .user-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-left: 10px; }
+        .u-name { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; }
+        .u-id { font-family: monospace; font-size: 0.8rem; color: var(--primary); opacity: 0.8; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-left: 10px; margin-bottom: 15px; }
+        .info-item { background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .info-item i { color: #fff; }
+
+        .card-footer { 
+            border-top: 1px solid rgba(255,255,255,0.05); 
+            padding-top: 15px; margin-left: 10px;
             display: flex; justify-content: space-between; align-items: center; 
-            margin-top: 15px; padding-top: 15px; 
-            border-top: 1px solid rgba(255,255,255,0.08); 
         }
-        
-        .status-tag { font-size: 0.75rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
-        .st-active { color: var(--success); }
-        .st-banned { color: var(--danger); }
-        .st-expired { color: var(--warning); }
-        .st-null { color: var(--text-muted); }
 
-        .action-btn { 
-            width: 38px; height: 38px; border-radius: 10px; border: none; 
-            background: rgba(255,255,255,0.05); color: white; 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; transition: 0.2s; 
+        .status-badge { font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+
+        /* Actions */
+        .btn-mini { 
+            width: 36px; height: 36px; border-radius: 10px; border: none; 
+            background: rgba(255,255,255,0.08); color: white; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .btn-edit:hover { background: var(--primary); color: black; }
-        .btn-del:hover { background: var(--danger); color: white; }
+        .btn-mini:active { transform: scale(0.9); }
+        .btn-edit:hover { background: var(--primary); color: #000; }
+        .btn-del:hover { background: var(--accent); }
 
-        /* --- TOGGLE --- */
-        .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
+        /* --- 5. TOGGLE SWITCH --- */
+        .toggle-switch { position: relative; width: 40px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--danger); }
-        input:checked + .slider:before { transform: translateX(16px); }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(18px); }
 
-        /* --- BOTTOM NAV --- */
-        .nav-bar {
+        /* --- 6. NAVIGATION BAR (Material 3 Style) --- */
+        .nav-container {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(15, 15, 25, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 0 25px;
-            height: 65px;
-            border-radius: 40px;
-            display: flex; align-items: center; gap: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            z-index: 99;
+            width: 90%; max-width: 400px; height: 70px;
+            background: rgba(18, 18, 24, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            z-index: 500;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .nav-item { font-size: 1.4rem; color: #555; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+
+        /* FLOATING ACTION BUTTON (Corrected) */
+        .fab-wrapper {
+            position: absolute;
+            left: 50%; top: -25px; /* Floats above nav */
+            transform: translateX(-50%);
         }
         
-        .nav-icon { color: #555; font-size: 1.4rem; cursor: pointer; transition: 0.3s; position: relative; }
-        .nav-icon.active { color: var(--primary); }
-        .nav-icon.active::after { content:''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--primary); border-radius: 50%; }
-
-        /* --- FAB (BIG PLUS BUTTON) --- */
-        .fab-main {
-            width: 55px; height: 55px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        .fab-btn {
+            width: 65px; height: 65px;
+            background: linear-gradient(135deg, var(--primary), #00baff);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
-            transform: translateY(-20px);
-            border: 2px solid #1a1a2e;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+            border: 4px solid var(--bg-body); /* Creates cutout effect */
             cursor: pointer;
-            transition: 0.2s;
+            transition: transform 0.2s;
         }
-        .fab-main:active { transform: translateY(-18px) scale(0.95); }
-        .fab-main i { font-size: 1.5rem; color: white; }
+        .fab-btn:active { transform: scale(0.9); }
+        .fab-btn i { font-size: 1.6rem; color: #000; }
 
-        /* --- MODAL --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #151520; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; border: 1px solid var(--secondary); box-shadow: 0 0 50px rgba(112,0,255,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .inp-group { margin-bottom: 15px; }
-        .inp-group label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
-        input, textarea { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 12px 15px; color: white; border-radius: 10px; font-family: 'Poppins', sans-serif; }
-        input:focus { border-color: var(--secondary); }
-        
-        .btn-full { width: 100%; padding: 14px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; font-weight: 600; border-radius: 12px; cursor: pointer; margin-top: 10px; font-size: 1rem; }
+        /* --- 7. MODAL --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; backdrop-filter: blur(8px); align-items: center; justify-content: center; }
+        .modal-box { background: #15151e; width: 85%; max-width: 350px; padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .inp-label { display: block; font-size: 0.75rem; color: var(--primary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inp-field { width: 100%; background: #0a0a0e; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; margin-bottom: 15px; font-family: 'Poppins', sans-serif; }
+        .inp-field:focus { border-color: var(--secondary); }
+
+        .btn-save { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; color: white; font-weight: 700; border-radius: 14px; cursor: pointer; font-size: 1rem; margin-top: 10px; }
         
         /* Utility */
-        .hidden { display: none !important; }
+        .hidden { display: none; }
+        .error-box { background: rgba(255, 0, 85, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 15px; border-radius: 12px; text-align: center; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo"><span class="status-dot"></span> DPMODS V9</div>
+        <div class="logo">
+            <span class="live-dot"></span> DPMODS V9
+        </div>
     </header>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
+        
+        <div id="errorState" class="error-box">
+            <i class="fas fa-wifi"></i><br>
+            <strong>Connection Failed</strong><br>
+            <span style="font-size:0.8rem">Check your internet or Firebase URL.</span><br>
+            <button onclick="window.location.reload()" style="background:var(--accent); color:white; border:none; padding:5px 15px; border-radius:5px; margin-top:10px;">Retry</button>
+        </div>
+
         <div id="tabDevices">
-            <h2 style="color: white; margin-bottom: 5px;">User Management</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:0; margin-bottom: 20px;">Manage access and devices</p>
-            
-            <div class="search-box">
+            <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search username or device ID..." onkeyup="handleSearch()">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search User or ID..." onkeyup="handleSearch()">
             </div>
 
-            <div class="filter-scroll">
-                <div class="filter-chip active" onclick="setFilter('all', this)">All Users</div>
-                <div class="filter-chip" onclick="setFilter('active', this)">Active</div>
-                <div class="filter-chip" onclick="setFilter('expired', this)">Expired</div>
-                <div class="filter-chip" onclick="setFilter('banned', this)">Banned</div>
-                <div class="filter-chip" onclick="setFilter('nodevice', this)">No Device</div>
+            <div class="chips-scroll">
+                <div class="chip active" onclick="setFilter('all', this)">All</div>
+                <div class="chip" onclick="setFilter('active', this)">Active</div>
+                <div class="chip" onclick="setFilter('expired', this)">Expired</div>
+                <div class="chip" onclick="setFilter('banned', this)">Banned</div>
+                <div class="chip" onclick="setFilter('null', this)">No ID</div>
             </div>
 
-            <div id="loadingState" style="text-align: center; padding: 40px;">
+            <div id="loader" style="text-align: center; padding: 50px 0;">
                 <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                <p style="color: #666; margin-top: 15px;">Syncing Database...</p>
+                <p style="color: #555; margin-top: 15px; font-size: 0.9rem;">Syncing Database...</p>
             </div>
 
             <div id="userList"></div>
-            <div id="emptyMsg" style="display:none; text-align:center; color:#555; margin-top:30px;">
-                <i class="far fa-folder-open" style="font-size: 2rem; margin-bottom: 10px;"></i><br>No users found matching filters.
+            
+            <div id="emptyState" style="display:none; text-align:center; color:#555; padding: 40px;">
+                <i class="far fa-folder-open" style="font-size: 2.5rem; margin-bottom: 10px; opacity:0.5;"></i><br>
+                No users found.
             </div>
         </div>
 
         <div id="tabSettings" class="hidden">
-            <h2 style="color: white; margin-bottom: 20px;">App Configuration</h2>
-            
-            <div class="card">
-                <div class="inp-group">
-                    <label>Admin Contact URL</label>
-                    <input type="text" id="confAdminUrl" placeholder="https://t.me/yourid">
-                </div>
+            <h2 style="color: white;">Settings</h2>
+            <div class="card" style="border-left:none;">
+                <label class="inp-label">Admin Contact URL</label>
+                <input type="text" class="inp-field" id="confAdminUrl" placeholder="https://t.me/...">
 
-                <div class="inp-group">
-                    <label>Dialog Timeout</label>
-                    <input type="text" id="confTimeout" placeholder="1m">
-                </div>
+                <label class="inp-label">Dialog Timeout</label>
+                <input type="text" class="inp-field" id="confTimeout" placeholder="1m">
 
-                <div class="inp-group">
-                    <label>Announcement Message</label>
-                    <textarea id="confAnnounceMsg" rows="3" placeholder="Enter message for users..."></textarea>
-                </div>
+                <label class="inp-label">Announcement</label>
+                <textarea class="inp-field" id="confAnnounceMsg" rows="3"></textarea>
                 
-                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-                    <span style="color: white; font-size: 0.9rem;">Show Announcement</span>
-                    <label class="switch">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <span style="color:#aaa; font-size:0.9rem;">Show Announcement</span>
+                    <label class="toggle-switch">
                         <input type="checkbox" id="confShowAnnounce">
                         <span class="slider"></span>
                     </label>
                 </div>
-
-                <button class="btn-full" onclick="saveSettings()">Save Configuration</button>
+                
+                <button class="btn-save" onclick="saveSettings()">Save Configuration</button>
             </div>
         </div>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                <h3 style="color: white; margin: 0; font-family:'Rajdhani', sans-serif;">User Details</h3>
-                <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer; font-size:1.2rem;"></i>
-            </div>
-            
-            <input type="hidden" id="editIndex">
-            
-            <div class="inp-group">
-                <label>Username</label> 
-                <input type="text" id="inpUser" placeholder="Enter name">
-            </div>
-            
-            <div class="inp-group">
-                <label>Password</label> 
-                <input type="text" id="inpPass" placeholder="Set password">
-            </div>
-            
-            <div class="inp-group">
-                <label>Device ID</label> 
-                <input type="text" id="inpDevice" placeholder="Unique ID">
-            </div>
-            
-            <div class="inp-group">
-                <label>Expiry Date</label> 
-                <input type="date" id="inpExpiry">
-            </div>
-
-            <button class="btn-full" onclick="saveUser()">Save User</button>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-icon active" onclick="switchTab('Devices')" id="navDevices">
+    <div class="nav-container">
+        <div class="nav-item active" id="navDev" onclick="switchTab('Devices')">
             <i class="fas fa-users"></i>
         </div>
         
-        <div class="fab-main" onclick="openModal()">
-            <i class="fas fa-plus"></i>
+        <div class="fab-wrapper">
+            <div class="fab-btn" onclick="openModal()">
+                <i class="fas fa-plus"></i>
+            </div>
         </div>
 
-        <div class="nav-icon" onclick="switchTab('Settings')" id="navSettings">
+        <div class="nav-item" id="navSet" onclick="switchTab('Settings')">
             <i class="fas fa-sliders-h"></i>
         </div>
     </div>
 
-    <script>
-        // ==========================================
-        // 1. CONFIGURATION
-        // ==========================================
-        const FIREBASE_URL = "https://awesome-6004e.firebaseio.com/.json";
-        
-        let dbData = { Users: [], BannedDevices: [], AdminUrl: "", DialogTimeout: "1m" };
-        let isModalOpen = false;
-        let currentFilter = 'all';
-        let searchTerm = '';
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3 style="margin:0; color:white;">User Details</h3>
+                <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
+            </div>
+            
+            <input type="hidden" id="editIndex">
+            
+            <label class="inp-label">Username</label>
+            <input type="text" class="inp-field" id="inpUser" placeholder="Enter Name">
+            
+            <label class="inp-label">Password</label>
+            <input type="text" class="inp-field" id="inpPass" placeholder="Set Password">
+            
+            <label class="inp-label">Device ID</label>
+            <input type="text" class="inp-field" id="inpDevice" placeholder="Unique ID">
+            
+            <label class="inp-label">Expiry Date</label>
+            <input type="date" class="inp-field" id="inpExpiry">
 
-        // ==========================================
-        // 2. CORE LOGIC
-        // ==========================================
-        async function fetchData() {
-            if(isModalOpen) return;
+            <button class="btn-save" onclick="saveUser()">Save User</button>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG ---
+        const DB_URL = "https://awesome-6004e.firebaseio.com/.json";
+        
+        let state = { users: [], banned: [], adminUrl: "", timeout: "1m" };
+        let ui = { filter: 'all', search: '' };
+        let isEditing = false;
+
+        // --- CORE LOGIC ---
+        async function loadData() {
+            if(isEditing) return; // Don't refresh while typing
 
             try {
-                const res = await fetch(FIREBASE_URL);
-                if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                const val = await res.json();
+                // Fetch
+                const res = await fetch(DB_URL);
+                if(!res.ok) throw new Error("Network Error");
+                const data = await res.json();
+
+                // Hide Loader / Error
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+
+                if(!data) { render(); return; } // Empty DB
+
+                // Parse Settings
+                state.adminUrl = data.AdminUrl || "";
+                state.timeout = data.DialogTimeout || "1m";
+                state.announce = data.Announcement || "";
+                state.showAnnounce = data.ShowAnnouncement || false;
+
+                // Parse Bans (Object to Array)
+                let bans = data.BannedDevices || [];
+                if(!Array.isArray(bans)) bans = Object.values(bans);
+                state.banned = bans.filter(x => x);
+
+                // Parse Users (Object to Array)
+                let users = data.Users || [];
+                if(!Array.isArray(users)) users = Object.values(users);
                 
-                if(!val) { renderUI(); return; }
-
-                // Safe Parsing
-                dbData.AdminUrl = val.AdminUrl || "";
-                dbData.DialogTimeout = val.DialogTimeout || "1m";
-                dbData.ShowAnnouncement = val.ShowAnnouncement || false;
-                dbData.Announcement = val.Announcement || "";
-
-                // Parsing Bans
-                let bans = val.BannedDevices || [];
-                if(typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
-                dbData.BannedDevices = bans.filter(x => x); 
-
-                // Parsing Users
-                let users = val.Users || [];
-                if(typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
-
-                dbData.Users = users.map(u => ({
-                    Username: u.Username || "Unknown",
-                    Password: u.Password || "---",
-                    DeviceID: u.DeviceID || u.ID || "", 
-                    Expiry: u.Expiry || ""
+                state.users = users.map(u => ({
+                    name: u.Username || "Unknown",
+                    pass: u.Password || "---",
+                    id: u.DeviceID || u.ID || "",
+                    expiry: u.Expiry || ""
                 }));
 
-                document.getElementById('loadingState').style.display = 'none';
-                renderUI();
+                render();
 
-            } catch (e) {
-                console.error(e);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
             }
         }
 
-        // ==========================================
-        // 3. UI RENDERING (WITH SEARCH & FILTERS)
-        // ==========================================
-        function renderUI() {
+        // --- RENDER UI ---
+        function render() {
             const list = document.getElementById('userList');
-            const empty = document.getElementById('emptyMsg');
+            const empty = document.getElementById('emptyState');
             list.innerHTML = "";
-            
-            // Sync Settings Inputs
+
+            // Sync Settings Form (Only if not focused)
             if(document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                document.getElementById('confAdminUrl').value = dbData.AdminUrl;
-                document.getElementById('confTimeout').value = dbData.DialogTimeout;
-                document.getElementById('confShowAnnounce').checked = dbData.ShowAnnouncement;
-                document.getElementById('confAnnounceMsg').value = dbData.Announcement;
+                document.getElementById('confAdminUrl').value = state.adminUrl;
+                document.getElementById('confTimeout').value = state.timeout;
+                document.getElementById('confAnnounceMsg').value = state.announce;
+                document.getElementById('confShowAnnounce').checked = state.showAnnounce;
             }
 
-            // FILTER & SEARCH LOGIC
-            let filteredUsers = dbData.Users.map((u, index) => {
-                const isBanned = dbData.BannedDevices.includes(u.DeviceID);
-                const isExpired = checkExpiry(u.Expiry);
-                const hasDevice = u.DeviceID && u.DeviceID.length > 2;
+            // Apply Search & Filter
+            let processed = state.users.map((u, idx) => {
+                const isBanned = state.banned.includes(u.id);
+                const hasId = u.id && u.id.length > 2;
+                const isExpired = checkExpired(u.expiry);
+                
+                let type = 'st-active';
+                if(isBanned) type = 'st-banned';
+                else if(!hasId) type = 'st-null';
+                else if(isExpired) type = 'st-expired';
 
-                // Determine Status for Styling
-                let statusClass = 'status-active';
-                let statusText = 'ACTIVE';
-                let tagClass = 'st-active';
-
-                if (isBanned) { statusClass = 'status-banned'; statusText = 'BANNED'; tagClass = 'st-banned'; }
-                else if (!hasDevice) { statusClass = 'status-nodevice'; statusText = 'NO DEVICE'; tagClass = 'st-null'; }
-                else if (isExpired) { statusClass = 'status-expired'; statusText = 'EXPIRED'; tagClass = 'st-expired'; }
-
-                return { ...u, originalIndex: index, isBanned, isExpired, hasDevice, statusClass, statusText, tagClass };
+                return { ...u, idx, isBanned, hasId, isExpired, type };
             });
 
-            // 1. Apply Text Search
-            if(searchTerm) {
-                const term = searchTerm.toLowerCase();
-                filteredUsers = filteredUsers.filter(u => 
-                    u.Username.toLowerCase().includes(term) || 
-                    u.DeviceID.toLowerCase().includes(term)
-                );
+            // 1. Search
+            if(ui.search) {
+                const term = ui.search.toLowerCase();
+                processed = processed.filter(u => u.name.toLowerCase().includes(term) || u.id.toLowerCase().includes(term));
             }
 
-            // 2. Apply Chip Filter
-            if(currentFilter !== 'all') {
-                filteredUsers = filteredUsers.filter(u => {
-                    if(currentFilter === 'active') return !u.isBanned && !u.isExpired && u.hasDevice;
-                    if(currentFilter === 'banned') return u.isBanned;
-                    if(currentFilter === 'expired') return u.isExpired && !u.isBanned;
-                    if(currentFilter === 'nodevice') return !u.hasDevice;
-                    return true;
+            // 2. Filter
+            if(ui.filter !== 'all') {
+                processed = processed.filter(u => {
+                    if(ui.filter === 'active') return !u.isBanned && !u.isExpired && u.hasId;
+                    if(ui.filter === 'banned') return u.isBanned;
+                    if(ui.filter === 'expired') return u.isExpired && !u.isBanned;
+                    if(ui.filter === 'null') return !u.hasId;
                 });
             }
 
-            // Render
-            if(filteredUsers.length === 0) {
+            // Draw
+            if(processed.length === 0) {
                 empty.style.display = 'block';
             } else {
                 empty.style.display = 'none';
-                filteredUsers.forEach(u => {
-                    const html = `
-                    <div class="card ${u.statusClass}">
-                        <div class="user-top">
+                processed.forEach(u => {
+                    // Status Badge Text
+                    let badgeText = "ACTIVE";
+                    let badgeColor = "#00ff9d";
+                    if(u.isBanned) { badgeText = "BANNED"; badgeColor = "#ff0055"; }
+                    else if(!u.hasId) { badgeText = "NO DEVICE"; badgeColor = "#555"; }
+                    else if(u.isExpired) { badgeText = "EXPIRED"; badgeColor = "#ffb700"; }
+
+                    list.innerHTML += `
+                    <div class="card ${u.type}">
+                        <div class="user-header">
                             <div>
-                                <div class="user-name">${u.Username}
+                                <div class="u-name">${u.name}</div>
+                                <span class="u-id">${u.id || "Waiting for login..."}</span>
+                            </div>
+                            <label class="toggle-switch">
+                
