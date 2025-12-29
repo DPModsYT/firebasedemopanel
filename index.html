@@ -33,13 +33,6 @@
             padding-bottom: 120px;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes pulse-red {
-            0% { border-left-color: var(--danger); box-shadow: -2px 0 10px rgba(255, 0, 85, 0.2); }
-            50% { border-left-color: #ff4d88; box-shadow: -2px 0 20px rgba(255, 0, 85, 0.5); }
-            100% { border-left-color: var(--danger); box-shadow: -2px 0 10px rgba(255, 0, 85, 0.2); }
-        }
-
         /* --- HEADER --- */
         header {
             padding: 18px 20px;
@@ -50,7 +43,8 @@
             display: flex; justify-content: space-between; align-items: center;
         }
         .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 12px; letter-spacing: 1px; }
-        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; }
+        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; transition: 0.3s; }
+        .status-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
@@ -70,9 +64,12 @@
         
         /* STATUS INDICATORS */
         .card.active { border-left: 4px solid var(--primary); }
-        .card.banned { border-left: 4px solid var(--danger); animation: pulse-red 2s infinite; }
-        .card.noid { border-left: 4px solid #555; }
+        .card.banned { border-left: 4px solid var(--danger); }
         .card.expired { border-left: 4px solid #ffb700; }
+
+        /* Pulsing animation only for Banned */
+        @keyframes pulse-red { 0% { box-shadow: inset 3px 0 0 var(--danger); } 50% { box-shadow: inset 3px 0 15px var(--danger); } 100% { box-shadow: inset 3px 0 0 var(--danger); } }
+        .card.banned { animation: pulse-red 2s infinite; }
 
         .user-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .u-name { font-weight: 700; font-size: 1.3rem; font-family: 'Rajdhani', sans-serif; color: #fff; }
@@ -84,11 +81,13 @@
 
         .actions { display: flex; justify-content: flex-end; align-items: center; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
 
-        /* --- ACTION BUTTONS --- */
+        /* --- BUTTONS --- */
         .btn-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.05); border-radius: 12px; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
         .btn-icon:hover { background: rgba(255,255,255,0.1); }
-        .btn-del:hover { background: rgba(255, 0, 85, 0.2); color: var(--danger); }
-        .btn-copy:hover { background: rgba(0, 229, 255, 0.2); color: var(--primary); }
+        .btn-del { color: #ff4d6d; }
+        .btn-del:hover { background: rgba(255, 0, 85, 0.15); }
+        .btn-copy { color: var(--primary); }
+        .btn-copy:hover { background: rgba(0, 229, 255, 0.15); }
 
         /* --- SWITCH --- */
         .switch { position: relative; width: 44px; height: 24px; }
@@ -124,25 +123,14 @@
         /* --- MODAL --- */
         .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-box { background: #1a1a24; width: 85%; max-width: 360px; padding: 25px; border-radius: 28px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.6); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.5rem; margin: 0; color: white; }
-
         .tool-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-tool { 
-            flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--primary); 
-            background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.8rem; 
-            font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .btn-tool:active { background: var(--primary); color: #000; }
-
+        .btn-tool { flex: 1; padding: 10px; border-radius: 12px; border: 1px solid var(--primary); background: rgba(0, 229, 255, 0.05); color: var(--primary); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        
         .inp-group { margin-bottom: 15px; }
         .inp-label { display: block; color: var(--primary); font-size: 0.7rem; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
         .inp { width: 100%; background: #0f0f15; border: 1px solid #333; padding: 14px; color: white; border-radius: 14px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; }
-        .inp:focus { border-color: var(--secondary); background: #14141e; }
-
         .btn-row { display: flex; gap: 12px; margin-top: 25px; }
         .btn-save { flex: 1; padding: 15px; background: linear-gradient(90deg, var(--secondary), var(--primary)); border: none; font-weight: 700; border-radius: 14px; color: white; cursor: pointer; font-size: 1rem; }
         .btn-cancel { flex: 1; padding: 15px; background: #2a2a35; border: none; font-weight: 600; border-radius: 14px; color: #ccc; cursor: pointer; font-size: 1rem; }
@@ -161,13 +149,17 @@
     <div class="container">
         <div id="loader" style="text-align: center; padding: 80px 0;">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 2.2rem; color: var(--primary);"></i>
-            <p style="color: #666; margin-top: 15px; font-size: 0.9rem;">Connecting...</p>
+            <p id="loadingText" style="color: #666; margin-top: 15px; font-size: 0.9rem;">Connecting...</p>
         </div>
 
         <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 20px; border-radius: 16px; text-align: center; color: var(--danger);">
             <i class="fas fa-wifi" style="font-size: 1.5rem; margin-bottom: 10px;"></i><br><strong>Connection Failed</strong><br>
-            <small id="errorDetail">Check URL or Internet</small><br>
-            <button onclick="window.location.reload()" style="background: #333; color: white; border: none; padding: 8px 20px; margin-top: 15px; border-radius: 8px; cursor: pointer;">Retry</button>
+            <small id="errorDetail">Database unreachable</small><br>
+            
+            <div style="display:flex; gap:10px; margin-top:15px; justify-content:center;">
+                <button onclick="resetUrl()" style="background: #444; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer;">Reset URL</button>
+                <button onclick="window.location.reload()" style="background: var(--danger); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer;">Retry</button>
+            </div>
         </div>
 
         <div id="contentArea" class="hidden">
@@ -199,41 +191,21 @@
 
     <div id="modal" class="modal-wrap">
         <div class="modal-box">
-            <div class="modal-header">
-                <h3 class="modal-title">User Details</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3 style="margin:0; font-family:'Rajdhani', sans-serif; color:white;">User Details</h3>
                 <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
             </div>
             
             <input type="hidden" id="editIdx">
-            
             <div class="tool-bar">
-                <button class="btn-tool" onclick="randomGen()">
-                    <i class="fas fa-dice"></i> Randomize
-                </button>
-                <button class="btn-tool" onclick="makeSame()">
-                    <i class="fas fa-clone"></i> Same
-                </button>
+                <button class="btn-tool" onclick="randomGen()"><i class="fas fa-dice"></i> Randomize</button>
+                <button class="btn-tool" onclick="makeSame()"><i class="fas fa-clone"></i> Same</button>
             </div>
 
-            <div class="inp-group">
-                <label class="inp-label">Username</label>
-                <input type="text" class="inp" id="uName" placeholder="Enter username">
-            </div>
-            
-            <div class="inp-group">
-                <label class="inp-label">Password</label>
-                <input type="text" class="inp" id="uPass" placeholder="Enter password">
-            </div>
-            
-            <div class="inp-group">
-                <label class="inp-label">Device ID</label>
-                <input type="text" class="inp" id="uDev" placeholder="Device ID (Optional)">
-            </div>
-            
-            <div class="inp-group">
-                <label class="inp-label">Expiry Date</label>
-                <input type="date" class="inp" id="uExp">
-            </div>
+            <div class="inp-group"><label class="inp-label">Username</label><input type="text" class="inp" id="uName"></div>
+            <div class="inp-group"><label class="inp-label">Password</label><input type="text" class="inp" id="uPass"></div>
+            <div class="inp-group"><label class="inp-label">Device ID</label><input type="text" class="inp" id="uDev" placeholder="Optional"></div>
+            <div class="inp-group"><label class="inp-label">Expiry</label><input type="date" class="inp" id="uExp"></div>
 
             <div class="btn-row">
                 <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -251,45 +223,53 @@
     </div>
 
     <script>
-        // CONFIG
+        // --- CONSTANTS ---
         const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
         let localData = { users: [], banned: [] };
         let currentFilter = 'all';
 
-        // --- FETCH LOGIC ---
+        // --- CORE FETCH LOGIC (ANTI-STUCK) ---
         async function fetchData() {
             document.getElementById('loader').style.display = 'block';
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000); 
+            document.getElementById('contentArea').classList.add('hidden');
+            document.getElementById('errorMsg').classList.add('hidden');
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 Second Timeout
+
+            try {
                 const response = await fetch(dbUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) throw new Error(`Status ${response.status}`);
                 const data = await response.json();
                 processData(data);
                 
+                // Success: Hide Loader
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('contentArea').classList.remove('hidden');
-                document.getElementById('errorMsg').classList.add('hidden');
+                document.getElementById('statusDot').classList.remove('offline');
 
             } catch (error) {
+                console.error("Fetch Error:", error);
+                // SHOW ERROR SCREEN
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('contentArea').classList.add('hidden');
                 document.getElementById('errorMsg').classList.remove('hidden');
-                document.getElementById('errorDetail').innerText = error.message;
+                document.getElementById('errorDetail').innerText = error.name === 'AbortError' ? "Connection Timed Out" : error.message;
+                document.getElementById('statusDot').classList.add('offline');
             }
         }
 
         function processData(data) {
             if (!data) { localData.users = []; localData.banned = []; return; }
 
+            // Safe Parse Banned
             let bans = data.BannedDevices;
             if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
             localData.banned = bans ? bans.filter(x => x) : [];
 
+            // Safe Parse Users
             let users = data.Users;
             if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
             localData.users = users ? users.map(u => ({
@@ -314,18 +294,16 @@
                 const hasID = u.deviceID && u.deviceID.length > 2;
                 const isExpired = checkExpired(u.expiry);
                 
-                // --- FILTER LOGIC ---
-                // Active = ONLY checks Date (as requested)
+                // FILTER: Active = NOT EXPIRED (Per User Request)
                 if (currentFilter === 'active' && isExpired) return;
                 
-                // Banned = Only Banned
+                // FILTER: Banned = Only Banned users
                 if (currentFilter === 'banned' && !isBanned) return;
-                
-                // Search
+
                 if (search && !u.username.toLowerCase().includes(search)) return;
 
-                // --- VISUAL STYLING ---
-                let cardClass = 'active'; // Default Blue
+                // STYLING
+                let cardClass = 'active'; 
                 let statusTxt = 'ACTIVE';
                 let statusColor = '#00ff9d';
                 let devText = u.deviceID || "NO ID";
@@ -333,15 +311,12 @@
 
                 if (isBanned) { 
                     cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; 
-                } else if (!hasID) {
-                    // Even if NO ID, if it's not expired, it shows in Active tab
-                    // But visually we can style it gray or keep it blue. 
-                    // Let's keep card blue (Active) but show "NO ID" text.
-                    statusTxt = 'WAITING...'; statusColor = '#00e5ff';
-                    if(currentFilter === 'all') cardClass = 'noid'; // In 'All', show gray
+                } 
+                else if (!hasID) { 
+                    statusTxt = 'WAITING'; statusColor = '#00e5ff'; 
                 } 
                 
-                if (isExpired) {
+                if (isExpired) { 
                     cardClass = 'expired'; statusTxt = 'EXPIRED'; statusColor = '#ffb700'; 
                 }
 
@@ -364,12 +339,166 @@
 
                     <div class="actions">
                         <span class="u-status" style="color:${statusColor}; margin-right:auto;">${statusTxt}</span>
-                        
-                        <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        
-                        <button class="btn-icon" onclick="openModal(${index})">
-                            <i class="fas fa-pen"></i>
-                        </button>
-                        <button class="btn-icon 
+                        <button class="btn-icon btn-copy" onclick="copyCreds('${u.username}', '${u.password}')"><i class="fas fa-copy"></i></button>
+                        <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
+                        <button class="btn-icon btn-del" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+                list.innerHTML += html;
+            });
+
+            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:50px;'>No Users Found</div>";
+        }
+
+        // --- ACTIONS ---
+        function randomGen() {
+            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('uName').value = rnd;
+            document.getElementById('uPass').value = rnd;
+        }
+
+        function makeSame() {
+            document.getElementById('uPass').value = document.getElementById('uName').value;
+        }
+
+        function copyCreds(user, pass) {
+            navigator.clipboard.writeText(`${user}:${pass}`).then(() => {
+                const t = document.getElementById('toast');
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2000);
+            });
+        }
+
+        // --- DATABASE WRITES ---
+        async function saveData() {
+            const payload = {
+                BannedDevices: localData.banned,
+                Users: localData.users.map(u => ({
+                    Username: u.username, Password: u.password,
+                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
+                }))
+            };
+            try {
+                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+                fetchData();
+            } catch (e) { alert("Save Failed: " + e.message); }
+        }
+
+        function toggleBan(id) {
+            if(!id || id.length < 3) return alert("User has no Device ID.");
+            const idx = localData.banned.indexOf(id);
+            if(idx > -1) localData.banned.splice(idx, 1);
+            else localData.banned.push(id);
+            saveData();
+        }
+
+        function delUser(idx) {
+            if(confirm("Delete this user?")) {
+                localData.users.splice(idx, 1);
+                saveData();
+            }
+        }
+
+        function saveUser() {
+            const idx = document.getElementById('editIdx').value;
+            const u = {
+                username: document.getElementById('uName').value,
+                password: document.getElementById('uPass').value,
+                deviceID: document.getElementById('uDev').value,
+                expiry: formatDate(document.getElementById('uExp').value)
+            };
+
+            if(!u.username) return alert("Username Required");
+            if(!u.expiry) {
+                 const d = new Date(); d.setDate(d.getDate() + 30);
+                 const day = String(d.getDate()).padStart(2,'0');
+                 const mo = String(d.getMonth()+1).padStart(2,'0');
+                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
+            }
+
+            if(idx !== "") localData.users[idx] = u;
+            else localData.users.push(u);
+
+            document.getElementById('modal').style.display = 'none';
+            saveData();
+        }
+
+        // --- UTILS ---
+        function resetUrl() {
+            localStorage.removeItem("dbUrl");
+            dbUrl = DEFAULT_URL;
+            window.location.reload();
+        }
+
+        function saveSettings() {
+            const newUrl = document.getElementById('confUrl').value;
+            if(newUrl) {
+                dbUrl = newUrl;
+                localStorage.setItem("dbUrl", newUrl);
+                fetchData();
+                alert("URL Updated");
+            }
+        }
+
+        function checkExpired(dateStr) {
+            if(!dateStr) return false;
+            const [d, m, y] = dateStr.split('/');
+            return new Date(`${y}-${m}-${d}`) < new Date();
+        }
+
+        function setFilter(f, el) {
+            currentFilter = f;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            render();
+        }
+
+        function switchTab(t) {
+            const home = document.getElementById('contentArea');
+            const sett = document.getElementById('settingsArea');
+            if(t === 'home') { 
+                home.classList.remove('hidden'); sett.classList.add('hidden'); 
+                document.getElementById('navHome').classList.add('active');
+                document.getElementById('navSet').classList.remove('active');
+            } else { 
+                home.classList.add('hidden'); sett.classList.remove('hidden'); 
+                document.getElementById('navHome').classList.remove('active');
+                document.getElementById('navSet').classList.add('active');
+            }
+        }
+
+        function openModal(idx = null) {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('editIdx').value = "";
+            document.getElementById('uName').value = "";
+            document.getElementById('uPass').value = "";
+            document.getElementById('uDev').value = "";
+            document.getElementById('uExp').value = "";
+
+            if(idx !== null) {
+                const u = localData.users[idx];
+                document.getElementById('editIdx').value = idx;
+                document.getElementById('uName').value = u.username;
+                document.getElementById('uPass').value = u.password;
+                document.getElementById('uDev').value = u.deviceID;
+                if(u.expiry.includes('/')) {
+                    const [d,m,y] = u.expiry.split('/');
+                    document.getElementById('uExp').value = `${y}-${m}-${d}`;
+                }
+            }
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function formatDate(dateStr) {
+            if(!dateStr) return "";
+            const [y, m, d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        // START
+        fetchData();
+        // Background Refresh
+        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 15000);
+    </script>
+</body>
+</html>
