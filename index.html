@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPMods Admin V9 (Stable)</title>
+    <title>DPMods Admin V9</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -13,11 +13,15 @@
             --bg-body: #050508;
             --bg-card: #0f0f16;
             --primary: #00e5ff; 
+            --primary-dim: rgba(0, 229, 255, 0.1);
             --secondary: #7000ff; 
             --danger: #ff0055;
+            --danger-glow: rgba(255, 0, 85, 0.5);
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
             margin: 0; padding: 0;
@@ -25,77 +29,101 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 var(--danger-glow); border-color: var(--danger); }
+            70% { box-shadow: 0 0 10px 4px rgba(255, 0, 85, 0); border-color: var(--danger); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); border-color: var(--danger); }
         }
 
         /* --- HEADER --- */
         header {
             padding: 15px 20px;
             background: rgba(5, 5, 8, 0.95);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
         }
         .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
         .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 10px #00ff9d; }
-        .status-dot.error { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
 
-        /* --- CONTAINER --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
         /* --- SEARCH & CHIPS --- */
         .search-box { position: relative; margin-bottom: 15px; }
         .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
-        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 15px 15px 15px 45px; border-radius: 12px; color: white; outline: none; }
+        .search-input { width: 100%; background: #12121a; border: 1px solid #333; padding: 15px 15px 15px 45px; border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; }
         .search-input:focus { border-color: var(--primary); }
 
-        .chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
-        .chip { padding: 6px 16px; background: #1a1a24; border-radius: 20px; font-size: 0.8rem; color: #888; border: 1px solid #333; white-space: nowrap; }
-        .chip.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); }
+        .chips { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scrollbar-width: none; }
+        .chip { padding: 8px 18px; background: #1a1a24; border-radius: 20px; font-size: 0.85rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; }
+        .chip.active { background: var(--primary); color: #000; font-weight: 600; border-color: var(--primary); box-shadow: 0 0 15px var(--primary-dim); }
 
         /* --- CARDS --- */
-        .card { background: #101018; border: 1px solid #222; border-radius: 16px; padding: 18px; margin-bottom: 15px; position: relative; }
-        .card.active { border-left: 3px solid #00ff9d; }
-        .card.banned { border-left: 3px solid #ff0055; }
-        .card.expired { border-left: 3px solid #ffb700; }
-        .card.noid { border-left: 3px solid #555; }
+        .card { background: #101018; border: 1px solid #222; border-radius: 18px; padding: 20px; margin-bottom: 15px; position: relative; transition: 0.3s; }
+        
+        /* STATUS STYLES */
+        .card.active { border-left: 4px solid var(--primary); }
+        .card.banned { border-left: 4px solid var(--danger); animation: pulse-red 2s infinite; }
+        .card.noid { border-left: 4px solid #555; }
 
-        .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .u-name { font-weight: 700; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; }
-        .u-id { font-size: 0.75rem; color: var(--primary); font-family: monospace; }
+        .user-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .u-name { font-weight: 700; font-size: 1.2rem; font-family: 'Rajdhani', sans-serif; }
+        .u-id { font-size: 0.8rem; color: var(--primary); font-family: monospace; letter-spacing: 0.5px; }
         
-        .info-row { background: #08080c; padding: 8px; border-radius: 8px; font-size: 0.8rem; color: #aaa; margin-bottom: 12px; display: flex; gap: 15px; }
+        .info-row { background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; color: #bbb; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.05); }
         
-        .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; padding-top: 10px; }
-        .status-text { font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        .status-text { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
         /* --- BUTTONS --- */
-        .btn-icon { width: 32px; height: 32px; background: #222; border-radius: 8px; color: white; border: none; display: flex; align-items: center; justify-content: center; margin-left: 8px; }
-        
+        .btn-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.05); border-radius: 10px; color: white; border: none; display: flex; align-items: center; justify-content: center; margin-left: 10px; font-size: 1rem; cursor: pointer; }
+        .btn-icon:active { transform: scale(0.95); }
+
         /* --- SWITCH --- */
-        .switch { position: relative; width: 34px; height: 18px; }
+        .switch { position: relative; width: 42px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 34px; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .4s; }
         input:checked + .slider { background: var(--danger); }
-        input:checked + .slider:before { transform: translateX(16px); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- NAV & MODAL --- */
-        .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #151520; border: 1px solid #333; padding: 0 30px; height: 60px; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; width: 85%; max-width: 350px; z-index: 99; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .nav-item { color: #555; font-size: 1.2rem; }
-        .nav-item.active { color: var(--primary); }
+        /* --- NAV BAR --- */
+        .nav-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: #161621; border: 1px solid rgba(255,255,255,0.1); padding: 0 30px; height: 70px; border-radius: 50px; display: flex; align-items: center; justify-content: space-between; width: 90%; max-width: 380px; z-index: 99; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .nav-item { color: #666; font-size: 1.4rem; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
         
-        .fab { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #000; position: absolute; left: 50%; top: -20px; transform: translateX(-50%); border: 4px solid var(--bg-body); cursor: pointer; }
+        .fab { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #000; position: absolute; left: 50%; top: -25px; transform: translateX(-50%); border: 5px solid var(--bg-body); cursor: pointer; box-shadow: 0 0 20px var(--primary-dim); }
+        .fab:active { transform: translateX(-50%) scale(0.95); }
 
-        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a1a24; width: 80%; max-width: 300px; padding: 20px; border-radius: 15px; border: 1px solid #333; }
-        .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 10px; color: white; border-radius: 8px; margin-bottom: 10px; }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); border: none; font-weight: bold; border-radius: 8px; margin-top: 10px; cursor: pointer; }
+        /* --- MODAL (Fixed Styling) --- */
+        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-box { background: #1a1a24; width: 85%; max-width: 350px; padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.4rem; margin: 0; color: white; }
+
+        .inp-group { margin-bottom: 15px; }
+        .inp-label { display: block; color: var(--primary); font-size: 0.75rem; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .inp { width: 100%; background: #0f0f15; border: 1px solid #333; padding: 14px; color: white; border-radius: 12px; font-family: 'Poppins', sans-serif; transition: 0.3s; }
+        .inp:focus { border-color: var(--secondary); background: #15151f; }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-main { flex: 1; padding: 14px; background: linear-gradient(135deg, var(--secondary), var(--primary)); border: none; font-weight: 600; border-radius: 12px; color: white; cursor: pointer; font-size: 1rem; }
+        .btn-cancel { flex: 1; padding: 14px; background: #2a2a35; border: 1px solid #333; font-weight: 600; border-radius: 12px; color: #ccc; cursor: pointer; font-size: 1rem; }
+        
+        .btn-random { 
+            background: rgba(0, 229, 255, 0.1); border: 1px solid var(--primary); 
+            color: var(--primary); padding: 8px 12px; border-radius: 8px; 
+            font-size: 0.75rem; font-weight: 600; cursor: pointer; 
+            margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px;
+        }
 
         .hidden { display: none !important; }
-        
-        /* DEBUG TEXT */
-        #debug-log { font-family: monospace; font-size: 10px; color: #555; text-align: center; margin-top: 20px; }
+        #debug-log { font-family: monospace; font-size: 10px; color: #444; text-align: center; margin-top: 30px; }
     </style>
 </head>
 <body>
@@ -105,21 +133,21 @@
     </header>
 
     <div class="container">
-        <div id="loader" style="text-align: center; padding: 50px;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-            <p style="color: #666; margin-top: 10px;">Connecting...</p>
+        <div id="loader" style="text-align: center; padding: 60px;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="color: #666; margin-top: 15px;">Connecting...</p>
         </div>
 
-        <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 10px; text-align: center; color: var(--danger);">
-            <i class="fas fa-wifi"></i><br>Connection Failed<br>
+        <div id="errorMsg" class="hidden" style="background: rgba(255,0,85,0.1); border: 1px solid var(--danger); padding: 15px; border-radius: 12px; text-align: center; color: var(--danger);">
+            <i class="fas fa-wifi"></i><br><strong>Connection Failed</strong><br>
             <small id="errorDetail">Check URL or Internet</small>
-            <button onclick="window.location.reload()" style="background: #333; color: white; border: none; padding: 5px 10px; margin-top: 10px; border-radius: 5px;">Retry</button>
+            <button onclick="window.location.reload()" style="background: #333; color: white; border: none; padding: 8px 15px; margin-top: 10px; border-radius: 8px;">Retry</button>
         </div>
 
         <div id="contentArea" class="hidden">
             <div class="search-box">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search" class="search-input" placeholder="Search..." onkeyup="render()">
+                <input type="text" id="search" class="search-input" placeholder="Search user or ID..." onkeyup="render()">
             </div>
 
             <div class="chips">
@@ -132,70 +160,91 @@
         </div>
 
         <div id="settingsArea" class="hidden">
-            <h3 style="color:white">Config</h3>
-            <div class="card">
-                <label style="font-size:0.8rem; color:var(--primary);">Firebase URL</label>
-                <input type="text" class="inp" id="confUrl">
-                <label style="font-size:0.8rem; color:var(--primary);">Timeout</label>
-                <input type="text" class="inp" id="confTime">
-                <button class="btn-main" onclick="saveSettings()">Save</button>
+            <h2 style="color:white; margin-bottom:20px;">Settings</h2>
+            <div class="card" style="border:1px solid #333;">
+                <div class="inp-group">
+                    <label class="inp-label">Firebase Database URL</label>
+                    <input type="text" class="inp" id="confUrl">
+                </div>
+                <button class="btn-main" onclick="saveSettings()">Save Configuration</button>
             </div>
         </div>
-
+        
         <div id="debug-log">System Ready</div>
     </div>
 
     <div id="modal" class="modal-wrap">
         <div class="modal-box">
-            <h3 style="margin-top:0; color:white;">User</h3>
+            <div class="modal-header">
+                <h3 class="modal-title">User Details</h3>
+                <i class="fas fa-times" onclick="closeModal()" style="color:#666; cursor:pointer;"></i>
+            </div>
+            
             <input type="hidden" id="editIdx">
-            <input type="text" class="inp" id="uName" placeholder="Username">
-            <input type="text" class="inp" id="uPass" placeholder="Password">
-            <input type="text" class="inp" id="uDev" placeholder="Device ID">
-            <input type="date" class="inp" id="uExp">
-            <button class="btn-main" onclick="saveUser()">Save</button>
-            <button class="btn-main" style="background:#333; color:white;" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+            
+            <button class="btn-random" onclick="randomGen()">
+                <i class="fas fa-dice"></i> Randomize
+            </button>
+
+            <div class="inp-group">
+                <label class="inp-label">Username</label>
+                <input type="text" class="inp" id="uName" placeholder="Enter username">
+            </div>
+            
+            <div class="inp-group">
+                <label class="inp-label">Password</label>
+                <input type="text" class="inp" id="uPass" placeholder="Enter password">
+            </div>
+            
+            <div class="inp-group">
+                <label class="inp-label">Device ID</label>
+                <input type="text" class="inp" id="uDev" placeholder="Device ID (Optional)">
+            </div>
+            
+            <div class="inp-group">
+                <label class="inp-label">Expiry Date</label>
+                <input type="date" class="inp" id="uExp">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-main" onclick="saveUser()">Save</button>
+            </div>
         </div>
     </div>
 
     <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
+        <div class="nav-item active" id="navHome" onclick="switchTab('home')"><i class="fas fa-home"></i></div>
         <div class="fab" onclick="openModal()"><i class="fas fa-plus"></i></div>
-        <div class="nav-item" onclick="switchTab('settings')"><i class="fas fa-cog"></i></div>
+        <div class="nav-item" id="navSet" onclick="switchTab('settings')"><i class="fas fa-cog"></i></div>
     </div>
 
     <script>
-        // --- 1. CONFIG & STATE ---
-        // DEFAULT URL (Change this if needed, but this one is from your file)
+        // --- 1. CONFIG ---
         const DEFAULT_URL = "https://awesome-6004e.firebaseio.com/.json";
-        
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
         let localData = { users: [], banned: [] };
         let currentFilter = 'all';
 
-        // --- 2. ROBUST DATA FETCHING ---
+        // --- 2. LOGIC ---
         async function fetchData() {
             log("Fetching...");
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('statusDot').classList.remove('error');
-
+            
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s Timeout
+                const timeoutId = setTimeout(() => controller.abort(), 4000); 
 
                 const response = await fetch(dbUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
                 const data = await response.json();
-                processData(data); // Parse whatever we get
+                processData(data);
                 
-                // Success: Show Content
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('contentArea').classList.remove('hidden');
                 document.getElementById('errorMsg').classList.add('hidden');
-                log("Sync Complete");
 
             } catch (error) {
                 console.error(error);
@@ -203,85 +252,71 @@
                 document.getElementById('contentArea').classList.add('hidden');
                 document.getElementById('errorMsg').classList.remove('hidden');
                 document.getElementById('errorDetail').innerText = error.message;
-                document.getElementById('statusDot').classList.add('error');
-                log("Error: " + error.message);
             }
         }
 
-        // --- 3. BULLETPROOF PARSING (Fixes the Array Issue) ---
         function processData(data) {
-            if (!data) {
-                localData.users = [];
-                localData.banned = [];
-                return;
-            }
+            if (!data) { localData.users = []; localData.banned = []; return; }
 
-            // 1. Fix Banned Devices (Ensure Array)
+            // Fix Banned (Object -> Array)
             let bans = data.BannedDevices;
-            if (bans) {
-                // If it's an object {id1: "val", id2: "val"}, convert to array ["val", "val"]
-                if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
-                // Filter out nulls
-                localData.banned = bans.filter(item => item != null);
-            } else {
-                localData.banned = [];
-            }
+            if (typeof bans === 'object' && !Array.isArray(bans)) bans = Object.values(bans);
+            localData.banned = bans ? bans.filter(x => x) : [];
 
-            // 2. Fix Users (Ensure Array)
+            // Fix Users (Object -> Array)
             let users = data.Users;
-            if (users) {
-                // If it's an object {key1: {User...}, key2: {User...}}, convert to Array
-                if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
-                
-                // Map cleanly
-                localData.users = users.map(u => ({
-                    username: u.Username || u.name || "Unknown",
-                    password: u.Password || u.pass || "---",
-                    deviceID: u.DeviceID || u.ID || u.id || "",
-                    expiry: u.Expiry || u.expiry || ""
-                }));
-            } else {
-                localData.users = [];
-            }
-
-            // Update Inputs in Settings
-            document.getElementById('confUrl').value = dbUrl;
+            if (typeof users === 'object' && !Array.isArray(users)) users = Object.values(users);
             
+            localData.users = users ? users.map(u => ({
+                username: u.Username || u.name || "Unknown",
+                password: u.Password || u.pass || "---",
+                deviceID: u.DeviceID || u.ID || u.id || "",
+                expiry: u.Expiry || u.expiry || ""
+            })) : [];
+
+            document.getElementById('confUrl').value = dbUrl;
             render();
         }
 
-        // --- 4. RENDER UI ---
+        // --- 3. RENDERING ---
         function render() {
             const list = document.getElementById('list');
             list.innerHTML = "";
             const search = document.getElementById('search').value.toLowerCase();
 
             localData.users.forEach((u, index) => {
-                // Determine Status
                 const isBanned = localData.banned.includes(u.deviceID);
                 const hasID = u.deviceID && u.deviceID.length > 2;
+                const isExpired = checkExpired(u.expiry);
                 
-                // Filter Logic
+                // FILTER LOGIC (Fixed)
                 if (currentFilter === 'banned' && !isBanned) return;
-                if (currentFilter === 'active' && (isBanned || !hasID)) return;
+                if (currentFilter === 'active') {
+                    // Active = Not Banned AND Has ID AND Not Expired
+                    if (isBanned || !hasID || isExpired) return;
+                }
                 
-                // Search Logic
                 if (search && !u.username.toLowerCase().includes(search)) return;
 
-                // Styling Classes
-                let cardClass = 'active';
+                // VISUALS
+                let cardClass = 'active'; // Default to Blue
                 let statusTxt = 'ACTIVE';
                 let statusColor = '#00ff9d';
 
-                if (isBanned) { cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; }
-                else if (!hasID) { cardClass = 'noid'; statusTxt = 'NO ID'; statusColor = '#555'; }
+                if (isBanned) { 
+                    cardClass = 'banned'; statusTxt = 'BANNED'; statusColor = '#ff0055'; 
+                } else if (!hasID) { 
+                    cardClass = 'noid'; statusTxt = 'NO ID'; statusColor = '#555'; 
+                } else if (isExpired) {
+                    cardClass = 'noid'; statusTxt = 'EXPIRED'; statusColor = '#ffb700'; 
+                }
 
                 const html = `
                 <div class="card ${cardClass}">
                     <div class="user-row">
                         <div>
                             <div class="u-name">${u.username}</div>
-                            <div class="u-id">${u.deviceID || "Waiting..."}</div>
+                            <div class="u-id">${u.deviceID || "Waiting for login..."}</div>
                         </div>
                         <label class="switch">
                             <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.deviceID}')">
@@ -291,52 +326,49 @@
                     
                     <div class="info-row">
                         <span><i class="fas fa-key"></i> ${u.password}</span>
-                        <span><i class="fas fa-clock"></i> ${u.expiry}</span>
+                        <span><i class="far fa-clock"></i> ${u.expiry}</span>
                     </div>
 
                     <div class="actions">
                         <span class="status-text" style="color:${statusColor}">${statusTxt}</span>
                         <div style="display:flex">
                             <button class="btn-icon" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
-                            <button class="btn-icon" onclick="delUser(${index})"><i class="fas fa-trash"></i></button>
+                            <button class="btn-icon" onclick="delUser(${index})" style="color:#ff0055"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 </div>`;
                 list.innerHTML += html;
             });
 
-            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:20px;'>No Users Found</div>";
+            if (list.innerHTML === "") list.innerHTML = "<div style='text-align:center; color:#555; margin-top:40px;'>No Users Found</div>";
         }
 
-        // --- 5. ACTIONS ---
+        // --- 4. ACTIONS ---
+        function randomGen() {
+            // Generates 6-char random alphanumeric string
+            const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('uName').value = rnd;
+            document.getElementById('uPass').value = rnd;
+        }
+
         async function saveData() {
             log("Saving...");
-            // Convert back to Firebase Structure
             const payload = {
                 BannedDevices: localData.banned,
                 Users: localData.users.map(u => ({
-                    Username: u.username,
-                    Password: u.password,
-                    DeviceID: u.deviceID,
-                    ID: u.deviceID, // Backwards compatibility
-                    Expiry: u.expiry
+                    Username: u.username, Password: u.password,
+                    DeviceID: u.deviceID, ID: u.deviceID, Expiry: u.expiry
                 }))
             };
 
             try {
-                await fetch(dbUrl, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-                fetchData(); // Refresh on success
-            } catch (e) {
-                alert("Save Failed: " + e.message);
-            }
+                await fetch(dbUrl, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+                fetchData();
+            } catch (e) { alert("Save Failed"); }
         }
 
         function toggleBan(id) {
-            if(!id) return alert("No Device ID");
+            if(!id) return alert("Cannot ban user without Device ID");
             const idx = localData.banned.indexOf(id);
             if(idx > -1) localData.banned.splice(idx, 1);
             else localData.banned.push(id);
@@ -344,7 +376,7 @@
         }
 
         function delUser(idx) {
-            if(confirm("Delete User?")) {
+            if(confirm("Delete this user permanently?")) {
                 localData.users.splice(idx, 1);
                 saveData();
             }
@@ -360,6 +392,14 @@
             };
 
             if(!u.username) return alert("Username Required");
+            
+            // Default 30 days if empty
+            if(!u.expiry) {
+                 const d = new Date(); d.setDate(d.getDate() + 30);
+                 const day = String(d.getDate()).padStart(2,'0');
+                 const mo = String(d.getMonth()+1).padStart(2,'0');
+                 u.expiry = `${day}/${mo}/${d.getFullYear()}`;
+            }
 
             if(idx !== "") localData.users[idx] = u;
             else localData.users.push(u);
@@ -378,7 +418,13 @@
             }
         }
 
-        // --- 6. UTILS ---
+        // --- 5. HELPERS ---
+        function checkExpired(dateStr) {
+            if(!dateStr) return false;
+            const [d, m, y] = dateStr.split('/');
+            return new Date(`${y}-${m}-${d}`) < new Date();
+        }
+
         function setFilter(f, el) {
             currentFilter = f;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -389,8 +435,15 @@
         function switchTab(t) {
             const home = document.getElementById('contentArea');
             const sett = document.getElementById('settingsArea');
-            if(t === 'home') { home.classList.remove('hidden'); sett.classList.add('hidden'); }
-            else { home.classList.add('hidden'); sett.classList.remove('hidden'); }
+            if(t === 'home') { 
+                home.classList.remove('hidden'); sett.classList.add('hidden'); 
+                document.getElementById('navHome').classList.add('active');
+                document.getElementById('navSet').classList.remove('active');
+            } else { 
+                home.classList.add('hidden'); sett.classList.remove('hidden'); 
+                document.getElementById('navHome').classList.remove('active');
+                document.getElementById('navSet').classList.add('active');
+            }
         }
 
         function openModal(idx = null) {
@@ -407,7 +460,6 @@
                 document.getElementById('uName').value = u.username;
                 document.getElementById('uPass').value = u.password;
                 document.getElementById('uDev').value = u.deviceID;
-                // Parse date for input (DD/MM/YYYY -> YYYY-MM-DD)
                 if(u.expiry.includes('/')) {
                     const [d,m,y] = u.expiry.split('/');
                     document.getElementById('uExp').value = `${y}-${m}-${d}`;
@@ -415,24 +467,17 @@
             }
         }
 
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
         function formatDate(dateStr) {
             if(!dateStr) return "";
             const [y, m, d] = dateStr.split('-');
             return `${d}/${m}/${y}`;
         }
+        function log(msg) { document.getElementById('debug-log').innerText = msg; }
 
-        function log(msg) {
-            document.getElementById('debug-log').innerText = msg;
-            console.log(msg);
-        }
-
-        // Init
+        // Start
         fetchData();
-        // Auto-refresh every 10s
-        setInterval(() => {
-            if(document.getElementById('modal').style.display === 'none') fetchData();
-        }, 10000);
-
+        setInterval(() => { if(document.getElementById('modal').style.display === 'none') fetchData(); }, 10000);
     </script>
 </body>
 </html>
