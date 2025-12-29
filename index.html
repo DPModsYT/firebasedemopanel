@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPMods Ultimate V5</title>
+    <title>DPMods Ultimate Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -73,20 +73,21 @@
             border-left: 4px solid var(--primary);
             position: relative;
         }
-        .user-item.banned { border-left-color: var(--accent); opacity: 0.8; }
+        .user-item.banned { border-left-color: var(--accent); opacity: 0.7; }
         
-        .user-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .user-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
         .user-info h4 { margin: 0; font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 700; color: #fff; }
         .user-info small { color: var(--text-muted); font-size: 0.8rem; }
         
         .user-meta {
             display: flex; gap: 15px; font-size: 0.85rem; color: #aaa;
             background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px;
+            align-items: center;
         }
         .meta-tag { display: flex; align-items: center; gap: 5px; }
 
         /* --- BAN TOGGLE SWITCH --- */
-        .ban-control { display: flex; align-items: center; gap: 10px; }
+        .ban-control { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
@@ -99,8 +100,7 @@
         }
         input:checked + .slider { background-color: var(--accent); border-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(20px); }
-        .ban-label { font-size: 0.75rem; font-weight: bold; color: var(--accent); display: none; }
-        input:checked ~ .ban-label { display: block; }
+        .ban-label { font-size: 0.65rem; font-weight: bold; color: var(--accent); letter-spacing: 1px; }
 
         /* --- ACTIONS --- */
         .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
@@ -165,26 +165,27 @@
     <canvas id="particles"></canvas>
 
     <header>
-        <div class="logo"><span class="status-dot"></span> DPMODS V5</div>
-        <div style="font-size: 0.8rem; color: #888;">ADMIN</div>
+        <div class="logo"><span class="status-dot"></span> DPMODS PANEL</div>
+        <div style="font-size: 0.8rem; color: #888;">STATUS: LIVE</div>
     </header>
 
     <div class="container">
         
         <div id="tabDevices">
             <h2 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
-                <i class="fas fa-users" style="color: var(--primary);"></i> User Management
+                <i class="fas fa-users" style="color: var(--primary);"></i> User Database
             </h2>
             <div id="userList">
-                <div class="glass-card" style="text-align: center; color: #888;">
-                    <i class="fas fa-sync fa-spin"></i> Loading Database...
+                <div class="glass-card" style="text-align: center; color: #aaa; padding: 40px;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 10px; color: var(--secondary);"></i>
+                    <br>Connecting to Firebase...
                 </div>
             </div>
         </div>
 
         <div id="tabSettings" style="display: none;">
             <h2 style="margin-bottom: 20px; font-size: 1.2rem; color: #fff;">
-                <i class="fas fa-cogs" style="color: var(--secondary);"></i> App Settings
+                <i class="fas fa-cogs" style="color: var(--secondary);"></i> Configuration
             </h2>
             <div class="glass-card">
                 <label>Admin Contact URL</label>
@@ -201,7 +202,7 @@
                 <label>Announcement Message</label>
                 <textarea id="confAnnounceMsg" rows="3" placeholder="Enter message..."></textarea>
 
-                <button class="btn-main" onclick="saveSettings()">Save Config</button>
+                <button class="btn-main" onclick="saveSettings()">Save Configuration</button>
             </div>
         </div>
 
@@ -209,7 +210,7 @@
 
     <div id="modal" class="modal">
         <div class="modal-content">
-            <h3 style="color: #fff; margin-bottom: 15px;">User Details</h3>
+            <h3 style="color: #fff; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">User Details</h3>
             <input type="hidden" id="editIndex">
             
             <label>Username</label>
@@ -223,14 +224,14 @@
 
             <label>Expiry Date</label>
             <div style="display:flex; gap:5px; margin-bottom:5px;">
-                <button onclick="setExpiry(30)" style="padding:5px; background:#333; color:#fff; border:none; border-radius:4px; font-size:0.7rem;">+1 Mo</button>
-                <button onclick="setExpiry(365)" style="padding:5px; background:#333; color:#fff; border:none; border-radius:4px; font-size:0.7rem;">+1 Yr</button>
+                <button onclick="setExpiry(30)" style="padding:6px; background:#333; color:#fff; border:none; border-radius:4px; font-size:0.75rem; cursor:pointer;">+1 Month</button>
+                <button onclick="setExpiry(365)" style="padding:6px; background:#333; color:#fff; border:none; border-radius:4px; font-size:0.75rem; cursor:pointer;">+1 Year</button>
             </div>
             <input type="date" id="inpExpiry">
 
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-main" style="background:#333; width:40%;" onclick="closeModal()">Cancel</button>
-                <button class="btn-main" style="width:60%;" onclick="saveUser()">Save</button>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-main" style="background:#222; width:40%; margin-top:0;" onclick="closeModal()">Cancel</button>
+                <button class="btn-main" style="width:60%; margin-top:0;" onclick="saveUser()">Save</button>
             </div>
         </div>
     </div>
@@ -243,11 +244,10 @@
 
     <script>
         // ==========================================
-        // CONFIGURATION
+        // 1. FIREBASE CONFIG
         // ==========================================
         const DATABASE_URL = "https://awesome-6004e.firebaseio.com";
         
-        // Default Structure
         let dbData = {
             AdminUrl: "",
             DialogTimeout: "1m",
@@ -260,67 +260,47 @@
         let lastJsonString = "";
 
         // ==========================================
-        // PARTICLE BACKGROUND
-        // ==========================================
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let particlesArray = [];
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2; this.speedX = (Math.random() * 0.5) - 0.25; this.speedY = (Math.random() * 0.5) - 0.25;
-                this.color = Math.random() > 0.5 ? '#7000ff' : '#00c6ff';
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
-            }
-            draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
-        }
-        function initParticles() { particlesArray = []; for (let i=0; i<60; i++) particlesArray.push(new Particle()); }
-        function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particlesArray.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateParticles); }
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initParticles(); });
-        initParticles(); animateParticles();
-
-        // ==========================================
-        // LOGIC
+        // 2. LOGIC
         // ==========================================
         async function fetchData() {
             try {
                 const response = await fetch(`${DATABASE_URL}/.json`);
                 const val = await response.json();
 
-                if (val) {
-                    const newJson = JSON.stringify(val);
-                    if (newJson === lastJsonString) return;
-                    lastJsonString = newJson;
-
-                    // Parse Data safely
-                    dbData.AdminUrl = val.AdminUrl || "";
-                    dbData.DialogTimeout = val.DialogTimeout || "1m";
-                    dbData.ShowAnnouncement = val.ShowAnnouncement || false;
-                    dbData.Announcement = val.Announcement || "";
-                    
-                    // Handle Arrays (Firebase converts empty array to null/undefined)
-                    dbData.BannedDevices = val.BannedDevices || [];
-                    
-                    let usersList = val.Users || [];
-                    if (typeof usersList === 'object' && !Array.isArray(usersList)) {
-                        usersList = Object.values(usersList);
-                    }
-                    dbData.Users = usersList;
-
-                    renderUsers();
-                    fillSettings();
-                } else {
-                    // Database empty, initialize locally
-                    renderUsers();
+                // FIX: If null (empty DB), initialize default structure
+                if (!val) {
+                    renderUsers(); // Shows empty state
+                    return;
                 }
-            } catch (error) { console.error(error); }
+
+                const newJson = JSON.stringify(val);
+                if (newJson === lastJsonString) return; // No change, don't re-render
+                lastJsonString = newJson;
+
+                // Safely parse data
+                dbData.AdminUrl = val.AdminUrl || "";
+                dbData.DialogTimeout = val.DialogTimeout || "1m";
+                dbData.ShowAnnouncement = val.ShowAnnouncement || false;
+                dbData.Announcement = val.Announcement || "";
+                dbData.BannedDevices = val.BannedDevices || [];
+                
+                let usersList = val.Users || [];
+                if (typeof usersList === 'object' && !Array.isArray(usersList)) {
+                    usersList = Object.values(usersList);
+                }
+                dbData.Users = usersList;
+
+                renderUsers();
+                fillSettings();
+
+            } catch (error) { 
+                console.error(error); 
+                // Show error in UI so user knows
+                document.getElementById('userList').innerHTML = `<div class="glass-card" style="text-align:center; color:var(--accent);">Connection Error. Retrying...</div>`;
+            }
         }
 
+        // Poll every 2 seconds
         setInterval(fetchData, 2000);
         fetchData();
 
@@ -329,12 +309,13 @@
             list.innerHTML = "";
 
             if (dbData.Users.length === 0) {
-                list.innerHTML = `<div class="glass-card" style="text-align:center; color:#aaa;">No users found. Add one +</div>`;
+                list.innerHTML = `<div class="glass-card" style="text-align:center; color:#aaa; padding: 30px;">
+                    <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                    No users found. Add one +</div>`;
                 return;
             }
 
             dbData.Users.forEach((u, index) => {
-                // Check if banned
                 const isBanned = dbData.BannedDevices.includes(u.DeviceID);
 
                 const div = document.createElement('div');
@@ -343,24 +324,26 @@
                 div.innerHTML = `
                     <div class="user-header">
                         <div class="user-info">
-                            <h4>${u.Username} <small>(${u.Password})</small></h4>
-                            <div style="color:var(--primary); font-size:0.8rem; font-family:monospace;">${u.DeviceID}</div>
+                            <h4>${u.Username} <small style="opacity:0.6;">(${u.Password})</small></h4>
+                            <div style="color:var(--primary); font-size:0.75rem; font-family:monospace; margin-top:2px;">
+                                <i class="fas fa-mobile-alt"></i> ${u.DeviceID}
+                            </div>
                         </div>
                         <div class="ban-control">
                             <label class="switch">
                                 <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${u.DeviceID}')">
                                 <span class="slider"></span>
                             </label>
-                            <span class="ban-label">BANNED</span>
+                            ${isBanned ? '<span class="ban-label">BANNED</span>' : ''}
                         </div>
                     </div>
                     
                     <div class="user-meta">
-                        <span class="meta-tag"><i class="far fa-calendar-alt"></i> ${u.Expiry}</span>
+                        <span class="meta-tag"><i class="far fa-calendar-alt"></i> Exp: ${u.Expiry}</span>
                     </div>
 
                     <div class="action-row">
-                        <span style="font-size:0.7rem; color:#666;">Actions:</span>
+                        <span style="font-size:0.7rem; color:#666; text-transform:uppercase; font-weight:bold;">Actions</span>
                         <div style="display:flex; gap:10px;">
                             <button class="btn-icon btn-edit" onclick="openModal(${index})"><i class="fas fa-pen"></i></button>
                             <button class="btn-icon btn-delete" onclick="deleteUser(${index})"><i class="fas fa-trash"></i></button>
@@ -372,26 +355,20 @@
         }
 
         async function toggleBan(deviceID) {
-            // Optimistic update
             const index = dbData.BannedDevices.indexOf(deviceID);
             if (index > -1) {
-                // Remove ban
                 dbData.BannedDevices.splice(index, 1);
             } else {
-                // Add ban
                 dbData.BannedDevices.push(deviceID);
             }
             
-            // Render immediately for visual feedback
-            renderUsers(); 
+            renderUsers(); // Update UI instantly
             
-            // Save to Firebase
             await fetch(`${DATABASE_URL}/BannedDevices.json`, {
                 method: 'PUT',
                 body: JSON.stringify(dbData.BannedDevices)
             });
-            // Clear cache to force refresh on next poll
-            lastJsonString = "";
+            lastJsonString = ""; // Force refresh
         }
 
         function fillSettings() {
@@ -412,8 +389,8 @@
                 DialogTimeout: document.getElementById('confTimeout').value,
                 ShowAnnouncement: document.getElementById('confShowAnnounce').checked,
                 Announcement: document.getElementById('confAnnounceMsg').value,
-                BannedDevices: dbData.BannedDevices, // Preserve existing bans
-                Users: dbData.Users // Preserve existing users
+                BannedDevices: dbData.BannedDevices,
+                Users: dbData.Users
             };
 
             await fetch(`${DATABASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(newData) });
@@ -426,4 +403,36 @@
             const user = document.getElementById('inpUser').value;
             const pass = document.getElementById('inpPass').value;
             const device = document.getElementById('inpDevice').value;
-            co
+            const dateVal = document.getElementById('inpExpiry').value;
+            const index = document.getElementById('editIndex').value;
+
+            if (!user || !pass || !device || !dateVal) return alert("All fields required");
+
+            const [year, month, day] = dateVal.split('-');
+            const formattedDate = `${day}/${month}/${year}`;
+
+            const userObj = {
+                Username: user,
+                Password: pass,
+                DeviceID: device,
+                Expiry: formattedDate
+            };
+
+            let newList = [...dbData.Users];
+            if (index !== "") newList[parseInt(index)] = userObj;
+            else newList.push(userObj);
+
+            const fullPayload = { ...dbData, Users: newList };
+
+            await fetch(`${DATABASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(fullPayload) });
+            closeModal();
+            lastJsonString = "";
+            fetchData();
+        }
+
+        async function deleteUser(index) {
+            if(confirm("Delete this user?")) {
+                let newList = [...dbData.Users];
+                newList.splice(index, 1);
+                
+                const fu
