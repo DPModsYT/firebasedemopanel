@@ -195,7 +195,7 @@
 
         // AUTO-CORRECT URL LOGIC
         // If the stored URL looks broken or is missing, force the user provided one
-        if(!dbUrl || dbUrl.includes(".json")) {
+        if(!dbUrl || dbUrl.includes("/.json")) {
             dbUrl = USER_PROVIDED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
