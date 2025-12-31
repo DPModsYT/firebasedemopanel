@@ -3,198 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPMods VIP Gateway</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Gateway Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- PREMIUM THEME --- */
         :root {
-            --bg-body: #050508;
-            --bg-card: #0e0e14;
-            --primary: #00e5ff; 
-            --primary-dark: #00b8cc;
-            --secondary: #7000ff; 
-            --danger: #ff0055;
-            --warning: #ffb700;
-            --text-main: #ffffff;
-            --border: rgba(255, 255, 255, 0.08);
-            --nav-bg: #161621;
+            --bg-body: #0f172a;       /* Deep Slate */
+            --bg-card: #1e293b;       /* Lighter Slate */
+            --bg-nav: #0f172a;
+            --primary: #3b82f6;       /* Professional Blue */
+            --primary-light: #60a5fa;
+            --success: #10b981;       /* Green */
+            --danger: #ef4444;        /* Red */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
 
         body {
             margin: 0; padding: 0;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 110px;
+            padding-bottom: 100px;
             overflow-x: hidden;
-        }
-
-        /* --- BACKGROUND PARTICLES --- */
-        #particles {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1; pointer-events: none;
         }
 
         /* --- HEADER --- */
         header {
-            padding: 15px 20px;
-            background: rgba(5, 5, 8, 0.8);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
+            padding: 16px 20px;
+            position: sticky; top: 0; z-index: 50;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
-        .status-dot { width: 8px; height: 8px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 12px #00ff9d; transition: 0.3s; }
-        .status-dot.offline { background: var(--danger); box-shadow: 0 0 12px var(--danger); }
+        .logo { font-size: 1.1rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 10px; }
+        .refresh-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .refresh-btn:active { transform: scale(0.95); background: var(--primary); border-color: var(--primary); }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-        /* --- SEARCH & CHIPS --- */
-        .search-box { position: relative; margin-bottom: 12px; }
-        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1rem; }
-        .search-input { width: 100%; background: rgba(18, 18, 26, 0.8); border: 1px solid #333; padding: 12px 12px 12px 40px; border-radius: 12px; color: white; font-family: 'Poppins', sans-serif; font-size: 0.9rem; transition: 0.3s; backdrop-filter: blur(5px); }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 229, 255, 0.1); }
-
-        .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scrollbar-width: none; }
-        .chip { padding: 6px 16px; background: #1a1a24; border-radius: 50px; font-size: 0.8rem; color: #888; border: 1px solid #333; white-space: nowrap; transition: 0.3s; font-weight: 500; cursor: pointer; }
-        .chip.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 600; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
+        /* --- STATS BAR --- */
+        .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .stat-card { flex: 1; background: var(--bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); display: block; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
 
         /* --- CARDS --- */
-        .card { background: rgba(14, 14, 20, 0.7); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 14px; margin-bottom: 10px; position: relative; transition: transform 0.2s; }
-        .card:active { transform: scale(0.98); }
+        .card { 
+            background: var(--bg-card); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 16px; 
+            margin-bottom: 12px; 
+            position: relative; 
+            transition: all 0.2s; 
+            cursor: pointer;
+        }
+        .card:active { transform: scale(0.99); background: #263345; }
         
-        .card.key-card { border-left: 3px solid var(--primary); }
-        .card.user-card { border-left: 3px solid var(--secondary); }
-        .card.banned { border-left: 3px solid var(--danger); opacity: 0.7; }
+        /* Key Card Style */
+        .key-row { display: flex; justify-content: space-between; align-items: center; }
+        .key-text { font-family: 'Inter', monospace; font-size: 1rem; font-weight: 600; color: var(--text-main); letter-spacing: 0.5px; }
+        .badge { font-size: 0.7rem; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: #334155; color: #cbd5e1; }
+        .badge.success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
 
-        .head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .main-text { font-weight: 700; font-size: 1.1rem; font-family: 'Rajdhani', sans-serif; color: #fff; letter-spacing: 1px; word-break: break-all; }
-        .sub-text { font-family: monospace; font-size: 0.8rem; color: #666; display: block; }
+        /* User Card Style */
+        .user-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .user-id { font-weight: 600; color: white; font-size: 0.95rem; }
+        .bind-status { font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 5px; font-weight: 500; }
         
-        .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .btn-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.05); border-radius: 8px; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .btn-icon:hover { background: rgba(255,255,255,0.1); }
-        .btn-copy { color: var(--primary); }
-        .btn-del { color: var(--danger); }
-        .btn-ban { color: var(--warning); }
+        /* --- TOGGLE SWITCH --- */
+        .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+        .toggle-label { font-size: 0.75rem; color: var(--text-muted); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--danger); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- SETTINGS --- */
-        .section-title { color: var(--primary); font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; margin: 20px 0 10px 0; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .inp-group { margin-bottom: 12px; }
-        .inp-label { display: block; color: #888; font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; }
-        .inp { width: 100%; background: #0a0a10; border: 1px solid #333; padding: 12px; color: white; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 0.85rem; }
-        .inp:focus { border-color: var(--primary); }
+        /* --- INPUTS --- */
+        .inp-group { margin-bottom: 15px; }
+        .inp-label { display: block; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; }
+        .inp { width: 100%; background: #0f172a; border: 1px solid var(--border); padding: 12px; color: white; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; transition: 0.2s; }
+        .inp:focus { border-color: var(--primary); outline: none; }
+
+        /* --- BUTTONS --- */
+        .btn-primary { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-cancel { background: #334155; margin-top: 10px; }
+        .btn-delete { background: none; border: none; color: var(--danger); padding: 5px; cursor: pointer; font-size: 1rem; }
 
         /* --- NAV BAR --- */
+        .nav-container {
+            position: fixed; bottom: 20px; left: 0; right: 0;
+            display: flex; justify-content: center; z-index: 100;
+        }
         .nav-bar { 
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); 
-            background: rgba(22, 22, 33, 0.95); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 0 25px; height: 65px; border-radius: 40px; 
+            background: rgba(30, 41, 59, 0.95); 
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border); 
+            padding: 0 10px; height: 65px; border-radius: 20px; 
             display: flex; align-items: center; justify-content: space-between; 
-            width: 85%; max-width: 380px; z-index: 99; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+            width: 90%; max-width: 400px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); 
         }
-        .nav-item { color: #555; font-size: 1.3rem; cursor: pointer; transition: 0.3s; position: relative; }
-        .nav-item.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        
+        /* Flex fix for icons */
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: 0.3s; height: 100%; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { margin-bottom: 2px; }
+        .nav-text { font-size: 0.65rem; font-weight: 600; }
+
+        .fab-wrap { width: 60px; height: 60px; position: relative; display: flex; justify-content: center; }
         .fab { 
-            width: 55px; height: 55px; 
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            width: 50px; height: 50px; 
+            background: var(--primary); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.4rem; color: #000; 
-            position: absolute; left: 50%; top: -25px; transform: translateX(-50%); 
-            border: 5px solid var(--bg-body); cursor: pointer; 
-            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); 
+            font-size: 1.4rem; color: white; 
+            position: absolute; top: -20px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); 
+            cursor: pointer; transition: 0.2s;
         }
+        .fab:active { transform: scale(0.95); }
 
         /* --- MODAL --- */
-        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #1a1a24; width: 85%; max-width: 320px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-        .btn-full { width: 100%; padding: 12px; background: var(--primary); border: none; font-weight: 700; border-radius: 12px; color: #000; margin-top: 10px; cursor: pointer; }
-        .btn-cancel { background: #333; color: white; margin-top: 10px; }
+        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-box { background: var(--bg-card); width: 90%; max-width: 350px; padding: 25px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .modal-title { font-size: 1.1rem; font-weight: 700; color: white; margin-top: 0; margin-bottom: 20px; }
 
+        /* --- UTILS --- */
         .hidden { display: none !important; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #161621; border: 1px solid var(--primary); color: white; padding: 10px 20px; border-radius: 10px; z-index: 300; transition: 0.4s; font-size: 0.85rem; display: flex; align-items: center; gap: 10px; }
+        
+        .toast { 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); 
+            background: #1e293b; border: 1px solid var(--primary); color: white; 
+            padding: 12px 24px; border-radius: 50px; z-index: 300; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-size: 0.9rem; display: flex; align-items: center; gap: 10px; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); font-weight: 500;
+        }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <canvas id="particles"></canvas>
-
     <header>
-        <div class="logo"><div id="statusDot" class="status-dot"></div> VIP GATEWAY</div>
+        <div class="logo"><i class="fas fa-shield-alt" style="color:var(--primary)"></i> VIP ADMIN PANEL</div>
+        <button class="refresh-btn" onclick="init()"><i class="fas fa-sync-alt"></i></button>
     </header>
 
     <div class="container">
-        <div id="loader" style="text-align: center; padding: 80px 0;">
-            <i class="fas fa-satellite-dish fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-            <p style="color: #666; margin-top: 15px; font-size: 0.8rem; letter-spacing: 1px;">ESTABLISHING UPLINK...</p>
+        
+        <div id="loader" style="text-align: center; padding: 100px 0;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            <p style="color: var(--text-muted); margin-top: 15px; font-size: 0.9rem;">Connecting to Database...</p>
         </div>
 
-        <div id="errorMsg" class="hidden" style="text-align: center; padding: 40px; color: var(--danger);">
-            <i class="fas fa-exclamation-triangle" style="font-size: 2rem;"></i>
-            <p>DATABASE DISCONNECTED</p>
-            <button onclick="resetApp()" style="background: #333; color: white; border: none; padding: 8px 15px; border-radius: 8px; margin-top: 10px;">RESET</button>
+        <div id="errorMsg" class="hidden" style="text-align: center; padding: 50px 20px; border: 1px solid var(--danger); border-radius: 12px; background: rgba(239, 68, 68, 0.1);">
+            <i class="fas fa-wifi" style="font-size: 2rem; color: var(--danger); margin-bottom: 15px;"></i>
+            <h3 style="margin:0 0 10px 0;">Connection Failed</h3>
+            <button class="btn-primary" onclick="window.location.reload()" style="background: var(--bg-card); border: 1px solid var(--border); width: auto; padding: 8px 20px;">Retry</button>
         </div>
 
-        <div id="tabKeys" class="hidden">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchKey" class="search-input" placeholder="Search Keys..." onkeyup="renderKeys()">
+        <div id="mainContent" class="hidden">
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <span class="stat-val" id="countKeys">0</span>
+                    <span class="stat-label">Valid Keys</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" id="countUsers">0</span>
+                    <span class="stat-label">Online Devices</span>
+                </div>
             </div>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <span style="color: #666; font-size: 0.8rem; font-weight: 600;">VALID KEYS DATABASE</span>
-                <span id="keyCount" style="background: var(--primary); color: black; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">0</span>
+
+            <div id="tabKeys">
+                <h3 style="margin: 0 0 15px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">Manage Keys</h3>
+                <div id="keyList"></div>
             </div>
 
-            <div id="keyList"></div>
-        </div>
-
-        <div id="tabUsers" class="hidden">
-            <div class="chips">
-                <div class="chip active" onclick="setFilter('active', this)">Activated</div>
-                <div class="chip" onclick="setFilter('banned', this)">Banned</div>
+            <div id="tabUsers" class="hidden">
+                 <h3 style="margin: 0 0 15px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">Device Management</h3>
+                <div id="userList"></div>
             </div>
-            <div id="userList"></div>
-        </div>
 
-        <div id="tabSettings" class="hidden">
-            <h2 style="color:white; margin:0 0 15px 0; font-size:1.3rem;">App Configuration</h2>
-            
-            <div class="card" style="border:1px solid #222;">
-                <div class="section-title">GENERAL</div>
-                <div class="inp-group"><label class="inp-label">App Title</label><input type="text" class="inp" id="cfgTitle"></div>
-                <div class="inp-group"><label class="inp-label">Subtitle (Status)</label><input type="text" class="inp" id="cfgSub"></div>
-                <div class="inp-group"><label class="inp-label">App Version (Int)</label><input type="number" class="inp" id="cfgVer"></div>
-                <div class="inp-group"><label class="inp-label">Key Duration (Hours)</label><input type="number" class="inp" id="cfgDur"></div>
+            <div id="tabSettings" class="hidden">
+                <h3 style="margin: 0 0 15px 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">System Config</h3>
+                <div style="background: var(--bg-card); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    
+                    <div class="inp-group"><label class="inp-label">App Title</label><input type="text" class="inp" id="cfgTitle"></div>
+                    <div class="inp-group"><label class="inp-label">Status Message</label><input type="text" class="inp" id="cfgSub"></div>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div class="inp-group"><label class="inp-label">Version</label><input type="number" class="inp" id="cfgVer"></div>
+                        <div class="inp-group"><label class="inp-label">Duration (Hrs)</label><input type="number" class="inp" id="cfgDur"></div>
+                    </div>
 
-                <div class="section-title">LINKS</div>
-                <div class="inp-group"><label class="inp-label">Admin Contact URL</label><input type="text" class="inp" id="cfgAdminUrl"></div>
-                <div class="inp-group"><label class="inp-label">Update URL</label><input type="text" class="inp" id="cfgUpdUrl"></div>
-
-                <div class="section-title">INTERFACE TEXTS</div>
-                <div class="inp-group"><label class="inp-label">Hint Text</label><input type="text" class="inp" id="txtHint"></div>
-                <div class="inp-group"><label class="inp-label">Key Button</label><input type="text" class="inp" id="txtBtnKey"></div>
-                <div class="inp-group"><label class="inp-label">Login Button</label><input type="text" class="inp" id="txtBtnLog"></div>
-                <div class="inp-group"><label class="inp-label">Admin Button</label><input type="text" class="inp" id="txtBtnAdm"></div>
-
-                <div class="section-title">API INTEGRATION</div>
-                <div class="inp-group"><label class="inp-label">Base URL</label><input type="text" class="inp" id="apiBase"></div>
-                <div class="inp-group"><label class="inp-label">API Token</label><input type="text" class="inp" id="apiToken"></div>
-                
-                <button class="btn-full" onclick="saveConfig()">SAVE CONFIGURATION</button>
-                
-                <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 15px;">
-                   <div class="inp-group"><label class="inp-label">Database URL (Admin Only)</label><input type="text" class="inp" id="dbUrlConf"></div>
-                   <button class="btn-full btn-cancel" onclick="updateDbUrl()">SWITCH DATABASE</button>
+                    <div class="inp-group"><label class="inp-label">Admin URL</label><input type="text" class="inp" id="cfgAdminUrl"></div>
+                    <div class="inp-group"><label class="inp-label">Update URL</label><input type="text" class="inp" id="cfgUpdUrl"></div>
+                    
+                    <button class="btn-primary" onclick="saveConfig()">Save Settings</button>
+                    
+                    <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
+                        <button class="btn-primary" style="background:#334155;" onclick="resetApp()">Reset Database Link</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -202,110 +223,93 @@
 
     <div id="modalKey" class="modal-wrap">
         <div class="modal-box">
-            <h3 style="color:white; margin-top:0;">Generate Access Key</h3>
+            <h3 class="modal-title">Generate Keys</h3>
             
             <div class="inp-group">
-                <label class="inp-label">Key String</label>
-                <div style="display:flex; gap:5px;">
-                    <input type="text" class="inp" id="newKeyVal" placeholder="Ex: VIP-XXXX">
-                    <button onclick="genRandomKey()" style="background:#333; border:none; color:var(--primary); border-radius:8px; width:40px;"><i class="fas fa-dice"></i></button>
-                </div>
+                <label class="inp-label">Prefix (Optional)</label>
+                <input type="text" class="inp" id="keyPrefix" placeholder="VIP">
             </div>
 
-            <button class="btn-full" onclick="addKey()">ADD TO DATABASE</button>
-            <button class="btn-full btn-cancel" onclick="document.getElementById('modalKey').style.display='none'">CANCEL</button>
+            <div class="inp-group">
+                <label class="inp-label">Quantity</label>
+                <input type="number" class="inp" id="keyQty" value="1" min="1" max="50">
+            </div>
+
+            <button class="btn-primary" onclick="generateKeys()">Generate & Add</button>
+            <button class="btn-primary btn-cancel" onclick="document.getElementById('modalKey').style.display='none'">Close</button>
         </div>
     </div>
 
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">Saved</span></div>
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle" style="color:var(--success)"></i>
+        <span id="toastMsg">Action Successful</span>
+    </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" id="navKeys" onclick="switchTab('keys')"><i class="fas fa-key"></i></div>
-        <div class="fab" onclick="openKeyModal()"><i class="fas fa-plus"></i></div>
-        <div class="nav-item" id="navUsers" onclick="switchTab('users')"><i class="fas fa-users"></i></div>
-        <div class="nav-item" id="navSet" onclick="switchTab('settings')"><i class="fas fa-cog"></i></div>
+    <div class="nav-container">
+        <div class="nav-bar">
+            <div class="nav-item active" id="navKeys" onclick="switchTab('keys')">
+                <i class="fas fa-key"></i>
+                <span class="nav-text">Keys</span>
+            </div>
+            
+            <div class="fab-wrap">
+                <div class="fab" onclick="openKeyModal()">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+            
+            <div class="nav-item" id="navUsers" onclick="switchTab('users')">
+                <i class="fas fa-users"></i>
+                <span class="nav-text">Devices</span>
+            </div>
+            
+            <div class="nav-item" id="navSet" onclick="switchTab('settings')">
+                <i class="fas fa-cog"></i>
+                <span class="nav-text">Settings</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        // Your specific Firebase URL
+        // CONFIG
         const DEFAULT_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com/.json";
-        
-        // The exact structure you requested
         const DEFAULT_JSON = {
-            "Config": {
-                "Title": "DPMods VIP",
-                "Subtitle": "GATEWAY V14.0 // ONLINE",
-                "AdminUrl": "https://t.me/dpmods",
-                "UpdateUrl": "https://google.com",
-                "AppVersion": 1,
-                "KeyDurationHours": 4,
-                "Texts": {
-                    "Hint": "ENTER ACCESS KEY",
-                    "BtnKey": "GET KEY",
-                    "BtnLogin": "ACTIVATE SYSTEM",
-                    "BtnAdmin": "ADMIN SUPPORT"
-                },
-                "Api": {
-                    "Token": "e866b423bb5ae2597c657c9fd6288e8e5d113a47",
-                    "BaseUrl": "https://xtglinks.com/api"
-                }
-            },
-            "BannedDevices": { "test_device": "banned" },
-            "ActivatedUsers": { "do_not_delete": "placeholder" },
-            "ValidKeys": { "DEMO-KEY-123": "placeholder" }
+            "Config": { "Title": "DPMods VIP", "Subtitle": "ONLINE", "AppVersion": 1, "KeyDurationHours": 4, "AdminUrl": "", "UpdateUrl": "" },
+            "BannedDevices": { "test_ban": "banned" },
+            "ActivatedUsers": { "placeholder_user": "active" },
+            "ValidKeys": { "VIP-DEMO-KEY": "placeholder" }
         };
 
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
-        let dbData = null; // Stores full JSON object
-        let currentTab = 'keys';
-        let userFilter = 'active';
+        let dbData = null;
 
-        // --- PARTICLE ANIMATION ---
-        const canvas = document.getElementById('particles');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        function resizeCanvas() { canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        class P {
-            constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; this.s=Math.random()*2; }
-            up(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0)this.x=canvas.width; if(this.x>canvas.width)this.x=0; if(this.y<0)this.y=canvas.height; if(this.y>canvas.height)this.y=0; }
-            dr(){ ctx.fillStyle=`rgba(0, 229, 255, ${Math.random()*0.3})`; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill(); }
-        }
-        for(let i=0;i<40;i++) particles.push(new P());
-        function anim(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.up();p.dr()}); requestAnimationFrame(anim); }
-        anim();
-
-        // --- CORE FUNCTIONS ---
+        // INIT
         async function init() {
             document.getElementById('loader').style.display = 'block';
+            document.getElementById('mainContent').classList.add('hidden');
             document.getElementById('errorMsg').classList.add('hidden');
-            
+
             try {
                 const res = await fetch(dbUrl);
-                if(!res.ok) throw new Error("Net Error");
+                if(!res.ok) throw new Error("Network Error");
+                
                 let data = await res.json();
-
-                // Auto-upload defaults if empty
                 if(data === null) {
-                    await fetch(dbUrl, { method:'PUT', body: JSON.stringify(DEFAULT_JSON) });
+                    await fetch(dbUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_JSON) });
                     data = DEFAULT_JSON;
                 }
                 
                 dbData = data;
-                ensureStructure(); // Fix missing objects if any
+                ensureStructure();
+                render();
                 
-                populateUI();
                 document.getElementById('loader').style.display = 'none';
-                document.getElementById('tabKeys').classList.remove('hidden');
-                document.getElementById('statusDot').classList.remove('offline');
+                document.getElementById('mainContent').classList.remove('hidden');
 
-            } catch(e) {
-                console.log(e);
+            } catch (e) {
+                console.error(e);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('errorMsg').classList.remove('hidden');
-                document.getElementById('statusDot').classList.add('offline');
             }
         }
 
@@ -317,145 +321,130 @@
         }
 
         async function saveData() {
-            // Optimistic UI update already happened in local dbData
-            // Just push dbData to Firebase
             try {
-                await fetch(dbUrl, { method:'PUT', body: JSON.stringify(dbData) });
-                showToast("Database Updated");
-            } catch(e) {
-                showToast("Sync Failed!");
-            }
+                await fetch(dbUrl, { method: 'PUT', body: JSON.stringify(dbData) });
+                showToast("Database Synced");
+            } catch(e) { showToast("Sync Failed"); }
         }
 
-        function populateUI() {
+        // RENDER LOGIC
+        function render() {
             renderKeys();
             renderUsers();
             fillSettings();
         }
 
-        // --- KEYS TAB ---
+        // --- KEYS ---
         function renderKeys() {
             const list = document.getElementById('keyList');
             list.innerHTML = "";
-            const search = document.getElementById('searchKey').value.toLowerCase();
-            const keys = Object.keys(dbData.ValidKeys).reverse(); // Newest first usually
-            
-            document.getElementById('keyCount').innerText = keys.length;
+            const keys = Object.keys(dbData.ValidKeys).reverse();
+            document.getElementById('countKeys').innerText = keys.length - (keys.includes('do_not_delete') ? 1 : 0);
 
-            if(keys.length === 0) { list.innerHTML="<div style='text-align:center;color:#444;margin-top:20px;'>No Keys Found</div>"; return; }
+            if(keys.length === 0) { list.innerHTML="<p style='text-align:center;color:#666'>No Keys Available</p>"; return; }
 
             keys.forEach(k => {
-                if(k === "do_not_delete") return; // Skip placeholder
-                if(search && !k.toLowerCase().includes(search)) return;
-
-                const val = dbData.ValidKeys[k];
+                if(k === "do_not_delete") return;
                 list.innerHTML += `
-                <div class="card key-card">
-                    <div class="head-row">
-                        <span class="main-text" style="color:var(--primary);">${k}</span>
-                        <span class="sub-text">VALID</span>
-                    </div>
-                    <div class="sub-text" style="font-size:0.75rem;">Status: ${val === 'placeholder' ? 'Unused' : val}</div>
-                    <div class="actions">
-                        <button class="btn-icon btn-copy" onclick="copyTxt('${k}')"><i class="fas fa-copy"></i></button>
-                        <button class="btn-icon btn-del" onclick="deleteKey('${k}')"><i class="fas fa-trash"></i></button>
+                <div class="card" onclick="copyTxt('${k}')">
+                    <div class="key-row">
+                        <div>
+                            <div class="key-text">${k}</div>
+                            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Tap to copy</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="badge success">Active</span>
+                            <button class="btn-delete" onclick="event.stopPropagation(); deleteKey('${k}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
                 </div>`;
             });
         }
 
-        function openKeyModal() {
-            document.getElementById('modalKey').style.display = 'flex';
-            document.getElementById('newKeyVal').value = "";
-        }
+        function generateKeys() {
+            const qty = parseInt(document.getElementById('keyQty').value);
+            const prefix = document.getElementById('keyPrefix').value.toUpperCase() || "KEY";
+            const chars = "ABCDEF0123456789";
 
-        function genRandomKey() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let res = "VIP-";
-            for(let i=0;i<6;i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
-            document.getElementById('newKeyVal').value = res;
-        }
+            for(let i=0; i<qty; i++) {
+                let rnd = "";
+                for(let j=0; j<6; j++) rnd += chars.charAt(Math.floor(Math.random() * chars.length));
+                const key = `${prefix}-${rnd}`;
+                dbData.ValidKeys[key] = "placeholder";
+            }
 
-        function addKey() {
-            const k = document.getElementById('newKeyVal').value.trim();
-            if(!k) return alert("Enter a key");
-            
-            dbData.ValidKeys[k] = "placeholder"; // Default value
             document.getElementById('modalKey').style.display = 'none';
             renderKeys();
             saveData();
+            showToast(`Generated ${qty} Keys`);
         }
 
         function deleteKey(k) {
-            if(confirm("Delete Key: " + k + "?")) {
+            if(confirm("Delete this key?")) {
                 delete dbData.ValidKeys[k];
                 renderKeys();
                 saveData();
             }
         }
 
-        // --- USERS TAB ---
-        function setFilter(f, el) {
-            userFilter = f;
-            document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-            el.classList.add('active');
-            renderUsers();
-        }
-
+        // --- USERS ---
         function renderUsers() {
             const list = document.getElementById('userList');
             list.innerHTML = "";
             
-            if(userFilter === 'active') {
-                const users = Object.keys(dbData.ActivatedUsers);
-                if(users.length === 0 || (users.length===1 && users[0]==='do_not_delete')) {
-                    list.innerHTML="<div style='text-align:center;color:#444;margin-top:20px;'>No Active Users</div>"; return;
-                }
-                users.forEach(u => {
-                    if(u === 'do_not_delete') return;
-                    list.innerHTML += `
-                    <div class="card user-card">
-                        <div class="head-row"><span class="main-text">${u}</span></div>
-                        <div class="sub-text">DEVICE ID</div>
-                        <div class="actions">
-                            <button class="btn-icon btn-copy" onclick="copyTxt('${u}')"><i class="fas fa-copy"></i></button>
-                            <button class="btn-icon btn-del" onclick="banUser('${u}')" style="width:auto; padding:0 10px; gap:5px;"><i class="fas fa-ban"></i> BAN DEVICE</button>
+            const active = Object.keys(dbData.ActivatedUsers);
+            const banned = Object.keys(dbData.BannedDevices);
+            
+            // Merge lists for display, prioritize display
+            const allDevices = [...new Set([...active, ...banned])];
+            document.getElementById('countUsers').innerText = active.length;
+
+            if(allDevices.length === 0) { list.innerHTML="<p style='text-align:center;color:#666'>No Devices Found</p>"; return; }
+
+            allDevices.forEach(d => {
+                if(d === "do_not_delete" || d === "placeholder_user" || d === "test_ban") return;
+
+                const isBanned = dbData.BannedDevices.hasOwnProperty(d);
+                
+                list.innerHTML += `
+                <div class="card">
+                    <div class="user-head">
+                        <span class="user-id">${d}</span>
+                        <div class="toggle-wrap">
+                            <span class="toggle-label">${isBanned ? 'BANNED' : 'ALLOWED'}</span>
+                            <label class="switch">
+                                <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${d}')">
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                    </div>`;
-                });
+                    </div>
+                    <div class="bind-status">
+                        <i class="fas fa-link"></i> Device Bound Successfully
+                    </div>
+                </div>`;
+            });
+        }
+
+        function toggleBan(deviceId) {
+            const isBanned = dbData.BannedDevices.hasOwnProperty(deviceId);
+            
+            if(isBanned) {
+                // Unban: Remove from banned, ensure in Active
+                delete dbData.BannedDevices[deviceId];
+                dbData.ActivatedUsers[deviceId] = "active";
+                showToast("Device Unbanned");
             } else {
-                const bans = Object.keys(dbData.BannedDevices);
-                if(bans.length === 0) { list.innerHTML="<div style='text-align:center;color:#444;margin-top:20px;'>No Banned Devices</div>"; return; }
-                bans.forEach(b => {
-                    list.innerHTML += `
-                    <div class="card banned">
-                        <div class="head-row"><span class="main-text" style="color:var(--danger)">${b}</span></div>
-                        <div class="sub-text">BANNED</div>
-                        <div class="actions">
-                            <button class="btn-icon btn-copy" onclick="copyTxt('${b}')"><i class="fas fa-copy"></i></button>
-                            <button class="btn-icon" onclick="unbanUser('${b}')" style="width:auto; padding:0 10px; color:#fff;">UNBAN</button>
-                        </div>
-                    </div>`;
-                });
-            }
-        }
-
-        function banUser(deviceId) {
-            if(confirm("Ban this device?")) {
-                delete dbData.ActivatedUsers[deviceId];
+                // Ban: Add to banned, remove from Active (optional, but keeps clean)
                 dbData.BannedDevices[deviceId] = "banned";
-                renderUsers();
-                saveData();
+                // We usually keep them in ActivatedUsers too so we know they were valid once, 
+                // but usually banning overrides.
+                showToast("Device Banned");
             }
-        }
-
-        function unbanUser(deviceId) {
-            delete dbData.BannedDevices[deviceId];
             renderUsers();
             saveData();
         }
 
-        // --- SETTINGS TAB ---
+        // --- SETTINGS ---
         function fillSettings() {
             const c = dbData.Config;
             document.getElementById('cfgTitle').value = c.Title || "";
@@ -464,20 +453,6 @@
             document.getElementById('cfgDur').value = c.KeyDurationHours || 4;
             document.getElementById('cfgAdminUrl').value = c.AdminUrl || "";
             document.getElementById('cfgUpdUrl').value = c.UpdateUrl || "";
-            
-            if(c.Texts) {
-                document.getElementById('txtHint').value = c.Texts.Hint || "";
-                document.getElementById('txtBtnKey').value = c.Texts.BtnKey || "";
-                document.getElementById('txtBtnLog').value = c.Texts.BtnLogin || "";
-                document.getElementById('txtBtnAdm').value = c.Texts.BtnAdmin || "";
-            }
-
-            if(c.Api) {
-                document.getElementById('apiBase').value = c.Api.BaseUrl || "";
-                document.getElementById('apiToken').value = c.Api.Token || "";
-            }
-            
-            document.getElementById('dbUrlConf').value = dbUrl;
         }
 
         function saveConfig() {
@@ -488,31 +463,11 @@
             c.KeyDurationHours = parseInt(document.getElementById('cfgDur').value);
             c.AdminUrl = document.getElementById('cfgAdminUrl').value;
             c.UpdateUrl = document.getElementById('cfgUpdUrl').value;
-
-            if(!c.Texts) c.Texts = {};
-            c.Texts.Hint = document.getElementById('txtHint').value;
-            c.Texts.BtnKey = document.getElementById('txtBtnKey').value;
-            c.Texts.BtnLogin = document.getElementById('txtBtnLog').value;
-            c.Texts.BtnAdmin = document.getElementById('txtBtnAdm').value;
-
-            if(!c.Api) c.Api = {};
-            c.Api.BaseUrl = document.getElementById('apiBase').value;
-            c.Api.Token = document.getElementById('apiToken').value;
-
             saveData();
         }
 
-        function updateDbUrl() {
-            const newUrl = document.getElementById('dbUrlConf').value;
-            if(newUrl) {
-                localStorage.setItem("dbUrl", newUrl);
-                window.location.reload();
-            }
-        }
-
-        // --- HELPERS ---
+        // --- UTILS ---
         function switchTab(t) {
-            currentTab = t;
             document.getElementById('tabKeys').classList.add('hidden');
             document.getElementById('tabUsers').classList.add('hidden');
             document.getElementById('tabSettings').classList.add('hidden');
@@ -521,10 +476,10 @@
             document.getElementById('navUsers').classList.remove('active');
             document.getElementById('navSet').classList.remove('active');
 
-            if(t==='keys') {
+            if(t === 'keys') {
                 document.getElementById('tabKeys').classList.remove('hidden');
                 document.getElementById('navKeys').classList.add('active');
-            } else if(t==='users') {
+            } else if(t === 'users') {
                 document.getElementById('tabUsers').classList.remove('hidden');
                 document.getElementById('navUsers').classList.add('active');
             } else {
@@ -533,22 +488,30 @@
             }
         }
 
+        function openKeyModal() {
+            document.getElementById('modalKey').style.display = 'flex';
+        }
+
+        function copyTxt(txt) {
+            navigator.clipboard.writeText(txt).then(() => showToast("Copied to Clipboard"));
+        }
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
             t.classList.add('show');
-            setTimeout(()=>t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 2500);
         }
 
-        function copyTxt(txt) {
-            navigator.clipboard.writeText(txt).then(() => showToast("Copied!"));
+        function resetApp() {
+            if(confirm("Disconnect from current database?")) {
+                localStorage.removeItem("dbUrl");
+                window.location.reload();
+            }
         }
-
-        function resetApp() { localStorage.removeItem("dbUrl"); window.location.reload(); }
 
         // START
         init();
-        setInterval(init, 8000); // Poll every 8s
     </script>
 </body>
 </html>
