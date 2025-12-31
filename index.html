@@ -47,7 +47,7 @@
             --text-muted: #448844;
             --border: #003300;
             --success: #00ff00;
-            --danger: #008800; /* Dim Green for delete */
+            --danger: #008800;
         }
 
         /* THEME: CHERRY */
@@ -187,7 +187,7 @@
         .inp:focus { border-color: var(--primary); }
 
         .btn-full { width: 100%; padding: 12px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px; }
-        .btn-cancel { background: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px; }
+        .btn-cancel { background: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px; cursor: pointer; }
 
         /* Utils */
         .hidden { display: none !important; }
@@ -219,6 +219,16 @@
         <div id="loader" style="text-align: center; padding: 100px 0;">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
             <p style="color: var(--text-muted); margin-top: 15px; font-size: 0.9rem;">SYNCING DATABASE...</p>
+        </div>
+
+        <div id="errorMsg" class="hidden" style="text-align: center; padding: 40px; border: 1px solid var(--danger); border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 15px;"></i>
+            <h3 style="margin: 0 0 10px 0; color: var(--danger);">Connection Failed</h3>
+            <p id="errorTxt" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Unable to fetch data.</p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="act-btn" style="width:auto; padding:0 20px; color:white; border-color:var(--border);" onclick="resetApp()">Reset URL</button>
+                <button class="btn-full" style="width:auto; padding:10px 30px; margin:0;" onclick="window.location.reload()">Retry</button>
+            </div>
         </div>
 
         <div id="mainContent" class="hidden">
@@ -289,6 +299,7 @@
     </div>
 
     <script>
+        // CONFIG
         const DEFAULT_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com/.json";
         const DEFAULT_JSON = {
             "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" },
@@ -297,7 +308,9 @@
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() }
         };
 
+        // --- ROBUST URL HANDLING ---
         let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
+        
         let dbData = null;
         let currentTheme = localStorage.getItem('theme') || 'cyberpunk';
 
@@ -307,13 +320,11 @@
             document.documentElement.setAttribute('data-theme', t);
             localStorage.setItem('theme', t);
             toggleThemeMenu(false);
-            
-            // Update particles color based on CSS var
             const rootStyle = getComputedStyle(document.documentElement);
             const color = rootStyle.getPropertyValue('--primary').trim();
             updateParticlesColor(color);
         }
-        setTheme(currentTheme); // Init
+        setTheme(currentTheme);
 
         function toggleThemeMenu(forceState) {
             const m = document.getElementById('themeMenu');
@@ -324,23 +335,50 @@
             }
         }
 
-        // --- CORE ---
+        // --- CORE (FIXED INIT) ---
         async function init() {
+            // Reset UI
             document.getElementById('loader').style.display = 'block';
             document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('errorMsg').classList.add('hidden');
+
             try {
-                const res = await fetch(dbUrl);
+                // Ensure URL ends in .json
+                let urlToFetch = dbUrl;
+                if (!urlToFetch.endsWith('.json')) urlToFetch += '.json';
+
+                // Fetch with Timeout protection
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+                
+                const res = await fetch(urlToFetch, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if(!res.ok) throw new Error(`HTTP Error ${res.status}`);
+
                 let data = await res.json();
+                
+                // Initialize if empty
                 if(!data) {
-                    await fetch(dbUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_JSON) });
+                    await fetch(urlToFetch, { method: 'PUT', body: JSON.stringify(DEFAULT_JSON) });
                     data = DEFAULT_JSON;
                 }
+
                 dbData = data;
                 ensureStructure();
                 render();
+
+                // Success
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('mainContent').classList.remove('hidden');
-            } catch(e) { alert("Connection Error"); }
+
+            } catch(e) {
+                console.error(e);
+                // Stop loader and show error screen
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('errorMsg').classList.remove('hidden');
+                document.getElementById('errorTxt').innerText = e.message || "Network Error";
+            }
         }
 
         function ensureStructure() {
@@ -351,16 +389,22 @@
         }
 
         async function saveData() {
-            await fetch(dbUrl, { method: 'PUT', body: JSON.stringify(dbData) });
-            showToast("Saved");
+            let urlToSave = dbUrl;
+            if (!urlToSave.endsWith('.json')) urlToSave += '.json';
+            try {
+                await fetch(urlToSave, { method: 'PUT', body: JSON.stringify(dbData) });
+                showToast("Saved");
+            } catch(e) { showToast("Save Failed"); }
         }
 
         function render() {
             renderKeys();
             renderUsers();
-            document.getElementById('cfgTitle').value = dbData.Config.Title || "";
-            document.getElementById('cfgSub').value = dbData.Config.Subtitle || "";
-            document.getElementById('cfgAdminUrl').value = dbData.Config.AdminUrl || "";
+            if(dbData.Config) {
+                document.getElementById('cfgTitle').value = dbData.Config.Title || "";
+                document.getElementById('cfgSub').value = dbData.Config.Subtitle || "";
+                document.getElementById('cfgAdminUrl').value = dbData.Config.AdminUrl || "";
+            }
         }
 
         // --- KEYS ---
@@ -373,7 +417,6 @@
             keys.forEach(k => {
                 if(search && !k.toLowerCase().includes(search)) return;
                 
-                // Get Time
                 let timeStr = "Unknown Date";
                 const rawTime = dbData.ValidKeys[k];
                 if(rawTime && rawTime.length > 10) {
@@ -407,7 +450,7 @@
             for(let i=0; i<qty; i++) {
                 const rnd = Math.random().toString(36).substring(2,8).toUpperCase();
                 const k = `${pre}-${rnd}`;
-                dbData.ValidKeys[k] = new Date().toISOString(); // Store Time
+                dbData.ValidKeys[k] = new Date().toISOString();
             }
             closeModal('modalKey');
             renderKeys();
@@ -433,20 +476,21 @@
             closeModal('modalEdit');
         }
 
-        // --- USERS ---
+        // --- USERS (Corrected Toggle Logic) ---
         function renderUsers() {
             const list = document.getElementById('userList');
             list.innerHTML = "";
             const search = document.getElementById('searchDev').value.toLowerCase();
             
-            const allUsers = [...Object.keys(dbData.ActivatedUsers), ...Object.keys(dbData.BannedDevices)];
+            const allUsers = [...Object.keys(dbData.ActivatedUsers || {}), ...Object.keys(dbData.BannedDevices || {})];
             const uniqueUsers = [...new Set(allUsers)];
 
             uniqueUsers.forEach(u => {
                 if(u === 'placeholder' || u === 'test_ban') return;
                 if(search && !u.toLowerCase().includes(search)) return;
 
-                const isBanned = dbData.BannedDevices[u] !== undefined;
+                // Check ban status safely
+                const isBanned = dbData.BannedDevices && dbData.BannedDevices[u] !== undefined;
                 
                 list.innerHTML += `
                 <div class="card" style="border-left: 3px solid ${isBanned ? 'var(--danger)' : 'var(--success)'}">
@@ -464,10 +508,11 @@
                     </div>
                 </div>`;
             });
+            if(uniqueUsers.length === 0) list.innerHTML = "<p style='text-align:center; color:var(--text-muted)'>No devices found</p>";
         }
 
         function toggleBan(u) {
-            if(dbData.BannedDevices[u]) {
+            if(dbData.BannedDevices && dbData.BannedDevices[u]) {
                 delete dbData.BannedDevices[u]; // Unban
                 dbData.ActivatedUsers[u] = "active";
             } else {
@@ -499,7 +544,7 @@
             dbData.Config.AdminUrl = document.getElementById('cfgAdminUrl').value;
             saveData();
         }
-        function resetApp() { if(confirm("Reset?")) { localStorage.removeItem("dbUrl"); location.reload(); } }
+        function resetApp() { if(confirm("Reset URL?")) { localStorage.removeItem("dbUrl"); location.reload(); } }
         function copyTxt(t) { navigator.clipboard.writeText(t); showToast("Copied"); }
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
 
@@ -513,8 +558,6 @@
         window.addEventListener('resize', resize); resize();
 
         function updateParticlesColor(hex) {
-            // Simple hex to rgba conversion
-            // This is rough but works for main colors
             pColor = hex; 
         }
 
