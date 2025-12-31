@@ -253,7 +253,7 @@
     </div>
 
     <script>
-        // --- CONFIG ---
+        // --- 1. DEFINE VARIABLES FIRST ---
         const DEFAULT_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_JSON = {
             "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" },
@@ -262,8 +262,18 @@
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() }
         };
 
-        // --- CORE FUNCTIONS ---
-        // 1. ROBUST URL CLEANER (Fixes .json.json or / or spaces)
+        // Variable for Particles
+        const cvs = document.getElementById('particles');
+        const ctx = cvs.getContext('2d');
+        let parts = [];
+        let pColor = "rgba(0, 229, 255, 0.2)";
+
+        // State Variables
+        let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
+        let dbData = null;
+        let currentTheme = localStorage.getItem('theme') || 'cyberpunk';
+
+        // --- 2. DEFINE HELPER FUNCTIONS ---
         function getCleanUrl(url) {
             let clean = url.trim();
             // Loop until we stripped all trailing slashes and .jsons
@@ -274,10 +284,7 @@
             return clean + ".json";
         }
 
-        let dbUrl = localStorage.getItem("dbUrl") || DEFAULT_URL;
-        let dbData = null;
-        let currentTheme = localStorage.getItem('theme') || 'cyberpunk';
-
+        // --- 3. CORE LOGIC ---
         async function init() {
             document.getElementById('loader').style.display = 'block';
             document.getElementById('mainContent').classList.add('hidden');
@@ -333,7 +340,7 @@
             catch(e) { showToast("Save Failed"); }
         }
 
-        // --- RENDERERS ---
+        // --- 4. RENDERERS ---
         function render() {
             renderKeys();
             renderUsers();
@@ -352,10 +359,9 @@
 
             keys.forEach(k => {
                 if(search && !k.toLowerCase().includes(search)) return;
-                // FAIL-SAFE DATE PARSING
                 let timeStr = "Manual Key";
                 const rawTime = dbData.ValidKeys[k];
-                if(rawTime && rawTime.length > 5) { // Ensure it's not just "active"
+                if(rawTime && rawTime.length > 5) { 
                     try { 
                         const d = new Date(rawTime);
                         if(!isNaN(d.getTime())) {
@@ -398,7 +404,7 @@
             if(list.innerHTML === "") list.innerHTML = "<p style='text-align:center; color:var(--text-muted); margin-top:20px;'>No devices found</p>";
         }
 
-        // --- LOGIC ---
+        // --- 5. LOGIC FUNCTIONS ---
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const pre = document.getElementById('keyPrefix').value.toUpperCase() || "KEY";
@@ -448,21 +454,21 @@
             document.getElementById(t==='keys'?'navKeys':(t==='devices'?'navDev':'navSet')).classList.add('active');
         }
 
-        // --- THEME ---
+        // --- 6. THEME & PARTICLES ---
         function setTheme(t) { currentTheme=t; document.documentElement.setAttribute('data-theme',t); localStorage.setItem('theme',t); toggleThemeMenu(false); updateParticles(t); }
         function toggleThemeMenu(force) { const m=document.getElementById('themeMenu'); if(force!==undefined) m.classList.toggle('show',force); else m.classList.toggle('show'); }
-        setTheme(currentTheme);
-
-        // --- PARTICLES ---
-        const cvs=document.getElementById('particles'), ctx=cvs.getContext('2d');
-        let parts=[], pColor="rgba(0,229,255,0.2)";
+        
         function resize(){cvs.width=window.innerWidth; cvs.height=window.innerHeight;} window.addEventListener('resize',resize); resize();
         function updateParticles(t){ pColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(); }
+        
         class P{ constructor(){this.reset()} reset(){this.x=Math.random()*cvs.width; this.y=Math.random()*cvs.height; this.v=(Math.random()*0.5)+0.2; this.s=Math.random()*2} up(){this.y-=this.v; if(this.y<0)this.reset()} dr(){ctx.fillStyle=pColor; ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill()} }
         for(let i=0;i<50;i++) parts.push(new P());
-        function anim(){ctx.clearRect(0,0,cvs.width,cvs.height); parts.forEach(p=>{p.up();p.dr()}); requestAnimationFrame(anim)} anim();
-
-        init();
+        function anim(){ctx.clearRect(0,0,cvs.width,cvs.height); parts.forEach(p=>{p.up();p.dr()}); requestAnimationFrame(anim)} 
+        
+        // --- 7. START ---
+        setTheme(currentTheme); // Set theme first to ensure pColor is ready
+        anim(); // Start animation
+        init(); // Start Database Sync
     </script>
 </body>
 </html>
