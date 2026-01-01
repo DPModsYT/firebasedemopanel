@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V7.0</title>
+    <title>Gateway Admin V8.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -20,7 +20,7 @@
 
         /* --- THEMES --- */
         [data-theme="cyberpunk"] { --bg:#050508; --accent:#00e5ff; }
-        [data-theme="matrix"] { --bg:#000000; --card:rgba(0, 20, 0, 0.7); --nav:rgba(0, 30, 0, 0.9); --accent:#00ff00; --green:#00ff00; --red:#008800; }
+        [data-theme="matrix"] { --bg:#000000; --card:rgba(0, 20, 0, 0.8); --nav:rgba(0, 30, 0, 0.9); --accent:#00ff00; --green:#00ff00; --red:#008800; }
         [data-theme="blood"] { --bg:#0f0202; --card:rgba(30, 5, 5, 0.6); --nav:rgba(40, 5, 5, 0.8); --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
         [data-theme="gold"] { --bg:#0a0800; --card:rgba(30, 25, 10, 0.6); --nav:rgba(40, 35, 10, 0.8); --accent:#ffd700; --green:#ffeb3b; --red:#ff4500; color:#fff; }
         [data-theme="ice"] { --bg:#00080a; --card:rgba(10, 30, 40, 0.6); --nav:rgba(10, 40, 50, 0.8); --accent:#00ffff; --green:#a0ffff; --red:#ff0055; }
@@ -37,32 +37,7 @@
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 110px; overflow-x: hidden; transition: background 0.4s ease; }
         
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
-        
-        /* --- ANIMATION OVERLAYS --- */
         #themeOverlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: flex; align-items: center; justify-content: center; opacity: 0.3; overflow: hidden; }
-        
-        /* Sharingan */
-        .sharingan {
-            width: 300px; height: 300px; border-radius: 50%; border: 8px solid #000; background: #a80000;
-            position: relative; animation: spin 4s linear infinite; box-shadow: 0 0 50px #ff0000; display: none;
-        }
-        .sharingan::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; height: 60%; border-radius: 50%; border: 4px solid #000; }
-        .tomoe { position: absolute; width: 30px; height: 30px; background: #000; border-radius: 50%; }
-        .tomoe:nth-child(1) { top: 10%; left: 50%; transform: translateX(-50%); }
-        .tomoe:nth-child(2) { bottom: 20%; right: 15%; }
-        .tomoe:nth-child(3) { bottom: 20%; left: 15%; }
-        .tomoe::after { content:''; position: absolute; top: -10px; left: 5px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 20px solid #000; transform: rotate(15deg); border-radius: 50%; }
-        [data-theme="itachi"] .sharingan { display: block; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Gojo Void */
-        .void-circle {
-            width: 400px; height: 400px; border-radius: 50%; 
-            background: radial-gradient(circle, rgba(196,0,255,0.4) 0%, rgba(0,0,0,0) 70%);
-            animation: pulse 3s ease-in-out infinite; display: none;
-        }
-        [data-theme="gojo"] .void-circle { display: block; }
-        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(0.8); opacity: 0.5; } }
 
         /* --- HEADER --- */
         header { 
@@ -101,18 +76,19 @@
             border-radius: 12px; font-weight: 700; cursor: pointer; 
             display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: var(--shadow); transition: 0.2s;
         }
+        
+        /* --- CHIPS --- */
         .chips { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .chip { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .chip.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
 
-        /* --- CARDS (IMPROVED BLUR) --- */
+        /* --- CARDS --- */
         .item-card { 
             background: var(--card); border: 1px solid var(--border); 
             border-radius: 24px; padding: 20px; margin-bottom: 12px; 
             display: flex; flex-direction: column; gap: 12px;
             backdrop-filter: var(--glass); 
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s, background 0.2s;
             position: relative; overflow: hidden;
         }
         .item-card.active-card::before { content:''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--green); box-shadow: 2px 0 15px var(--green); }
@@ -125,16 +101,15 @@
         .badge.active { background: rgba(0, 255, 157, 0.1); color: var(--green); border: 1px solid rgba(0, 255, 157, 0.2); }
         .badge.banned { background: rgba(255, 0, 85, 0.1); color: var(--red); border: 1px solid rgba(255, 0, 85, 0.2); }
         
-        /* --- DEVICE SPECIFIC --- */
         .device-info { display: flex; align-items: center; gap: 15px; }
         .device-icon { width: 42px; height: 42px; border-radius: 14px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--muted); border: 1px solid var(--border); }
         .active-card .device-icon { color: var(--green); border-color: rgba(0,255,157,0.3); box-shadow: 0 0 15px rgba(0,255,157,0.1); }
         .banned-card .device-icon { color: var(--red); border-color: rgba(255,0,85,0.3); box-shadow: 0 0 15px rgba(255,0,85,0.1); }
         
-        .time-badge { 
+        .info-pill { 
             background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); 
-            display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; color: var(--text);
-            font-size: 0.75rem;
+            display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; color: var(--muted);
+            font-size: 0.7rem; margin-top: 5px;
         }
 
         /* --- SWITCH --- */
@@ -172,6 +147,14 @@
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--nav); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 50px; z-index: 300; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 0.85rem; white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* --- THEME GRID --- */
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 300px; overflow-y: auto; }
+        .theme-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); padding: 15px; 
+            border-radius: 12px; text-align: center; color: var(--muted); font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .theme-btn:hover { background: var(--accent); color: #000; }
+        
         /* --- DPMODS PANEL --- */
         .dp-card { background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; margin-top: 20px; position: relative; overflow: hidden; }
         .dp-card::after { content: ''; position: absolute; top:0; left:0; width:100%; height:4px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
@@ -180,15 +163,11 @@
 <body>
 
     <canvas id="bgCanvas"></canvas>
-    <div id="themeOverlay">
-        <div class="sharingan"><div class="tomoe"></div><div class="tomoe"></div><div class="tomoe"></div></div>
-        <div class="void-circle"></div>
-    </div>
-
+    
     <header>
         <div class="brand"><i class="fas fa-cube"></i> <span id="brandName">...</span></div>
         <div style="display:flex; gap:10px">
-            <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
+            <div class="icon-btn" onclick="openThemeModal()"><i class="fas fa-palette"></i></div>
             <div class="icon-btn" onclick="appInit(true)"><i class="fas fa-sync-alt"></i></div>
         </div>
     </header>
@@ -269,7 +248,6 @@
                     <h4 style="margin:0 0 15px 0; color:var(--accent); font-size:0.85rem; border-bottom:1px solid var(--border); padding-bottom:10px;">API CONNECTION</h4>
                     <div class="inp-group"><label class="inp-label">API BASE URL</label><input type="text" class="input-std" id="confApiUrl" placeholder="https://api.example.com" style="padding-left:15px"></div>
                     <div class="inp-group"><label class="inp-label">API TOKEN</label><input type="text" class="input-std" id="confApiToken" placeholder="sk_live_..." style="padding-left:15px"></div>
-                    
                     <button class="btn-block" onclick="saveConfig()">SAVE CONFIGURATION</button>
                 </div>
 
@@ -316,14 +294,33 @@
 
     <div id="modalEditDevice" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="margin-top:0;">Edit Device ID</h3>
+            <h3 style="margin-top:0;">Edit Device</h3>
             <input type="hidden" id="editDeviceOld">
-            <input type="hidden" id="editDeviceType">
-            <div class="inp-group"><label class="inp-label">DEVICE ID</label><input type="text" class="input-std" id="editDeviceNew" style="padding-left:15px"></div>
+            <input type="hidden" id="editDeviceType"> <div class="inp-group">
+                <label class="inp-label">DEVICE ID</label>
+                <input type="text" class="input-std" id="editDeviceNew" style="padding-left:15px">
+            </div>
+            <div class="inp-group">
+                <label class="inp-label">LINKED KEY</label>
+                <input type="text" class="input-std" id="editDeviceKey" style="padding-left:15px">
+            </div>
+            <div class="inp-group">
+                <label class="inp-label">EXPIRY DATE (READABLE)</label>
+                <input type="text" class="input-std" id="editDeviceExpiry" style="padding-left:15px">
+            </div>
+
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <button class="btn-block" style="margin-top:0" onclick="saveDeviceEdit()">UPDATE</button>
                 <button class="btn-block" style="margin-top:0; background:transparent; border:1px solid var(--border); color:var(--muted)" onclick="closeModal('modalEditDevice')">CANCEL</button>
             </div>
+        </div>
+    </div>
+
+    <div id="modalThemes" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Select Theme</h3>
+            <div class="theme-grid" id="themeList"></div>
+            <button class="btn-block" style="margin-top:15px; background:transparent; border:1px solid var(--border); color:var(--muted)" onclick="closeModal('modalThemes')">CLOSE</button>
         </div>
     </div>
 
@@ -345,24 +342,18 @@
         let dbData = null;
         let devFilter = 'all';
         let themes = ['cyberpunk', 'gold', 'ice', 'nature', 'itachi', 'gojo', 'luffy', 'matrix', 'demon', 'blood'];
-        let curThemeIdx = 0;
+        let curTheme = localStorage.getItem("gateway_theme") || "cyberpunk";
 
-        // DATA STRUCTURE
+        // ENCRYPTED CREDITS
+        const _s1 = "R2F0ZXdheSBQYW5lbCBWOC4w"; 
+        const _s2 = "RFBNb2Rz";
+
         const DEFAULT_DATA = { 
             "Config": { 
-                "Title": "DPMods VIP", 
-                "Subtitle": "GATEWAY V7.0 // ONLINE", 
-                "AdminUrl": "https://t.me/dpmods", 
-                "UpdateUrl": "",
-                "AppVersion": 1,
-                "KeyDurationHours": 24,
+                "Title": "DPMods VIP", "Subtitle": "GATEWAY V8.0 // ONLINE", "AdminUrl": "", "UpdateUrl": "",
+                "AppVersion": 1, "KeyDurationHours": 24,
                 "Api": { "BaseUrl": "", "Token": "" },
-                "Texts": {
-                    "BtnAdmin": "ADMIN SUPPORT",
-                    "BtnKey": "GET KEY",
-                    "BtnLogin": "ACTIVATE SYSTEM",
-                    "Hint": "ENTER ACCESS KEY"
-                }
+                "Texts": { "BtnAdmin": "ADMIN SUPPORT", "BtnKey": "GET KEY", "BtnLogin": "ACTIVATE SYSTEM", "Hint": "ENTER ACCESS KEY" }
             }, 
             "BannedDevices": {}, "ActivatedUsers": {}, "ValidKeys": {} 
         };
@@ -372,13 +363,6 @@
         let particles = [];
         let animationId;
 
-        // ENCRYPTED CREDITS
-        const _s1 = "R2F0ZXdheSBQYW5lbCBWNy4w"; 
-        const _s2 = "RFBNb2Rz";
-
-        // ==========================================
-        // 2. MAIN APP
-        // ==========================================
         function initDecryption() {
             try {
                 document.getElementById('brandName').innerText = atob(_s1);
@@ -389,6 +373,9 @@
 
         async function appInit(isManual = false) {
             initDecryption();
+            document.documentElement.setAttribute('data-theme', curTheme);
+            setAnimation(curTheme);
+
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewSetup').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
@@ -472,12 +459,9 @@
         function renderAll() {
             renderKeys();
             renderDevices();
-            
-            // Stats
             document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
             document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length + Object.keys(dbData.BannedDevices).length;
             
-            // General Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
@@ -485,13 +469,11 @@
             document.getElementById('confUpdateUrl').value = dbData.Config.UpdateUrl || "";
             document.getElementById('confDuration').value = dbData.Config.KeyDurationHours || 24;
 
-            // UI Texts
             document.getElementById('confBtnAdmin').value = dbData.Config.Texts.BtnAdmin || "";
             document.getElementById('confBtnKey').value = dbData.Config.Texts.BtnKey || "";
             document.getElementById('confBtnLogin').value = dbData.Config.Texts.BtnLogin || "";
             document.getElementById('confHint').value = dbData.Config.Texts.Hint || "";
 
-            // API
             document.getElementById('confApiUrl').value = dbData.Config.Api.BaseUrl || "";
             document.getElementById('confApiToken').value = dbData.Config.Api.Token || "";
         }
@@ -511,10 +493,6 @@
                             <div class="icon-btn" style="width:32px; height:32px; border-color:var(--red); color:var(--red);" onclick="delKey('${key}')"><i class="fas fa-trash" style="font-size:0.8rem;"></i></div>
                         </div>
                     </div>
-                    <div class="meta-row">
-                        <span><i class="far fa-clock"></i> ${formatDate(dbData.ValidKeys[key])}</span>
-                        <span class="badge active"><i class="fas fa-check"></i> VALID</span>
-                    </div>
                 </div>`;
             });
         }
@@ -532,9 +510,21 @@
                 if (devFilter === 'allowed' && isBanned) return;
                 if (devFilter === 'banned' && !isBanned) return;
 
-                const rawTime = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
-                let timeStr = formatDate(rawTime);
-                if(timeStr === "Unknown" && !isBanned) timeStr = "Online"; //
+                // Handle Object vs String
+                let devData = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
+                let expiry = "N/A", keyUsed = "Unknown";
+                
+                if(typeof devData === 'object') {
+                    expiry = devData.ExpiryReadable || "N/A";
+                    keyUsed = devData.Key || "N/A";
+                } else {
+                    // Legacy string timestamp
+                     try {
+                        const d = new Date(devData);
+                        if(!isNaN(d)) expiry = d.toLocaleDateString();
+                        else expiry = devData; 
+                    } catch(e) { expiry = devData; }
+                }
 
                 const statusClass = isBanned ? 'banned-card' : 'active-card';
                 const statusText = isBanned ? 'BANNED' : 'AUTHORIZED';
@@ -556,25 +546,21 @@
                             <span class="slider"></span>
                         </label>
                     </div>
+                    
+                    <div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:8px;">
+                         <div class="info-pill"><i class="fas fa-key"></i> ${keyUsed}</div>
+                         <div class="info-pill"><i class="far fa-clock"></i> ${expiry}</div>
+                    </div>
+
                     <div class="meta-row" style="margin-top:5px;">
                         <span class="badge ${badgeClass}">${statusText}</span>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <span class="time-badge"><i class="fas fa-clock" style="font-size:0.7rem"></i> ${timeStr}</span>
-                            <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="editDevice('${dev}', ${isBanned})">
-                                <i class="fas fa-pen" style="font-size:0.8rem"></i>
-                            </div>
+                        <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="editDevice('${dev}', ${isBanned})">
+                            <i class="fas fa-pen" style="font-size:0.8rem"></i>
                         </div>
                     </div>
                 </div>`;
             });
             if(list.innerHTML === "") list.innerHTML = `<div style="text-align:center; padding:40px; color:var(--muted); font-size:0.8rem;">No Devices Found</div>`;
-        }
-
-        function formatDate(isoStr) {
-            try {
-                const d = new Date(isoStr);
-                return isNaN(d) ? "Unknown" : d.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ", " + d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-            } catch(e) { return "Unknown"; }
         }
 
         // ==========================================
@@ -593,36 +579,30 @@
         }
 
         function toggleBan(dev) {
-            const now = new Date().toISOString();
             if (dbData.BannedDevices[dev]) {
-                const oldTime = dbData.BannedDevices[dev];
+                dbData.ActivatedUsers[dev] = dbData.BannedDevices[dev];
                 delete dbData.BannedDevices[dev];
-                dbData.ActivatedUsers[dev] = (oldTime && oldTime.length > 5) ? oldTime : now;
             } else {
-                const oldTime = dbData.ActivatedUsers[dev];
-                dbData.BannedDevices[dev] = (oldTime && oldTime.length > 5) ? oldTime : now;
+                dbData.BannedDevices[dev] = dbData.ActivatedUsers[dev];
                 delete dbData.ActivatedUsers[dev];
             }
             syncDB();
         }
 
         function saveConfig() {
-            // General Settings
             dbData.Config.Title = document.getElementById('confTitle').value;
             dbData.Config.Subtitle = document.getElementById('confSub').value;
             dbData.Config.AdminUrl = document.getElementById('confUrl').value;
             dbData.Config.AppVersion = parseInt(document.getElementById('confVer').value) || 1;
             dbData.Config.UpdateUrl = document.getElementById('confUpdateUrl').value;
             dbData.Config.KeyDurationHours = parseInt(document.getElementById('confDuration').value) || 24;
-
-            // UI Texts
+            
             if(!dbData.Config.Texts) dbData.Config.Texts = {};
             dbData.Config.Texts.BtnAdmin = document.getElementById('confBtnAdmin').value;
             dbData.Config.Texts.BtnKey = document.getElementById('confBtnKey').value;
             dbData.Config.Texts.BtnLogin = document.getElementById('confBtnLogin').value;
             dbData.Config.Texts.Hint = document.getElementById('confHint').value;
 
-            // API
             dbData.Config.Api.BaseUrl = document.getElementById('confApiUrl').value;
             dbData.Config.Api.Token = document.getElementById('confApiToken').value;
             
@@ -643,17 +623,32 @@
         function saveDeviceEdit() {
             const oldDev = document.getElementById('editDeviceOld').value;
             const newDev = document.getElementById('editDeviceNew').value.trim();
+            const newKey = document.getElementById('editDeviceKey').value.trim();
+            const newExpiry = document.getElementById('editDeviceExpiry').value.trim();
             const type = document.getElementById('editDeviceType').value;
-            if(newDev && newDev !== oldDev) {
-                if(type === 'banned') {
-                    dbData.BannedDevices[newDev] = dbData.BannedDevices[oldDev];
-                    delete dbData.BannedDevices[oldDev];
-                } else {
-                    dbData.ActivatedUsers[newDev] = dbData.ActivatedUsers[oldDev];
-                    delete dbData.ActivatedUsers[oldDev];
-                }
-                syncDB();
+
+            // Get current object or create new
+            let targetObj = (type === 'banned') ? dbData.BannedDevices : dbData.ActivatedUsers;
+            let currentData = targetObj[oldDev];
+
+            // If it was just a string, convert to object to support editing
+            if(typeof currentData !== 'object') {
+                currentData = { ExpiryReadable: currentData, Key: "Unknown", ExpiryMs: 0 };
             }
+
+            // Update fields
+            currentData.Key = newKey;
+            currentData.ExpiryReadable = newExpiry;
+
+            // Handle ID Change
+            if(newDev !== oldDev) {
+                targetObj[newDev] = currentData;
+                delete targetObj[oldDev];
+            } else {
+                targetObj[oldDev] = currentData;
+            }
+
+            syncDB();
             closeModal('modalEditDevice');
         }
 
@@ -672,12 +667,23 @@
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function editKey(key) { document.getElementById('editOld').value=key; document.getElementById('editNew').value=key; openModal('modalEdit'); }
+        
         function editDevice(dev, isBanned) {
             document.getElementById('editDeviceOld').value = dev;
             document.getElementById('editDeviceNew').value = dev;
             document.getElementById('editDeviceType').value = isBanned ? 'banned' : 'allowed';
+
+            let data = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
+            if(typeof data === 'object') {
+                document.getElementById('editDeviceKey').value = data.Key || "";
+                document.getElementById('editDeviceExpiry').value = data.ExpiryReadable || "";
+            } else {
+                document.getElementById('editDeviceKey').value = "";
+                document.getElementById('editDeviceExpiry').value = data; // Legacy
+            }
             openModal('modalEditDevice');
         }
+
         function setDevFilter(f, el) {
             devFilter = f;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -691,13 +697,26 @@
             else if(tab === 'devices') { document.getElementById('tabDevices').classList.remove('hidden'); document.getElementById('navDev').classList.add('active'); }
             else { document.getElementById('tabConfig').classList.remove('hidden'); document.getElementById('navConf').classList.add('active'); }
         }
-        function toggleTheme() {
-            curThemeIdx = (curThemeIdx + 1) % themes.length;
-            const theme = themes[curThemeIdx];
-            document.documentElement.setAttribute('data-theme', theme);
-            showToast(`Theme: ${theme.toUpperCase()}`);
-            setAnimation(theme);
+
+        // --- THEME SELECTOR ---
+        function openThemeModal() {
+            const grid = document.getElementById('themeList');
+            grid.innerHTML = "";
+            themes.forEach(t => {
+                grid.innerHTML += `<div class="theme-btn" onclick="selectTheme('${t}')">${t.toUpperCase()}</div>`;
+            });
+            openModal('modalThemes');
         }
+
+        function selectTheme(theme) {
+            curTheme = theme;
+            localStorage.setItem("gateway_theme", theme);
+            document.documentElement.setAttribute('data-theme', theme);
+            setAnimation(theme);
+            closeModal('modalThemes');
+            showToast(`Theme Set: ${theme.toUpperCase()}`);
+        }
+
         function setAnimation(theme) {
             if(animationId) cancelAnimationFrame(animationId);
             canvas.width = window.innerWidth;
@@ -741,8 +760,6 @@
         }
 
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        document.documentElement.setAttribute('data-theme', 'cyberpunk');
-        setAnimation('cyberpunk');
         appInit();
     </script>
 </body>
