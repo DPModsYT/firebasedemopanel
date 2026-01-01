@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V8.0</title>
+    <title>Gateway Admin V8.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -345,12 +345,12 @@
         let curTheme = localStorage.getItem("gateway_theme") || "cyberpunk";
 
         // ENCRYPTED CREDITS
-        const _s1 = "R2F0ZXdheSBQYW5lbCBWOC4w"; 
+        const _s1 = "R2F0ZXdheSBQYW5lbCBWOC4x"; 
         const _s2 = "RFBNb2Rz";
 
         const DEFAULT_DATA = { 
             "Config": { 
-                "Title": "DPMods VIP", "Subtitle": "GATEWAY V8.0 // ONLINE", "AdminUrl": "", "UpdateUrl": "",
+                "Title": "DPMods VIP", "Subtitle": "GATEWAY V8.1 // ONLINE", "AdminUrl": "", "UpdateUrl": "",
                 "AppVersion": 1, "KeyDurationHours": 24,
                 "Api": { "BaseUrl": "", "Token": "" },
                 "Texts": { "BtnAdmin": "ADMIN SUPPORT", "BtnKey": "GET KEY", "BtnLogin": "ACTIVATE SYSTEM", "Hint": "ENTER ACCESS KEY" }
@@ -510,7 +510,6 @@
                 if (devFilter === 'allowed' && isBanned) return;
                 if (devFilter === 'banned' && !isBanned) return;
 
-                // Handle Object vs String
                 let devData = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
                 let expiry = "N/A", keyUsed = "Unknown";
                 
@@ -518,7 +517,6 @@
                     expiry = devData.ExpiryReadable || "N/A";
                     keyUsed = devData.Key || "N/A";
                 } else {
-                    // Legacy string timestamp
                      try {
                         const d = new Date(devData);
                         if(!isNaN(d)) expiry = d.toLocaleDateString();
@@ -554,8 +552,13 @@
 
                     <div class="meta-row" style="margin-top:5px;">
                         <span class="badge ${badgeClass}">${statusText}</span>
-                        <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="editDevice('${dev}', ${isBanned})">
-                            <i class="fas fa-pen" style="font-size:0.8rem"></i>
+                        <div style="display:flex; gap:8px;">
+                            <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="editDevice('${dev}', ${isBanned})">
+                                <i class="fas fa-pen" style="font-size:0.8rem"></i>
+                            </div>
+                            <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent; color:var(--red);" onclick="delDevice('${dev}')">
+                                <i class="fas fa-trash" style="font-size:0.8rem"></i>
+                            </div>
                         </div>
                     </div>
                 </div>`;
@@ -587,6 +590,14 @@
                 delete dbData.ActivatedUsers[dev];
             }
             syncDB();
+        }
+
+        function delDevice(dev) {
+            if(confirm("Permanently delete this device and all its data?")) {
+                if(dbData.ActivatedUsers[dev]) delete dbData.ActivatedUsers[dev];
+                if(dbData.BannedDevices[dev]) delete dbData.BannedDevices[dev];
+                syncDB();
+            }
         }
 
         function saveConfig() {
@@ -627,20 +638,16 @@
             const newExpiry = document.getElementById('editDeviceExpiry').value.trim();
             const type = document.getElementById('editDeviceType').value;
 
-            // Get current object or create new
             let targetObj = (type === 'banned') ? dbData.BannedDevices : dbData.ActivatedUsers;
             let currentData = targetObj[oldDev];
 
-            // If it was just a string, convert to object to support editing
             if(typeof currentData !== 'object') {
                 currentData = { ExpiryReadable: currentData, Key: "Unknown", ExpiryMs: 0 };
             }
 
-            // Update fields
             currentData.Key = newKey;
             currentData.ExpiryReadable = newExpiry;
 
-            // Handle ID Change
             if(newDev !== oldDev) {
                 targetObj[newDev] = currentData;
                 delete targetObj[oldDev];
@@ -679,7 +686,7 @@
                 document.getElementById('editDeviceExpiry').value = data.ExpiryReadable || "";
             } else {
                 document.getElementById('editDeviceKey').value = "";
-                document.getElementById('editDeviceExpiry').value = data; // Legacy
+                document.getElementById('editDeviceExpiry').value = data; 
             }
             openModal('modalEditDevice');
         }
