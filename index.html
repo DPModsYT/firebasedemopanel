@@ -3,76 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin Panel</title>
+    <title>Gateway Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- CSS VARIABLES --- */
-        :root {
-            --bg: #050508; --card: #0e0e14; --nav: #161621; 
-            --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; 
-            --border: rgba(255, 255, 255, 0.08); 
-            --green: #00ff9d; --red: #ff0055;
-        }
+        :root { --bg: #050508; --card: #0e0e14; --nav: #161621; --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; --border: rgba(255, 255, 255, 0.08); --green: #00ff9d; --red: #ff0055; }
         [data-theme="blood"] { --bg:#1a0505; --card:#2b0a0a; --nav:#360000; --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
         [data-theme="matrix"] { --bg:#000000; --card:#051a05; --nav:#001100; --accent:#00ff00; --green:#00ff00; --red:#008800; }
         [data-theme="cherry"] { --bg:#1a0f14; --card:#26161c; --nav:#331e26; --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
 
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
-        
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
-        header { 
-            position: sticky; top: 0; z-index: 50; 
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border); padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        header { position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
         .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
         .brand i { color: var(--accent); }
-        .icon-btn { 
-            width: 40px; height: 40px; border-radius: 10px; 
-            background: var(--card); border: 1px solid var(--border); color: var(--text);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
+        .icon-btn { width: 40px; height: 40px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .icon-btn:active { transform: scale(0.95); }
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
 
-        /* Controls */
         .controls { display: flex; gap: 10px; margin-bottom: 15px; }
         .search { position: relative; flex: 1; }
         .search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-        .input-std { 
-            width: 100%; background: var(--card); border: 1px solid var(--border); 
-            padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; 
-            font-family: 'Inter', sans-serif; font-size: 0.9rem;
-        }
-        .btn-main { 
-            background: var(--accent); color: #000; border: none; padding: 0 20px; 
-            border-radius: 12px; font-weight: 700; cursor: pointer; 
-            display: flex; align-items: center; gap: 8px; white-space: nowrap;
-        }
+        .input-std { width: 100%; background: var(--card); border: 1px solid var(--border); padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
+        .btn-main { background: var(--accent); color: #000; border: none; padding: 0 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 
-        /* Cards */
-        .item-card { 
-            background: var(--card); border: 1px solid var(--border); 
-            border-radius: 16px; padding: 16px; margin-bottom: 12px; 
-            display: flex; flex-direction: column; gap: 10px;
-        }
+        .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
         .row-top { display: flex; justify-content: space-between; align-items: center; }
         .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 0.95rem; word-break: break-all; }
-        .meta-row { 
-            border-top: 1px solid var(--border); padding-top: 10px; 
-            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted);
-        }
+        .meta-row { border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); }
         .badge { color: var(--green); font-weight: 700; text-transform: uppercase; }
         .badge.banned { color: var(--red); }
 
-        /* Switch */
         .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 24px; transition: .3s; }
@@ -80,30 +46,15 @@
         input:checked + .slider { background: var(--red); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* Nav */
         .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
-        .nav-inner { 
-            background: var(--nav); border: 1px solid var(--border); 
-            padding: 0 15px; height: 65px; border-radius: 20px; width: 90%; max-width: 400px;
-            display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        .nav-inner { background: var(--nav); border: 1px solid var(--border); padding: 0 15px; height: 65px; border-radius: 20px; width: 90%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; }
         .nav-btn.active { color: var(--accent); transform: translateY(-2px); text-shadow: 0 0 10px rgba(0,229,255,0.3); }
         .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; }
 
-        /* Error Screen */
-        .error-box { 
-            text-align: center; padding: 30px 20px; border: 1px solid var(--red); 
-            border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px; 
-        }
-        .debug-box { 
-            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; 
-            margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; 
-            color: #ddd; font-size: 0.8rem; 
-        }
+        .error-box { text-align: center; padding: 30px 20px; border: 1px solid var(--red); border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px; }
+        .debug-box { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; color: #ddd; font-size: 0.8rem; }
 
-        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: var(--card); width: 90%; max-width: 320px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
         .btn-block { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-weight: 700; margin-top: 10px; }
@@ -135,7 +86,7 @@
         <div id="viewError" class="hidden error-box">
             <i class="fas fa-wifi" style="font-size: 3rem; color: var(--red); margin-bottom: 15px;"></i>
             <h3 style="color: var(--red); margin: 0;">Connection Failed</h3>
-            <p style="color: var(--muted);">Unable to reach Firebase.</p>
+            <p style="color: var(--muted); margin: 10px 0;" id="errorText">Network Error</p>
             
             <div class="debug-box">
                 <strong>TARGET:</strong><br>
@@ -218,9 +169,8 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. CRITICAL: VARIABLE DEFINITIONS (TOP)
-        // ==========================================
+        // --- 1. SAFE VARIABLE DEFINITIONS ---
+        // Prevents initialization errors by declaring everything first
         const HARDCODED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_DATA = { 
             "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" }, 
@@ -229,54 +179,55 @@
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
         };
 
-        // Global State - DEFINED FIRST TO AVOID CRASHES
-        let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
+        let dbUrl = localStorage.getItem("dbUrl");
         let dbData = null;
         let themes = ['cyberpunk', 'blood', 'matrix', 'cherry'];
         let curThemeIdx = 0;
-
-        // Canvas Vars
+        
+        // Canvas Setup
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let accentColor = "rgba(0, 229, 255, 0.3)";
 
-        // ==========================================
-        // 2. URL SANITIZER (Auto-Fixer)
-        // ==========================================
-        function sanitizeUrl(url) {
-            let clean = url.trim();
-            // Remove trailing slashes or .json
-            while(clean.endsWith('/') || clean.endsWith('.json')) {
-                if(clean.endsWith('/')) clean = clean.slice(0, -1);
-                if(clean.endsWith('.json')) clean = clean.slice(0, -5);
+        // --- 2. URL CLEANER & AUTO-REPAIR ---
+        function getSafeUrl(inputUrl) {
+            let url = inputUrl ? inputUrl.trim() : "";
+            
+            // If completely empty, use hardcoded default
+            if (!url) return HARDCODED_URL + ".json";
+
+            // Strip everything after .com or .json recursively
+            if (url.includes("firebaseio.com")) {
+                url = url.split("firebaseio.com")[0] + "firebaseio.com";
             }
-            return clean + ".json";
+            
+            // Add single json extension
+            return url + ".json";
         }
 
-        // FORCE FIX ON LOAD
-        if (!dbUrl.includes("appurl-8eec4") || dbUrl.includes(".json.json")) {
+        // AUTO-FIX: If stored URL is garbage, reset it immediately
+        if (!dbUrl || !dbUrl.includes("appurl-8eec4")) {
             dbUrl = HARDCODED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
 
-        // ==========================================
-        // 3. CORE LOGIC
-        // ==========================================
+        // --- 3. CORE APP LOGIC ---
         async function appInit() {
+            // UI State: Loading
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewError').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
 
-            const finalUrl = sanitizeUrl(dbUrl);
+            const finalUrl = getSafeUrl(dbUrl) + "?t=" + Date.now(); // Cache Buster
             document.getElementById('debugUrl').innerText = finalUrl;
 
-            // Timeout Protection (10s)
+            // 15 Second Timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
 
             try {
-                // Fetch Request (Standard Mode to fix CORS issues)
+                // Fetch request
                 const response = await fetch(finalUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
@@ -284,12 +235,9 @@
 
                 let data = await response.json();
 
-                // If DB is empty, initialize it
+                // Initialize empty DB
                 if (!data) {
-                    await fetch(finalUrl, {
-                        method: 'PUT',
-                        body: JSON.stringify(DEFAULT_DATA)
-                    });
+                    await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_DATA) });
                     data = DEFAULT_DATA;
                 }
 
@@ -297,12 +245,13 @@
                 ensureDataStructure();
                 renderAll();
 
-                // Success State
+                // UI State: Success
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewDashboard').classList.remove('hidden');
 
             } catch (err) {
                 console.error(err);
+                document.getElementById('errorText').innerText = err.message;
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewError').classList.remove('hidden');
             }
@@ -316,7 +265,7 @@
         }
 
         async function syncDB() {
-            const finalUrl = sanitizeUrl(dbUrl);
+            const finalUrl = getSafeUrl(dbUrl);
             try {
                 await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(dbData) });
                 showToast("Saved");
@@ -325,9 +274,7 @@
             }
         }
 
-        // ==========================================
-        // 4. RENDERERS
-        // ==========================================
+        // --- 4. RENDERERS ---
         function renderAll() {
             renderKeys();
             renderDevices();
@@ -396,18 +343,14 @@
             });
         }
 
-        // ==========================================
-        // 5. ACTIONS
-        // ==========================================
+        // --- 5. ACTIONS ---
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const prefix = document.getElementById('keyPrefix').value.toUpperCase();
-            
             for(let i=0; i<qty; i++) {
                 const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
                 dbData.ValidKeys[`${prefix}-${rnd}`] = new Date().toISOString();
             }
-            
             closeModal('modalKey');
             renderAll();
             syncDB();
@@ -457,9 +400,7 @@
             }
         }
 
-        // ==========================================
-        // 6. UTILITIES
-        // ==========================================
+        // --- 6. UTILS ---
         function hardReset() {
             localStorage.removeItem("dbUrl");
             location.reload();
@@ -472,21 +413,13 @@
             setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        function copy(txt) {
-            navigator.clipboard.writeText(txt);
-            showToast("Copied");
-        }
-
+        function copy(txt) { navigator.clipboard.writeText(txt); showToast("Copied"); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function switchTab(tab) {
-            ['Keys', 'Devices', 'Config'].forEach(t => {
-                document.getElementById(`tab${t}`).classList.add('hidden');
-            });
-            ['Key', 'Dev', 'Conf'].forEach(n => {
-                document.getElementById(`nav${n}`).classList.remove('active');
-            });
+            ['Keys', 'Devices', 'Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
+            ['Key', 'Dev', 'Conf'].forEach(n => document.getElementById(`nav${n}`).classList.remove('active'));
 
             if(tab === 'keys') {
                 document.getElementById('tabKeys').classList.remove('hidden');
@@ -500,14 +433,11 @@
             }
         }
 
-        // ==========================================
-        // 7. VISUALS
-        // ==========================================
+        // --- 7. VISUALS (THEME & PARTICLES) ---
         function toggleTheme() {
             curThemeIdx = (curThemeIdx + 1) % themes.length;
             const theme = themes[curThemeIdx];
             document.documentElement.setAttribute('data-theme', theme);
-            
             const style = getComputedStyle(document.documentElement);
             accentColor = style.getPropertyValue('--primary').trim();
         }
@@ -541,17 +471,12 @@
             requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // ==========================================
-        // 8. STARTUP SEQUENCE
-        // ==========================================
+        // --- 8. STARTUP ---
         document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
-        appInit(); 
+        appInit(); // Start the app immediately
 
     </script>
 </body>
