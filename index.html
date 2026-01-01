@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V5</title>
+    <title>Gateway Admin V5.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -96,7 +96,7 @@
         .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); font-size: 0.95rem; word-break: break-all; opacity: 0.9; }
         .meta-row { 
             border-top: 1px solid var(--border); padding: 10px 0 0 10px; 
-            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted);
+            display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted);
             align-items: center;
         }
         .badge { font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; font-size: 0.6rem; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; }
@@ -112,6 +112,12 @@
         }
         .active-card .device-icon { color: var(--green); border-color: rgba(0,255,157,0.3); }
         .banned-card .device-icon { color: var(--red); border-color: rgba(255,0,85,0.3); }
+        
+        /* Time Display */
+        .time-badge {
+            background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border);
+            display: inline-flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace;
+        }
 
         /* --- SWITCH --- */
         .switch { position: relative; width: 48px; height: 26px; }
@@ -297,6 +303,18 @@
         </div>
     </div>
 
+    <div id="modalEditDevice" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Edit Device ID</h3>
+            <input type="hidden" id="editDeviceOld">
+            <input type="hidden" id="editDeviceType"> <div class="inp-group"><label class="inp-label">DEVICE ID</label><input type="text" class="input-std" id="editDeviceNew" style="padding-left:15px"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button class="btn-block" style="margin-top:0" onclick="saveDeviceEdit()">UPDATE</button>
+                <button class="btn-block" style="margin-top:0; background:transparent; border:1px solid var(--border); color:var(--muted)" onclick="closeModal('modalEditDevice')">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--green)"></i><span>Action Successful</span></div>
 
     <div class="nav-fixed">
@@ -317,14 +335,15 @@
         let themes = ['cyberpunk', 'blood', 'matrix', 'cherry', 'naruto', 'itachi', 'demonslayer'];
         let curThemeIdx = 0;
 
-        // Default Structure if DB is empty
+        // Default Structure
+        // NOTE: Updated default device to include a Timestamp instead of just "active"
         const DEFAULT_DATA = { 
             "Config": { 
                 "Title": "Gateway Panel", "Subtitle": "ONLINE", "AdminUrl": "", 
                 "Api": { "BaseUrl": "", "Token": "", "Secret": "" } 
             }, 
-            "BannedDevices": { "test_device_ban": "banned" }, 
-            "ActivatedUsers": { "test_device_allow": "active" }, 
+            "BannedDevices": { "test_device_ban": new Date().toISOString() }, 
+            "ActivatedUsers": { "test_device_allow": new Date().toISOString() }, 
             "ValidKeys": { "VIP-EXAMPLE": new Date().toISOString() } 
         };
 
@@ -338,13 +357,11 @@
         // 2. APP LOGIC
         // ==========================================
         async function appInit(isManual = false) {
-            // UI Reset
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewSetup').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
             document.querySelector('.nav-fixed').classList.add('hidden');
 
-            // Check URL
             if (!dbUrl) {
                 setTimeout(() => {
                     document.getElementById('viewLoader').classList.add('hidden');
@@ -353,7 +370,6 @@
                 return;
             }
 
-            // Fetch Data
             const finalUrl = sanitizeUrl(dbUrl);
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -365,7 +381,6 @@
                 if (!response.ok) throw new Error("Connection failed");
                 let data = await response.json();
 
-                // Initialize if null
                 if (!data) {
                     await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_DATA) });
                     data = DEFAULT_DATA;
@@ -375,7 +390,6 @@
                 ensureDataStructure();
                 renderAll();
 
-                // Show Dashboard
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewDashboard').classList.remove('hidden');
                 document.querySelector('.nav-fixed').classList.remove('hidden');
@@ -383,7 +397,6 @@
 
             } catch (err) {
                 console.error(err);
-                // On error, allow user to reset URL
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewSetup').classList.remove('hidden');
                 showToast("Connection Error: Check URL");
@@ -393,20 +406,15 @@
         function saveUrlAndConnect() {
             const inp = document.getElementById('inputDbUrl').value.trim();
             if(!inp) return showToast("Please enter a URL");
-            
-            // Basic format fix
             let clean = inp;
             if(!clean.startsWith("http")) clean = "https://" + clean;
             if(!clean.includes("firebaseio.com")) clean += ".firebaseio.com";
-
             localStorage.setItem("gateway_db_url", clean);
             dbUrl = clean;
             appInit();
         }
 
-        function sanitizeUrl(url) {
-            return url.endsWith("/") ? url + ".json" : url + "/.json";
-        }
+        function sanitizeUrl(url) { return url.endsWith("/") ? url + ".json" : url + "/.json"; }
 
         function ensureDataStructure() {
             if(!dbData.ValidKeys) dbData.ValidKeys = {};
@@ -439,12 +447,8 @@
         function renderAll() {
             renderKeys();
             renderDevices();
-            
-            // Stats
             document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
             document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length + Object.keys(dbData.BannedDevices).length;
-
-            // Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
@@ -457,16 +461,8 @@
             const list = document.getElementById('listKeys');
             const search = document.getElementById('searchKeys').value.toLowerCase();
             list.innerHTML = "";
-
             Object.keys(dbData.ValidKeys).reverse().forEach(key => {
                 if (search && !key.toLowerCase().includes(search)) return;
-                
-                let dateStr = "N/A";
-                try {
-                    const d = new Date(dbData.ValidKeys[key]);
-                    if(!isNaN(d)) dateStr = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                } catch(e){}
-
                 list.innerHTML += `
                 <div class="item-card active-card">
                     <div class="row-top">
@@ -477,7 +473,7 @@
                         </div>
                     </div>
                     <div class="meta-row">
-                        <span><i class="far fa-clock"></i> ${dateStr}</span>
+                        <span><i class="far fa-clock"></i> ${formatDate(dbData.ValidKeys[key])}</span>
                         <span class="badge active"><i class="fas fa-check"></i> VALID</span>
                     </div>
                 </div>`;
@@ -488,8 +484,6 @@
             const list = document.getElementById('listDevices');
             const search = document.getElementById('searchDevs').value.toLowerCase();
             list.innerHTML = "";
-
-            // Merge Lists
             const allDevs = [...new Set([...Object.keys(dbData.ActivatedUsers), ...Object.keys(dbData.BannedDevices)])];
 
             allDevs.forEach(dev => {
@@ -497,9 +491,12 @@
                 if(search && !dev.toLowerCase().includes(search)) return;
 
                 const isBanned = dbData.BannedDevices[dev] !== undefined;
-
                 if (devFilter === 'allowed' && isBanned) return;
                 if (devFilter === 'banned' && !isBanned) return;
+
+                // Get Time Value (Check both lists)
+                const rawTime = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
+                const timeStr = formatDate(rawTime);
 
                 const statusClass = isBanned ? 'banned-card' : 'active-card';
                 const statusText = isBanned ? 'BANNED' : 'AUTHORIZED';
@@ -523,14 +520,31 @@
                     </div>
                     <div class="meta-row" style="margin-top:5px;">
                         <span class="badge ${badgeClass}">${statusText}</span>
-                        <div class="icon-btn" style="width:24px; height:24px; border:none; background:transparent;" onclick="copy('${dev}')">
-                            <i class="far fa-copy" style="font-size:0.8rem"></i>
+                        
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <span class="time-badge"><i class="fas fa-clock" style="font-size:0.7rem"></i> ${timeStr}</span>
+                            <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="editDevice('${dev}', ${isBanned})">
+                                <i class="fas fa-pen" style="font-size:0.8rem"></i>
+                            </div>
+                            <div class="icon-btn" style="width:28px; height:28px; border:none; background:transparent;" onclick="copy('${dev}')">
+                                <i class="far fa-copy" style="font-size:0.8rem"></i>
+                            </div>
                         </div>
                     </div>
                 </div>`;
             });
             
             if(list.innerHTML === "") list.innerHTML = `<div style="text-align:center; padding:40px; color:var(--muted); font-size:0.8rem;">No Devices Found</div>`;
+        }
+
+        // Helper: Format Date with Seconds
+        function formatDate(isoStr) {
+            try {
+                const d = new Date(isoStr);
+                if(isNaN(d)) return "Unknown";
+                return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ", " + 
+                       d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            } catch(e) { return "Unknown"; }
         }
 
         // ==========================================
@@ -549,14 +563,21 @@
         }
 
         function toggleBan(dev) {
+            const now = new Date().toISOString();
             if (dbData.BannedDevices[dev]) {
+                // Unban: Keep old time if valid, else use now
+                const oldTime = dbData.BannedDevices[dev];
                 delete dbData.BannedDevices[dev];
-                dbData.ActivatedUsers[dev] = "active";
+                // Check if oldTime is a valid date string, if not use now
+                dbData.ActivatedUsers[dev] = (oldTime && oldTime.length > 10) ? oldTime : now;
             } else {
-                dbData.BannedDevices[dev] = "banned";
-                // Optional: keep it in activated list or remove? 
-                // Usually keeping it in activated but marking as banned is safer for data, 
-                // but here we toggle purely based on presence in BannedDevices.
+                // Ban
+                const oldTime = dbData.ActivatedUsers[dev];
+                // Keep it in BannedDevices
+                dbData.BannedDevices[dev] = (oldTime && oldTime.length > 10) ? oldTime : now;
+                // Optional: Remove from Activated so it doesn't duplicate visually if we merge lists differently
+                // But our render merges them. Let's strictly move it.
+                delete dbData.ActivatedUsers[dev];
             }
             syncDB();
         }
@@ -582,11 +603,27 @@
             closeModal('modalEdit');
         }
 
-        function delKey(key) {
-            if(confirm("Delete this key?")) {
-                delete dbData.ValidKeys[key];
+        // NEW: Save Device Edit
+        function saveDeviceEdit() {
+            const oldDev = document.getElementById('editDeviceOld').value;
+            const newDev = document.getElementById('editDeviceNew').value.trim();
+            const type = document.getElementById('editDeviceType').value; // 'allowed' or 'banned'
+
+            if(newDev && newDev !== oldDev) {
+                if(type === 'banned') {
+                    dbData.BannedDevices[newDev] = dbData.BannedDevices[oldDev];
+                    delete dbData.BannedDevices[oldDev];
+                } else {
+                    dbData.ActivatedUsers[newDev] = dbData.ActivatedUsers[oldDev];
+                    delete dbData.ActivatedUsers[oldDev];
+                }
                 syncDB();
             }
+            closeModal('modalEditDevice');
+        }
+
+        function delKey(key) {
+            if(confirm("Delete this key?")) { delete dbData.ValidKeys[key]; syncDB(); }
         }
 
         // ==========================================
@@ -606,26 +643,26 @@
             setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        function copy(txt) { 
-            navigator.clipboard.writeText(txt).then(() => showToast("Copied to Clipboard")); 
-        }
+        function copy(txt) { navigator.clipboard.writeText(txt).then(() => showToast("Copied to Clipboard")); }
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         
-        function openModal(id) { 
-            document.getElementById(id).classList.add('open'); 
-        }
-        function closeModal(id) { 
-            document.getElementById(id).classList.remove('open'); 
-        }
         function editKey(key) { 
             document.getElementById('editOld').value=key; 
             document.getElementById('editNew').value=key; 
             openModal('modalEdit'); 
         }
 
+        function editDevice(dev, isBanned) {
+            document.getElementById('editDeviceOld').value = dev;
+            document.getElementById('editDeviceNew').value = dev;
+            document.getElementById('editDeviceType').value = isBanned ? 'banned' : 'allowed';
+            openModal('modalEditDevice');
+        }
+
         function switchTab(tab) {
             ['Keys', 'Devices', 'Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
             ['Key', 'Dev', 'Conf'].forEach(n => document.getElementById(`nav${n}`).classList.remove('active'));
-            
             if(tab === 'keys') { document.getElementById('tabKeys').classList.remove('hidden'); document.getElementById('navKey').classList.add('active'); }
             else if(tab === 'devices') { document.getElementById('tabDevices').classList.remove('hidden'); document.getElementById('navDev').classList.add('active'); }
             else { document.getElementById('tabConfig').classList.remove('hidden'); document.getElementById('navConf').classList.add('active'); }
@@ -657,7 +694,6 @@
             }
             animate();
         }
-
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = accentColor;
@@ -671,7 +707,6 @@
         }
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // STARTUP
         document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
         appInit(); 
