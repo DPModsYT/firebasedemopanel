@@ -3,152 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V4</title>
+    <title>Gateway Admin V5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- CSS VARIABLES --- */
+        /* --- VARIABLES --- */
         :root {
-            --bg: #050508; --card: rgba(14, 14, 20, 0.7); --nav: rgba(22, 22, 33, 0.8); 
+            --bg: #050508; --card: #0e0e14; --nav: #161621; 
             --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; 
             --border: rgba(255, 255, 255, 0.08); 
             --green: #00ff9d; --red: #ff0055;
-            --glass: blur(12px) saturate(180%);
         }
+        [data-theme="blood"] { --bg:#1a0505; --card:#2b0a0a; --nav:#360000; --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
+        [data-theme="matrix"] { --bg:#000000; --card:#051a05; --nav:#001100; --accent:#00ff00; --green:#00ff00; --red:#008800; }
+        [data-theme="cherry"] { --bg:#1a0f14; --card:#26161c; --nav:#331e26; --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
+        [data-theme="naruto"] { --bg:#0a0500; --card:rgba(40, 20, 0, 0.8); --nav:#1a0d00; --accent:#ff9100; --green:#ffae00; --red:#ff4500; }
+        [data-theme="itachi"] { --bg:#080000; --card:rgba(30, 0, 0, 0.8); --nav:#1a0000; --accent:#ff0000; --green:#ff3333; --red:#880000; }
+        [data-theme="demonslayer"] { --bg:#000805; --card:rgba(0, 30, 20, 0.8); --nav:#001a14; --accent:#00ffaa; --green:#00e676; --red:#ff0055; }
 
-        /* --- THEMES --- */
-        [data-theme="blood"] { --bg:#1a0505; --card:rgba(43, 10, 10, 0.7); --nav:rgba(54, 0, 0, 0.8); --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
-        [data-theme="matrix"] { --bg:#000000; --card:rgba(5, 26, 5, 0.7); --nav:rgba(0, 17, 0, 0.8); --accent:#00ff00; --green:#00ff00; --red:#008800; }
-        [data-theme="cherry"] { --bg:#1a0f14; --card:rgba(38, 22, 28, 0.7); --nav:rgba(51, 30, 38, 0.8); --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
-        
-        /* ANIME THEMES */
-        [data-theme="naruto"] { --bg:#0a0500; --card:rgba(40, 20, 0, 0.7); --nav:rgba(60, 30, 0, 0.8); --accent:#ff9100; --green:#ffae00; --red:#ff4500; }
-        [data-theme="itachi"] { --bg:#080000; --card:rgba(30, 0, 0, 0.8); --nav:rgba(40, 0, 0, 0.9); --accent:#ff0000; --green:#ff3333; --red:#880000; }
-        [data-theme="demonslayer"] { --bg:#000805; --card:rgba(0, 30, 20, 0.7); --nav:rgba(0, 40, 30, 0.8); --accent:#00ffaa; --green:#00e676; --red:#ff0055; }
-
-        /* --- GLOBAL RESETS --- */
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
-        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 120px; overflow-x: hidden; transition: background 0.3s; }
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
-        /* --- HEADER --- */
-        header { 
-            position: sticky; top: 0; z-index: 50; 
-            background: rgba(0,0,0,0.6); backdrop-filter: var(--glass);
-            border-bottom: 1px solid var(--border); padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-        .brand i { color: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
-        
-        .icon-btn { 
-            width: 40px; height: 40px; border-radius: 12px; 
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text);
-            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
-        }
-        .icon-btn:active { transform: scale(0.9); background: var(--accent); color: #000; }
-        .icon-btn.pulse { animation: spinPulse 0.5s ease-out; background: var(--accent); color: #000; }
-        @keyframes spinPulse { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
+        /* HEADER */
+        header { position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .brand i { color: var(--accent); }
+        .icon-btn { width: 40px; height: 40px; border-radius: 12px; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .icon-btn:active { transform: scale(0.95); background: var(--accent); color: #000; }
 
-        /* --- LAYOUT --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
 
-        /* --- CONTROLS --- */
-        .controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        /* CONTROLS */
+        .controls { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
         .search { position: relative; flex: 1; }
         .search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-        .input-std { 
-            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
-            padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; 
-            font-family: 'Inter', sans-serif; font-size: 0.9rem; backdrop-filter: blur(5px);
-        }
-        .input-std:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .input-std { width: 100%; background: var(--card); border: 1px solid var(--border); padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
         
-        .btn-main { 
-            background: var(--accent); color: #000; border: none; padding: 0 20px; 
-            border-radius: 12px; font-weight: 700; cursor: pointer; 
-            display: flex; align-items: center; gap: 8px; white-space: nowrap;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
+        .btn-main { background: var(--accent); color: #000; border: none; padding: 0 16px; height: 42px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 0.85rem; }
+        .btn-danger { background: rgba(255, 0, 85, 0.15); color: var(--red); border: 1px solid var(--red); padding: 0 14px; height: 42px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-danger:active { background: var(--red); color: white; }
 
-        /* --- FILTER CHIPS --- */
-        .chips { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .chip { padding: 6px 16px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        /* --- CARDS --- */
-        .item-card { 
-            background: var(--card); border: 1px solid var(--border); 
-            border-radius: 16px; padding: 16px; margin-bottom: 12px; 
-            display: flex; flex-direction: column; gap: 10px;
-            backdrop-filter: blur(10px); transition: transform 0.2s;
-        }
-        .item-card:active { transform: scale(0.98); }
+        /* CARDS */
+        .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s, border-color 0.2s; position: relative; }
+        .item-card.selected { border-color: var(--accent); background: rgba(0, 229, 255, 0.05); }
         
-        .row-top { display: flex; justify-content: space-between; align-items: center; }
-        .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 0.95rem; word-break: break-all; }
-        .meta-row { 
-            border-top: 1px solid var(--border); padding-top: 10px; 
-            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted);
-            align-items: center;
-        }
-        .badge { font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; letter-spacing: 0.5px; }
-        .badge.active { background: rgba(0, 255, 157, 0.15); color: var(--green); border: 1px solid rgba(0, 255, 157, 0.3); }
-        .badge.banned { background: rgba(255, 0, 85, 0.15); color: var(--red); border: 1px solid rgba(255, 0, 85, 0.3); }
+        .row-top { display: flex; align-items: center; gap: 12px; }
+        .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 0.95rem; word-break: break-all; flex: 1; }
+        
+        /* CUSTOM CHECKBOX */
+        .chk-wrap { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+        .custom-chk { appearance: none; width: 20px; height: 20px; border: 2px solid var(--muted); border-radius: 6px; background: transparent; cursor: pointer; position: relative; transition: 0.2s; }
+        .custom-chk:checked { background: var(--accent); border-color: var(--accent); }
+        .custom-chk:checked::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #000; font-size: 12px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-        /* --- SWITCH --- */
-        .user-row { display: flex; justify-content: space-between; align-items: center; }
+        .meta-row { border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); align-items: center; }
+        .badge { font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; }
+        .badge.active { background: rgba(0, 255, 157, 0.15); color: var(--green); }
+        .badge.banned { background: rgba(255, 0, 85, 0.15); color: var(--red); }
+
+        /* SWITCH */
         .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #222; border-radius: 24px; transition: .3s; border: 1px solid var(--border); }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #666; border-radius: 50%; transition: .3s; }
-        
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
         input:checked + .slider { background: rgba(255, 0, 85, 0.2); border-color: var(--red); }
-        input:checked + .slider:before { transform: translateX(20px); background: var(--red); box-shadow: 0 0 10px var(--red); }
+        input:checked + .slider:before { transform: translateX(20px); background: var(--red); }
         
-        input:not(:checked) + .slider { background: rgba(0, 255, 157, 0.2); border-color: var(--green); }
-        input:not(:checked) + .slider:before { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        /* BULK ACTION BAR */
+        .bulk-bar { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--nav); border: 1px solid var(--red); padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 98; opacity: 0; transition: 0.4s; }
+        .bulk-bar.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .bulk-btn { background: var(--red); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; }
 
-        /* --- NAV BAR --- */
-        .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; pointer-events: none; }
-        .nav-inner { 
-            background: var(--nav); border: 1px solid var(--border); 
-            padding: 0 20px; height: 70px; border-radius: 24px; width: 90%; max-width: 400px;
-            display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: var(--glass);
-            pointer-events: auto;
-        }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; cursor: pointer; }
-        .nav-btn.active { color: var(--accent); transform: translateY(-3px); text-shadow: 0 0 15px var(--accent); }
-        .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; letter-spacing: 0.5px; }
-
-        /* --- ERROR SCREEN --- */
-        .error-box { 
-            text-align: center; padding: 40px 20px; border: 1px solid var(--red); 
-            border-radius: 24px; background: rgba(255, 0, 85, 0.08); margin-top: 50px; 
-            backdrop-filter: blur(10px);
-        }
-        .debug-box { 
-            background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; 
-            margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; 
-            color: #ddd; font-size: 0.75rem; border: 1px solid var(--border);
-        }
-
-        /* --- MODAL --- */
+        /* NAV */
+        .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
+        .nav-inner { background: var(--nav); border: 1px solid var(--border); padding: 0 20px; height: 70px; border-radius: 24px; width: 90%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; }
+        .nav-btn.active { color: var(--accent); transform: translateY(-3px); }
+        
+        /* ERROR & MODAL */
+        .error-box { text-align: center; padding: 40px 20px; border: 1px solid var(--red); border-radius: 24px; background: rgba(255, 0, 85, 0.08); margin-top: 50px; }
+        .debug-box { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; color: #ddd; font-size: 0.75rem; border: 1px solid var(--border); }
+        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--card); width: 90%; max-width: 340px; padding: 30px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
-        
+        .modal-content { background: var(--card); width: 90%; max-width: 340px; padding: 30px; border-radius: 24px; border: 1px solid var(--border); }
         .inp-group { margin-bottom: 15px; }
-        .inp-label { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .btn-block { width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 800; margin-top: 10px; cursor: pointer; letter-spacing: 0.5px; }
-        .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; cursor: pointer; font-weight: 600; }
+        .inp-label { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 800; margin-bottom: 6px; }
+        .btn-block { width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 800; margin-top: 10px; cursor: pointer; }
+        .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; cursor: pointer; }
 
-        /* --- TOAST --- */
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--nav); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 50px; z-index: 300; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 0.85rem; }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--nav); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 50px; z-index: 300; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -157,10 +103,10 @@
     <canvas id="bgCanvas"></canvas>
 
     <header>
-        <div class="brand"><i class="fas fa-cube"></i> GATEWAY V4</div>
+        <div class="brand"><i class="fas fa-cube"></i> GATEWAY V5</div>
         <div style="display:flex; gap:10px">
-            <div class="icon-btn" id="themeBtn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
-            <div class="icon-btn" id="reloadBtn" onclick="manualReload()"><i class="fas fa-sync-alt"></i></div>
+            <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
+            <div class="icon-btn" onclick="appInit()"><i class="fas fa-sync-alt"></i></div>
         </div>
     </header>
 
@@ -168,38 +114,36 @@
         
         <div id="viewLoader" style="text-align: center; padding: 100px 0;">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--accent);"></i>
-            <p style="color: var(--muted); margin-top: 20px; font-weight: 600; letter-spacing: 1px;">ESTABLISHING UPLINK...</p>
+            <p style="color: var(--muted); margin-top: 20px; font-weight: 600;">ESTABLISHING UPLINK...</p>
         </div>
 
         <div id="viewError" class="hidden error-box">
             <i class="fas fa-wifi" style="font-size: 3rem; color: var(--red); margin-bottom: 15px;"></i>
             <h3 style="color: var(--red); margin: 0;">Connection Failed</h3>
-            <p style="color: var(--muted); margin: 10px 0;">Database Unreachable</p>
-            
+            <p style="color: var(--muted); margin: 10px 0;" id="errorText">Network Error</p>
             <div class="debug-box">
-                <strong>TARGET:</strong><br>
-                <span id="debugUrl" style="color: var(--accent);">...</span>
+                <strong>TARGET:</strong><br><span id="debugUrl" style="color: var(--accent);">...</span>
             </div>
-
             <button class="btn-block" style="background: #222; color: white; border:1px solid #444;" onclick="hardReset()">HARD RESET URL</button>
         </div>
 
         <div id="viewDashboard" class="hidden">
             
             <div class="stats-row" style="display:flex; gap:10px; margin-bottom:20px;">
-                <div class="item-card" style="flex:1; align-items:center; padding:15px; margin:0;">
+                <div class="stat-card" style="flex:1; background:var(--card); padding:15px; border-radius:16px; border:1px solid var(--border); text-align:center;">
                     <span style="font-size:1.8rem; font-weight:800; color:var(--accent);" id="statKeys">0</span>
-                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Total Keys</span>
+                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Keys</span>
                 </div>
-                <div class="item-card" style="flex:1; align-items:center; padding:15px; margin:0;">
+                <div class="stat-card" style="flex:1; background:var(--card); padding:15px; border-radius:16px; border:1px solid var(--border); text-align:center;">
                     <span style="font-size:1.8rem; font-weight:800; color:var(--green);" id="statDevs">0</span>
-                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Active Users</span>
+                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Devices</span>
                 </div>
             </div>
 
             <div id="tabKeys">
                 <div class="controls">
                     <div class="search"><i class="fas fa-search"></i><input type="text" class="input-std" id="searchKeys" placeholder="Search Keys..." onkeyup="renderKeys()"></div>
+                    <button class="btn-danger" onclick="nukeAllKeys()"><i class="fas fa-trash"></i></button>
                     <button class="btn-main" onclick="openModal('modalKey')"><i class="fas fa-plus"></i> NEW</button>
                 </div>
                 <div id="listKeys"></div>
@@ -208,11 +152,12 @@
             <div id="tabDevices" class="hidden">
                 <div class="controls">
                     <div class="search"><i class="fas fa-search"></i><input type="text" class="input-std" id="searchDevs" placeholder="Search Devices..." onkeyup="renderDevices()"></div>
+                    <button class="btn-danger" onclick="nukeAllDevices()"><i class="fas fa-trash"></i></button>
                 </div>
-                <div class="chips">
-                    <div class="chip active" onclick="setDevFilter('all', this)">All</div>
-                    <div class="chip" onclick="setDevFilter('allowed', this)">Allowed</div>
-                    <div class="chip" onclick="setDevFilter('banned', this)">Banned</div>
+                <div class="chips" style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button class="btn-main" style="height:30px; font-size:0.75rem; background:var(--card); border:1px solid var(--border); color:var(--muted);" onclick="setDevFilter('all', this)">All</button>
+                    <button class="btn-main" style="height:30px; font-size:0.75rem; background:var(--card); border:1px solid var(--border); color:var(--muted);" onclick="setDevFilter('allowed', this)">Allowed</button>
+                    <button class="btn-main" style="height:30px; font-size:0.75rem; background:var(--card); border:1px solid var(--border); color:var(--muted);" onclick="setDevFilter('banned', this)">Banned</button>
                 </div>
                 <div id="listDevices"></div>
             </div>
@@ -223,20 +168,21 @@
                     <div class="inp-group"><label class="inp-label">APP TITLE</label><input type="text" class="input-std" id="confTitle"></div>
                     <div class="inp-group"><label class="inp-label">SUBTITLE</label><input type="text" class="input-std" id="confSub"></div>
                     <div class="inp-group"><label class="inp-label">ADMIN CONTACT</label><input type="text" class="input-std" id="confUrl"></div>
-
-                    <div style="height:1px; background:var(--border); margin:20px 0;"></div>
-                    
-                    <h4 style="margin:0 0 15px 0; color:var(--accent);">API Configuration</h4>
-                    <div class="inp-group"><label class="inp-label">API BASE URL</label><input type="text" class="input-std" id="confApiUrl" placeholder="https://api.example.com"></div>
-                    <div class="inp-group"><label class="inp-label">API TOKEN</label><input type="text" class="input-std" id="confApiToken" placeholder="sk_live_..."></div>
-                    <div class="inp-group"><label class="inp-label">ENCRYPTION / SECRET KEY</label><input type="text" class="input-std" id="confApiSecret" placeholder="Secret Key"></div>
-
+                    <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+                    <div class="inp-group"><label class="inp-label">API BASE URL</label><input type="text" class="input-std" id="confApiUrl"></div>
+                    <div class="inp-group"><label class="inp-label">API TOKEN</label><input type="text" class="input-std" id="confApiToken"></div>
+                    <div class="inp-group"><label class="inp-label">SECRET KEY</label><input type="text" class="input-std" id="confApiSecret"></div>
                     <button class="btn-block" onclick="saveConfig()">SAVE CHANGES</button>
                     <button class="btn-text" onclick="hardReset()">RESET CONNECTION</button>
                 </div>
             </div>
 
         </div>
+    </div>
+
+    <div id="bulkBar" class="bulk-bar">
+        <span style="color:white; font-size:0.8rem; font-weight:600;"><span id="selCount">0</span> Selected</span>
+        <button class="bulk-btn" onclick="deleteSelectedItems()"><i class="fas fa-trash"></i> DELETE</button>
     </div>
 
     <div id="modalKey" class="modal-overlay hidden">
@@ -246,16 +192,6 @@
             <div class="inp-group"><label class="inp-label">QUANTITY</label><input type="number" class="input-std" id="keyQty" value="1"></div>
             <button class="btn-block" onclick="generateKeys()">GENERATE</button>
             <button class="btn-text" onclick="closeModal('modalKey')">CANCEL</button>
-        </div>
-    </div>
-
-    <div id="modalEdit" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h3 style="margin-top:0;">Edit Key</h3>
-            <input type="hidden" id="editOld">
-            <div class="inp-group"><label class="inp-label">KEY STRING</label><input type="text" class="input-std" id="editNew"></div>
-            <button class="btn-block" onclick="saveKeyEdit()">SAVE</button>
-            <button class="btn-text" onclick="closeModal('modalEdit')">CANCEL</button>
         </div>
     </div>
 
@@ -270,92 +206,62 @@
     </div>
 
     <script>
-        // ==========================================
-        // 1. INIT & VARIABLES (SAFE ORDER)
-        // ==========================================
+        // --- 1. SAFE VARS ---
         const HARDCODED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_DATA = { 
-            "Config": { 
-                "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "",
-                "Api": { "BaseUrl": "", "Token": "", "Secret": "" } 
-            }, 
+            "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "", "Api": { "BaseUrl": "", "Token": "", "Secret": "" } }, 
             "BannedDevices": { "test_ban": "banned" }, 
             "ActivatedUsers": { "placeholder": "active" }, 
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
         };
 
-        // Globals
         let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
         let dbData = null;
         let devFilter = 'all';
         let themes = ['cyberpunk', 'blood', 'matrix', 'cherry', 'naruto', 'itachi', 'demonslayer'];
         let curThemeIdx = 0;
+        let selectedKeys = new Set();
+        let selectedDevs = new Set();
 
-        // Canvas
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let accentColor = "rgba(0, 229, 255, 0.3)";
 
-        // ==========================================
-        // 2. URL LOGIC
-        // ==========================================
+        // --- 2. URL FIXER ---
         function sanitizeUrl(url) {
             let clean = url ? url.trim() : "";
             if (!clean) return HARDCODED_URL + "/.json";
-            if (clean.includes("firebaseio.com")) {
-                clean = clean.split("firebaseio.com")[0] + "firebaseio.com";
-            }
+            if (clean.includes("firebaseio.com")) clean = clean.split("firebaseio.com")[0] + "firebaseio.com";
             return clean + "/.json";
         }
+        if (!dbUrl.includes("appurl-8eec4")) { dbUrl = HARDCODED_URL; localStorage.setItem("dbUrl", dbUrl); }
 
-        // Auto-fix storage
-        if (!dbUrl.includes("appurl-8eec4")) {
-            dbUrl = HARDCODED_URL;
-            localStorage.setItem("dbUrl", dbUrl);
-        }
-
-        // ==========================================
-        // 3. CORE APP LOGIC
-        // ==========================================
-        async function appInit(isManual = false) {
-            if(isManual) {
-                document.getElementById('reloadBtn').classList.add('pulse');
-                setTimeout(() => document.getElementById('reloadBtn').classList.remove('pulse'), 500);
-            }
-
+        // --- 3. CORE LOGIC ---
+        async function appInit() {
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewError').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
 
             const finalUrl = sanitizeUrl(dbUrl) + "?t=" + Date.now();
             document.getElementById('debugUrl').innerText = finalUrl;
-
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
 
             try {
                 const response = await fetch(finalUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
-
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
                 let data = await response.json();
-
                 if (!data) {
                     await fetch(sanitizeUrl(dbUrl), { method: 'PUT', body: JSON.stringify(DEFAULT_DATA) });
                     data = DEFAULT_DATA;
                 }
-
                 dbData = data;
                 ensureDataStructure();
                 renderAll();
-
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewDashboard').classList.remove('hidden');
-                
-                if(!isManual) showToast("System Auto-Reloaded");
-
             } catch (err) {
                 console.error(err);
                 document.getElementById('errorText').innerText = err.message;
@@ -373,64 +279,44 @@
         }
 
         async function syncDB() {
-            const finalUrl = sanitizeUrl(dbUrl);
-            try {
-                await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(dbData) });
-                showToast("Data Saved");
-                renderAll();
-            } catch (e) {
-                showToast("Save Failed");
-            }
+            try { await fetch(sanitizeUrl(dbUrl), { method: 'PUT', body: JSON.stringify(dbData) }); showToast("Saved"); } 
+            catch (e) { showToast("Save Failed"); }
         }
 
-        function manualReload() {
-            appInit(true);
-        }
-
-        // ==========================================
-        // 4. RENDERERS
-        // ==========================================
+        // --- 4. RENDERERS ---
         function renderAll() {
             renderKeys();
             renderDevices();
-            
-            // Stats
-            document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
-            document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length;
-
             // Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
-            
-            // 3-Section API
             document.getElementById('confApiUrl').value = dbData.Config.Api.BaseUrl || "";
             document.getElementById('confApiToken').value = dbData.Config.Api.Token || "";
             document.getElementById('confApiSecret').value = dbData.Config.Api.Secret || "";
+            // Stats
+            document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
+            document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length;
         }
 
         function renderKeys() {
             const list = document.getElementById('listKeys');
             const search = document.getElementById('searchKeys').value.toLowerCase();
             list.innerHTML = "";
-
+            
             Object.keys(dbData.ValidKeys).reverse().forEach(key => {
                 if (search && !key.toLowerCase().includes(search)) return;
-                
+                const isSel = selectedKeys.has(key);
                 let dateStr = "Manual";
-                try {
-                    const d = new Date(dbData.ValidKeys[key]);
-                    if(!isNaN(d)) dateStr = d.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) + ", " + d.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' });
-                } catch(e){}
+                try { const d = new Date(dbData.ValidKeys[key]); if(!isNaN(d)) dateStr = d.toLocaleDateString()+" "+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); } catch(e){}
 
                 list.innerHTML += `
-                <div class="item-card">
+                <div class="item-card ${isSel?'selected':''}">
                     <div class="row-top">
-                        <span class="mono-text" onclick="copy('${key}')">${key}</span>
-                        <div style="display:flex; gap:8px">
-                            <div class="icon-btn" style="width:30px; height:30px;" onclick="editKey('${key}')"><i class="fas fa-pen" style="font-size:0.8rem"></i></div>
-                            <div class="icon-btn" style="width:30px; height:30px; border-color:var(--red);" onclick="delKey('${key}')"><i class="fas fa-trash" style="font-size:0.8rem; color:var(--red)"></i></div>
+                        <div class="chk-wrap" onclick="toggleSelKey('${key}')">
+                            <input type="checkbox" class="custom-chk" ${isSel?'checked':''}>
                         </div>
+                        <span class="mono-text" onclick="copy('${key}')">${key}</span>
                     </div>
                     <div class="meta-row">
                         <span><i class="far fa-clock"></i> ${dateStr}</span>
@@ -438,46 +324,83 @@
                     </div>
                 </div>`;
             });
+            updateBulkBar();
         }
 
         function renderDevices() {
             const list = document.getElementById('listDevices');
             const search = document.getElementById('searchDevs').value.toLowerCase();
             list.innerHTML = "";
-
             const allDevs = [...new Set([...Object.keys(dbData.ActivatedUsers), ...Object.keys(dbData.BannedDevices)])];
 
             allDevs.forEach(dev => {
                 if(dev === "placeholder" || dev === "test_ban") return;
                 if(search && !dev.toLowerCase().includes(search)) return;
-
                 const isBanned = dbData.BannedDevices[dev] !== undefined;
-
-                // Filter Logic
                 if (devFilter === 'allowed' && isBanned) return;
                 if (devFilter === 'banned' && !isBanned) return;
+                
+                const isSel = selectedDevs.has(dev);
 
                 list.innerHTML += `
-                <div class="item-card" style="border-left: 3px solid ${isBanned ? 'var(--red)' : 'var(--green)'}">
+                <div class="item-card ${isSel?'selected':''}" style="border-left: 3px solid ${isBanned ? 'var(--red)' : 'var(--green)'}">
                     <div class="user-row">
-                        <span class="mono-text" style="color:var(--text); font-size:0.85rem;" onclick="copy('${dev}')">${dev}</span>
+                        <div style="display:flex; align-items:center; gap:10px; flex:1; overflow:hidden;">
+                            <div class="chk-wrap" onclick="toggleSelDev('${dev}')">
+                                <input type="checkbox" class="custom-chk" ${isSel?'checked':''}>
+                            </div>
+                            <span class="mono-text" style="color:var(--text); font-size:0.85rem;" onclick="copy('${dev}')">${dev}</span>
+                        </div>
                         <label class="switch">
                             <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${dev}')">
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div class="meta-row" style="border:none; padding-top:5px;">
-                        <span class="badge ${isBanned?'banned':'active'}">
-                            ${isBanned ? 'BANNED' : 'ALLOWED'}
-                        </span>
+                        <span class="badge ${isBanned?'banned':'active'}">${isBanned ? 'BANNED' : 'ALLOWED'}</span>
                     </div>
                 </div>`;
             });
+            updateBulkBar();
         }
 
-        // ==========================================
-        // 5. ACTIONS
-        // ==========================================
+        // --- 5. SELECTION & BULK ---
+        function toggleSelKey(k) {
+            if(selectedKeys.has(k)) selectedKeys.delete(k); else selectedKeys.add(k);
+            renderKeys();
+        }
+        function toggleSelDev(d) {
+            if(selectedDevs.has(d)) selectedDevs.delete(d); else selectedDevs.add(d);
+            renderDevices();
+        }
+        function updateBulkBar() {
+            const count = selectedKeys.size + selectedDevs.size;
+            const bar = document.getElementById('bulkBar');
+            document.getElementById('selCount').innerText = count;
+            if(count > 0) bar.classList.add('show'); else bar.classList.remove('show');
+        }
+        function deleteSelectedItems() {
+            if(!confirm(`Delete ${selectedKeys.size} Keys and ${selectedDevs.size} Devices?`)) return;
+            selectedKeys.forEach(k => delete dbData.ValidKeys[k]);
+            selectedDevs.forEach(d => { delete dbData.ActivatedUsers[d]; delete dbData.BannedDevices[d]; });
+            selectedKeys.clear(); selectedDevs.clear();
+            renderAll(); syncDB();
+        }
+        function nukeAllKeys() {
+            if(confirm("DANGER: Delete ALL Keys? This cannot be undone.")) {
+                dbData.ValidKeys = { "VIP-DEMO": new Date().toISOString() };
+                renderAll(); syncDB();
+            }
+        }
+        function nukeAllDevices() {
+            if(confirm("DANGER: Delete ALL Devices? Users will be logged out.")) {
+                dbData.ActivatedUsers = { "placeholder": "active" };
+                dbData.BannedDevices = { "test_ban": "banned" };
+                renderAll(); syncDB();
+            }
+        }
+
+        // --- 6. ACTIONS ---
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const prefix = document.getElementById('keyPrefix').value.toUpperCase();
@@ -485,130 +408,64 @@
                 const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
                 dbData.ValidKeys[`${prefix}-${rnd}`] = new Date().toISOString();
             }
-            closeModal('modalKey');
-            syncDB();
+            closeModal('modalKey'); renderAll(); syncDB();
         }
-
         function toggleBan(dev) {
-            if (dbData.BannedDevices[dev]) {
-                delete dbData.BannedDevices[dev];
-                dbData.ActivatedUsers[dev] = "active";
-            } else {
-                dbData.BannedDevices[dev] = "banned";
-            }
-            syncDB();
+            if (dbData.BannedDevices[dev]) { delete dbData.BannedDevices[dev]; dbData.ActivatedUsers[dev] = "active"; }
+            else { dbData.BannedDevices[dev] = "banned"; }
+            renderAll(); syncDB();
         }
-
         function saveConfig() {
             dbData.Config.Title = document.getElementById('confTitle').value;
             dbData.Config.Subtitle = document.getElementById('confSub').value;
             dbData.Config.AdminUrl = document.getElementById('confUrl').value;
-            
-            // 3 API Fields
             dbData.Config.Api.BaseUrl = document.getElementById('confApiUrl').value;
             dbData.Config.Api.Token = document.getElementById('confApiToken').value;
             dbData.Config.Api.Secret = document.getElementById('confApiSecret').value;
-            
             syncDB();
         }
 
-        function saveKeyEdit() {
-            const oldK = document.getElementById('editOld').value;
-            const newK = document.getElementById('editNew').value;
-            if(newK && newK !== oldK) {
-                dbData.ValidKeys[newK] = dbData.ValidKeys[oldK];
-                delete dbData.ValidKeys[oldK];
-                syncDB();
-            }
-            closeModal('modalEdit');
-        }
-
-        function delKey(key) {
-            if(confirm("Delete Key?")) {
-                delete dbData.ValidKeys[key];
-                syncDB();
-            }
-        }
-
-        // ==========================================
-        // 6. UI UTILS
-        // ==========================================
-        function setDevFilter(f, el) {
-            devFilter = f;
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            renderDevices();
-        }
-
-        function hardReset() {
-            localStorage.removeItem("dbUrl");
-            location.reload();
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.querySelector('span').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
-        }
-
+        // --- 7. UTILS ---
+        function hardReset() { localStorage.removeItem("dbUrl"); location.reload(); }
+        function showToast(msg) { const t=document.getElementById('toast'); t.querySelector('span').innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
         function copy(txt) { navigator.clipboard.writeText(txt); showToast("Copied"); }
-        function openKeyModal() { document.getElementById('modalKey').classList.remove('hidden'); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function editKey(key) { document.getElementById('editOld').value=key; document.getElementById('editNew').value=key; openModal('modalEdit'); }
-
         function switchTab(tab) {
-            ['Keys', 'Devices', 'Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
-            ['Key', 'Dev', 'Conf'].forEach(n => document.getElementById(`nav${n}`).classList.remove('active'));
+            ['Keys','Devices','Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
+            ['Key','Dev','Conf'].forEach(n => document.getElementById(`nav${n}`).classList.remove('active'));
             if(tab === 'keys') { document.getElementById('tabKeys').classList.remove('hidden'); document.getElementById('navKey').classList.add('active'); }
             else if(tab === 'devices') { document.getElementById('tabDevices').classList.remove('hidden'); document.getElementById('navDev').classList.add('active'); }
             else { document.getElementById('tabConfig').classList.remove('hidden'); document.getElementById('navConf').classList.add('active'); }
         }
+        function setDevFilter(f, el) { 
+            devFilter=f; document.querySelectorAll('.chip button').forEach(b=>b.style.background='var(--card)'); el.style.background='var(--accent)'; el.style.color='#000'; renderDevices(); 
+        }
 
+        // --- 8. ANIMATION ---
         function toggleTheme() {
             curThemeIdx = (curThemeIdx + 1) % themes.length;
             const theme = themes[curThemeIdx];
             document.documentElement.setAttribute('data-theme', theme);
-            const style = getComputedStyle(document.documentElement);
-            accentColor = style.getPropertyValue('--accent').trim();
+            accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
             showToast(`Theme: ${theme.toUpperCase()}`);
         }
-
-        // ==========================================
-        // 7. ANIMATION
-        // ==========================================
         function initParticles() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(let i=0; i<60; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    v: (Math.random() * 0.5) + 0.2,
-                    s: Math.random() * 2
-                });
-            }
+            canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+            for(let i=0; i<60; i++) parts.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, v:(Math.random()*0.5)+0.2, s:Math.random()*2 });
             animate();
         }
-
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = accentColor;
-            ctx.globalAlpha = 0.4;
-            particles.forEach(p => {
-                p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
-            });
+            ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle=accentColor; ctx.globalAlpha=0.4;
+            parts.forEach(p=>{ p.y-=p.v; if(p.y<0)p.y=canvas.height; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill(); });
             requestAnimationFrame(animate);
         }
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
 
-        // STARTUP
+        // START
         document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
-        appInit(); // Auto-start
-
+        appInit();
     </script>
 </body>
 </html>
