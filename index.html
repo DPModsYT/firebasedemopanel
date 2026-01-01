@@ -3,377 +3,567 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin</title>
+    <title>Gateway Admin V2</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --bg-body: #050508; --bg-card: #0e0e14; --bg-nav: #161621; --primary: #00e5ff; --text-main: #ffffff; --text-muted: #94a3b8; --border: rgba(255, 255, 255, 0.08); --success: #00ff9d; --danger: #ff0055; }
-        [data-theme="blood"] { --bg-body:#1a0505; --bg-card:#2b0a0a; --bg-nav:#360000; --primary:#ff0033; --text-main:#ffcccc; --text-muted:#cc8888; --border:#4a1111; --success:#ff3333; --danger:#ff0033; }
-        [data-theme="matrix"] { --bg-body:#000000; --bg-card:#051a05; --bg-nav:#001100; --primary:#00ff00; --text-main:#ccffcc; --text-muted:#448844; --border:#003300; --success:#00ff00; --danger:#008800; }
-        [data-theme="cherry"] { --bg-body:#1a0f14; --bg-card:#26161c; --bg-nav:#331e26; --primary:#ff66b2; --text-main:#ffccdd; --text-muted:#aa6680; --border:#4d2636; --success:#ff99cc; --danger:#ff3366; }
+        /* --- CSS VARIABLES --- */
+        :root {
+            --bg: #050508; --card: #0e0e14; --nav: #161621; 
+            --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; 
+            --border: rgba(255, 255, 255, 0.08); 
+            --green: #00ff9d; --red: #ff0055;
+        }
+        /* Themes */
+        [data-theme="blood"] { --bg:#1a0505; --card:#2b0a0a; --nav:#360000; --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
+        [data-theme="matrix"] { --bg:#000000; --card:#051a05; --nav:#001100; --accent:#00ff00; --green:#00ff00; --red:#008800; }
+        [data-theme="cherry"] { --bg:#1a0f14; --card:#26161c; --nav:#331e26; --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
-        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-
-        header { background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 15px 20px; position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px; }
-        .logo i { color: var(--primary); }
-        .head-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .head-btn:active { transform: scale(0.95); background: var(--border); }
-
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        /* --- GLOBAL RESETS --- */
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
         
-        .controls-bar { display: flex; gap: 10px; margin-bottom: 15px; }
-        .search-wrap { position: relative; flex: 1; }
-        .search-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
-        .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); padding: 12px 12px 12px 42px; color: var(--text-main); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
-        .btn-gen { background: var(--primary); color: #000; border: none; padding: 0 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        /* --- PARTICLES CANVAS --- */
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s; }
-        .key-top { display: flex; justify-content: space-between; align-items: center; }
-        .key-text { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; word-break: break-all; }
-        .key-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
-        .actions { display: flex; gap: 8px; }
-        .act-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .act-btn.del:hover { background: rgba(255,0,85,0.1); color: var(--danger); border-color: var(--danger); }
+        /* --- HEADER --- */
+        header { 
+            position: sticky; top: 0; z-index: 50; 
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .brand i { color: var(--accent); }
+        .icon-btn { 
+            width: 40px; height: 40px; border-radius: 10px; 
+            background: var(--card); border: 1px solid var(--border); color: var(--text);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .icon-btn:active { transform: scale(0.95); }
 
-        .user-row { display: flex; justify-content: space-between; align-items: center; }
+        /* --- LAYOUT --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .hidden { display: none !important; }
+
+        /* --- CONTROLS --- */
+        .controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search { position: relative; flex: 1; }
+        .search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+        .input-std { 
+            width: 100%; background: var(--card); border: 1px solid var(--border); 
+            padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; 
+            font-family: 'Inter', sans-serif; font-size: 0.9rem;
+        }
+        .btn-main { 
+            background: var(--accent); color: #000; border: none; padding: 0 20px; 
+            border-radius: 12px; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+
+        /* --- CARDS --- */
+        .item-card { 
+            background: var(--card); border: 1px solid var(--border); 
+            border-radius: 16px; padding: 16px; margin-bottom: 12px; 
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .row-top { display: flex; justify-content: space-between; align-items: center; }
+        .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 0.95rem; word-break: break-all; }
+        .meta-row { 
+            border-top: 1px solid var(--border); padding-top: 10px; 
+            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted);
+        }
+        .badge { color: var(--green); font-weight: 700; text-transform: uppercase; }
+        .badge.banned { color: var(--red); }
+
+        /* --- SWITCH --- */
         .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .3s; border-radius: 24px; border: 1px solid var(--border); }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--danger); border-color: var(--danger); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 24px; transition: .3s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; }
+        input:checked + .slider { background: var(--red); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        .theme-menu { position: absolute; top: 70px; right: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; width: 160px; display: none; flex-direction: column; gap: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 100; }
-        .theme-menu.show { display: flex; }
-        .theme-opt { padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-muted); }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        /* --- NAV BAR --- */
+        .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
+        .nav-inner { 
+            background: var(--nav); border: 1px solid var(--border); 
+            padding: 0 15px; height: 65px; border-radius: 20px; width: 90%; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; }
+        .nav-btn.active { color: var(--accent); transform: translateY(-2px); text-shadow: 0 0 10px rgba(0,229,255,0.3); }
+        .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; }
 
-        .modal-wrap { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: var(--bg-card); width: 90%; max-width: 320px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
-        .inp-group { margin-bottom: 15px; }
-        .inp-label { display: block; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
-        .inp { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 12px; color: var(--text-main); border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
-        .btn-full { width: 100%; padding: 12px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 5px; }
-        .btn-cancel { background: transparent; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px; cursor: pointer; text-align: center; }
+        /* --- ERROR SCREEN --- */
+        .error-box { 
+            text-align: center; padding: 30px 20px; border: 1px solid var(--red); 
+            border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px; 
+        }
+        .debug-box { 
+            background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; 
+            margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; 
+            color: #ddd; font-size: 0.8rem; 
+        }
 
-        .nav-wrap { position: fixed; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
-        .nav-bar { background: var(--bg-nav); border: 1px solid var(--border); padding: 0 15px; height: 60px; border-radius: 20px; display: flex; align-items: center; width: 90%; max-width: 400px; justify-content: space-between; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--primary); transform: translateY(-2px); text-shadow: 0 0 10px var(--primary-dim); }
-        .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 600; }
+        /* --- MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card); width: 90%; max-width: 320px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        .btn-block { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-weight: 700; margin-top: 10px; }
+        .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; }
 
-        .hidden { display: none !important; }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--bg-card); border: 1px solid var(--primary); color: var(--text-main); padding: 12px 25px; border-radius: 30px; z-index: 300; transition: 0.4s; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* --- TOAST --- */
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--card); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 30px; z-index: 300; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <canvas id="particles"></canvas>
+    <canvas id="bgCanvas"></canvas>
 
     <header>
-        <div class="logo"><i class="fas fa-cube"></i> GATEWAY</div>
-        <div class="header-actions">
-            <div class="head-btn" onclick="toggleThemeMenu()"><i class="fas fa-palette"></i></div>
-            <div class="head-btn" onclick="init()"><i class="fas fa-sync-alt"></i></div>
+        <div class="brand"><i class="fas fa-cube"></i> GATEWAY</div>
+        <div style="display:flex; gap:10px">
+            <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
+            <div class="icon-btn" onclick="appInit()"><i class="fas fa-sync-alt"></i></div>
         </div>
     </header>
 
-    <div id="themeMenu" class="theme-menu">
-        <div class="theme-opt" onclick="setTheme('cyberpunk')"><div class="dot" style="background:#00e5ff"></div> Cyberpunk</div>
-        <div class="theme-opt" onclick="setTheme('blood')"><div class="dot" style="background:#ff0033"></div> Blood</div>
-        <div class="theme-opt" onclick="setTheme('matrix')"><div class="dot" style="background:#00ff00"></div> Matrix</div>
-        <div class="theme-opt" onclick="setTheme('cherry')"><div class="dot" style="background:#ff66b2"></div> Cherry</div>
-    </div>
-
     <div class="container">
-        <div id="loader" style="text-align: center; padding: 100px 0;">
-            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-            <p style="color: var(--text-muted); margin-top: 15px; font-size: 0.9rem;">SYNCING DATABASE...</p>
-            <button onclick="resetApp()" style="margin-top:20px; background:transparent; border:1px solid #333; color:#666; padding:5px 10px; border-radius:8px; font-size:0.7rem; cursor:pointer;">RESET</button>
+        
+        <div id="viewLoader" style="text-align: center; padding: 100px 0;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--accent);"></i>
+            <p style="color: var(--muted); margin-top: 20px; font-weight: 600;">SYNCING DATABASE...</p>
         </div>
 
-        <div id="errorMsg" class="hidden" style="text-align: center; padding: 30px 20px; border: 1px solid var(--danger); border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px;">
-            <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 15px;"></i>
-            <h3 style="margin: 0 0 10px 0; color: var(--danger);">Connection Failed</h3>
-            <p id="errorTxt" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Network Error</p>
-            <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:8px; margin-bottom:20px; text-align:left;">
-                <p style="margin:0; font-size:0.7rem; color:#888;">TARGET URL:</p>
-                <code id="debugUrl" style="font-family:monospace; color:#fff; word-break:break-all; font-size:0.8rem;">...</code>
+        <div id="viewError" class="hidden error-box">
+            <i class="fas fa-wifi" style="font-size: 3rem; color: var(--red); margin-bottom: 15px;"></i>
+            <h3 style="color: var(--red); margin: 0;">Connection Failed</h3>
+            <p style="color: var(--muted);">Unable to reach Firebase.</p>
+            
+            <div class="debug-box">
+                <strong>TARGET:</strong><br>
+                <span id="debugUrl">...</span>
             </div>
-            <button class="btn-full" style="width:auto; padding:10px 30px; background:#333; color:white;" onclick="resetApp()">HARD RESET URL</button>
+
+            <button class="btn-block" style="background: #333; color: white;" onclick="hardReset()">HARD RESET URL</button>
         </div>
 
-        <div id="mainContent" class="hidden">
+        <div id="viewDashboard" class="hidden">
+            
             <div id="tabKeys">
-                <div class="controls-bar">
-                    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" class="search-input" id="searchKey" placeholder="Search Keys..." onkeyup="renderKeys()"></div>
-                    <button class="btn-gen" onclick="openKeyModal()"><i class="fas fa-plus"></i> Generate</button>
+                <div class="controls">
+                    <div class="search"><i class="fas fa-search"></i><input type="text" class="input-std" id="searchKeys" placeholder="Search Keys..." onkeyup="renderKeys()"></div>
+                    <button class="btn-main" onclick="openModal('modalKey')"><i class="fas fa-plus"></i> NEW</button>
                 </div>
-                <div id="keyList"></div>
+                <div id="listKeys"></div>
             </div>
 
             <div id="tabDevices" class="hidden">
-                <div class="controls-bar">
-                    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" class="search-input" id="searchDev" placeholder="Search Devices..." onkeyup="renderUsers()"></div>
+                <div class="controls">
+                    <div class="search"><i class="fas fa-search"></i><input type="text" class="input-std" id="searchDevs" placeholder="Search Devices..." onkeyup="renderDevices()"></div>
                 </div>
-                <div id="userList"></div>
+                <div id="listDevices"></div>
             </div>
 
-            <div id="tabSettings" class="hidden">
-                <h3 style="color:var(--text-main); margin-bottom:15px;">Configuration</h3>
-                <div class="card" style="display:block;">
-                    <div class="inp-group"><label class="inp-label">Title</label><input type="text" class="inp" id="cfgTitle"></div>
-                    <div class="inp-group"><label class="inp-label">Subtitle</label><input type="text" class="inp" id="cfgSub"></div>
-                    <div class="inp-group"><label class="inp-label">Admin URL</label><input type="text" class="inp" id="cfgAdminUrl"></div>
-                    <button class="btn-full" onclick="saveConfig()">SAVE SETTINGS</button>
-                    <button class="btn-full btn-cancel" onclick="resetApp()">RESET LINK</button>
+            <div id="tabConfig" class="hidden">
+                <h3 style="margin-bottom:15px; color:var(--muted);">App Settings</h3>
+                <div class="item-card">
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:0.75rem; font-weight:700; color:var(--muted);">APP TITLE</label>
+                        <input type="text" class="input-std" id="confTitle" style="margin-top:5px;">
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:0.75rem; font-weight:700; color:var(--muted);">SUBTITLE</label>
+                        <input type="text" class="input-std" id="confSub" style="margin-top:5px;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75rem; font-weight:700; color:var(--muted);">ADMIN CONTACT</label>
+                        <input type="text" class="input-std" id="confUrl" style="margin-top:5px;">
+                    </div>
+                    <button class="btn-block" onclick="saveConfig()">SAVE CHANGES</button>
+                    <button class="btn-text" onclick="hardReset()">RESET CONNECTION</button>
                 </div>
             </div>
+
         </div>
     </div>
 
-    <div id="modalKey" class="modal-wrap">
-        <div class="modal-box">
-            <h3 style="color:var(--text-main); margin-top:0;">Generate Keys</h3>
-            <div class="inp-group"><label class="inp-label">Prefix</label><input type="text" class="inp" id="keyPrefix" placeholder="VIP"></div>
-            <div class="inp-group"><label class="inp-label">Quantity</label><input type="number" class="inp" id="keyQty" value="1"></div>
-            <button class="btn-full" onclick="generateKeys()">GENERATE</button>
-            <div class="btn-cancel" onclick="closeModal('modalKey')">CANCEL</div>
-        </div>
-    </div>
-    <div id="modalEdit" class="modal-wrap">
-        <div class="modal-box">
-            <h3 style="color:var(--text-main); margin-top:0;">Edit Key</h3>
-            <input type="hidden" id="editOldKey">
-            <div class="inp-group"><label class="inp-label">Key String</label><input type="text" class="inp" id="editNewKey"></div>
-            <button class="btn-full" onclick="saveEditedKey()">SAVE CHANGES</button>
-            <div class="btn-cancel" onclick="closeModal('modalEdit')">CANCEL</div>
+    <div id="modalKey" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Generate Keys</h3>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--muted);">PREFIX</label>
+            <input type="text" class="input-std" id="keyPrefix" value="VIP" style="margin-bottom:10px;">
+            <label style="font-size:0.75rem; font-weight:700; color:var(--muted);">QUANTITY</label>
+            <input type="number" class="input-std" id="keyQty" value="1">
+            <button class="btn-block" onclick="generateKeys()">GENERATE</button>
+            <button class="btn-text" onclick="closeModal('modalKey')">CANCEL</button>
         </div>
     </div>
 
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span id="toastMsg">Success</span></div>
+    <div id="modalEdit" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="margin-top:0;">Edit Key</h3>
+            <input type="hidden" id="editOld">
+            <input type="text" class="input-std" id="editNew">
+            <button class="btn-block" onclick="saveKeyEdit()">SAVE</button>
+            <button class="btn-text" onclick="closeModal('modalEdit')">CANCEL</button>
+        </div>
+    </div>
 
-    <div class="nav-wrap">
-        <div class="nav-bar">
-            <div class="nav-item active" id="navKeys" onclick="switchTab('keys')"><i class="fas fa-key"></i><span class="nav-lbl">KEYS</span></div>
-            <div class="nav-item" id="navDev" onclick="switchTab('devices')"><i class="fas fa-mobile-alt"></i><span class="nav-lbl">DEVICES</span></div>
-            <div class="nav-item" id="navSet" onclick="switchTab('settings')"><i class="fas fa-sliders-h"></i><span class="nav-lbl">CONFIG</span></div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span>Action Successful</span></div>
+
+    <div class="nav-fixed">
+        <div class="nav-inner">
+            <div class="nav-btn active" id="navKey" onclick="switchTab('keys')"><i class="fas fa-key"></i><span class="nav-lbl">KEYS</span></div>
+            <div class="nav-btn" id="navDev" onclick="switchTab('devices')"><i class="fas fa-mobile-alt"></i><span class="nav-lbl">DEVICES</span></div>
+            <div class="nav-btn" id="navConf" onclick="switchTab('config')"><i class="fas fa-sliders-h"></i><span class="nav-lbl">CONFIG</span></div>
         </div>
     </div>
 
     <script>
-        // --- 1. DEFINITIONS (Prevent ReferenceError) ---
-        const USER_PROVIDED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
-        const DEFAULT_JSON = { "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" }, "BannedDevices": { "test_ban": "banned" }, "ActivatedUsers": { "placeholder": "active" }, "ValidKeys": { "VIP-DEMO": new Date().toISOString() } };
+        // ==========================================
+        // 1. CRITICAL: VARIABLE DEFINITIONS (TOP)
+        // ==========================================
+        const HARDCODED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
+        const DEFAULT_DATA = { 
+            "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" }, 
+            "BannedDevices": { "test_ban": "banned" }, 
+            "ActivatedUsers": { "placeholder": "active" }, 
+            "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
+        };
 
-        // Define pColor immediately to fix "ReferenceError"
-        let pColor = "rgba(0, 229, 255, 0.2)"; 
-        const cvs = document.getElementById('particles');
-        const ctx = cvs.getContext('2d');
-        let parts = [];
-        let dbUrl = localStorage.getItem("dbUrl");
+        // Global State
+        let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
         let dbData = null;
-        let currentTheme = localStorage.getItem('theme') || 'cyberpunk';
+        let themes = ['cyberpunk', 'blood', 'matrix', 'cherry'];
+        let curThemeIdx = 0;
 
-        // --- 2. URL CLEANER (Fixes .json.json bug) ---
-        function getCleanUrl(url) {
-            let clean = url ? url.trim() : "";
-            if(!clean) return "";
-            if(clean.indexOf("firebaseio.com") === -1) return clean; 
-            // Fix double extension issues
-            let base = clean.split("firebaseio.com")[0] + "firebaseio.com";
-            return base + ".json";
+        // Canvas Vars
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let accentColor = "rgba(0, 229, 255, 0.3)";
+
+        // ==========================================
+        // 2. URL SANITIZER (Auto-Fixer)
+        // ==========================================
+        function sanitizeUrl(url) {
+            let clean = url.trim();
+            // Remove all instances of .json or trailing slashes
+            while(clean.endsWith('/') || clean.endsWith('.json')) {
+                if(clean.endsWith('/')) clean = clean.slice(0, -1);
+                if(clean.endsWith('.json')) clean = clean.slice(0, -5);
+            }
+            return clean + ".json";
         }
 
-        // FORCE FIX ON LOAD
-        if(!dbUrl || dbUrl.includes(".json.json") || !dbUrl.includes("appurl-8eec4")) {
-            dbUrl = USER_PROVIDED_URL;
+        // FORCE CORRECTION ON LOAD
+        // This fixes the issue seen in your screenshot where it was ".json.json"
+        if (!dbUrl.includes("appurl-8eec4") || dbUrl.includes(".json.json")) {
+            dbUrl = HARDCODED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
 
-        // --- 3. HELPER FUNCTIONS ---
-        function showToast(m) { const t=document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
-        function copyTxt(t) { navigator.clipboard.writeText(t); showToast("Copied"); }
-        function openKeyModal() { document.getElementById('modalKey').style.display='flex'; }
-        function openEditKey(k) { document.getElementById('editOldKey').value=k; document.getElementById('editNewKey').value=k; document.getElementById('modalEdit').style.display='flex'; }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function resetApp() { localStorage.removeItem("dbUrl"); location.reload(); }
+        // ==========================================
+        // 3. CORE LOGIC
+        // ==========================================
+        async function appInit() {
+            // UI Reset
+            document.getElementById('viewLoader').classList.remove('hidden');
+            document.getElementById('viewError').classList.add('hidden');
+            document.getElementById('viewDashboard').classList.add('hidden');
 
-        // --- 4. CORE LOGIC ---
-        async function init() {
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('mainContent').classList.add('hidden');
-            document.getElementById('errorMsg').classList.add('hidden');
+            const finalUrl = sanitizeUrl(dbUrl);
+            document.getElementById('debugUrl').innerText = finalUrl;
 
-            const targetUrl = getCleanUrl(dbUrl);
-            document.getElementById('debugUrl').innerText = targetUrl;
-
-            // Timeout Protection
+            // Timeout Protection (10s)
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000);
 
             try {
-                // STANDARD FETCH (No CORS mode to avoid failures)
-                const res = await fetch(targetUrl, { signal: controller.signal });
+                // Fetch Request (Standard Mode)
+                const response = await fetch(finalUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
-                if(res.status === 401 || res.status === 403) throw new Error("Permission Denied (401). Check Database Rules.");
-                if(res.status === 404) throw new Error("Database Not Found (404).");
-                if(!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
-                let data = await res.json();
-                
-                // Init Database if empty
-                if(data === null) {
-                    await fetch(targetUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_JSON) });
-                    data = DEFAULT_JSON;
+                let data = await response.json();
+
+                // If DB is empty, initialize it
+                if (!data) {
+                    await fetch(finalUrl, {
+                        method: 'PUT',
+                        body: JSON.stringify(DEFAULT_DATA)
+                    });
+                    data = DEFAULT_DATA;
                 }
-                
+
                 dbData = data;
-                ensureStructure();
-                render();
+                ensureDataStructure();
+                renderAll();
 
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('mainContent').classList.remove('hidden');
+                // Success State
+                document.getElementById('viewLoader').classList.add('hidden');
+                document.getElementById('viewDashboard').classList.remove('hidden');
 
-            } catch(e) {
-                console.error(e);
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('errorMsg').classList.remove('hidden');
-                document.getElementById('errorTxt').innerText = e.message;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('viewLoader').classList.add('hidden');
+                document.getElementById('viewError').classList.remove('hidden');
             }
         }
 
-        function ensureStructure() {
+        function ensureDataStructure() {
             if(!dbData.ValidKeys) dbData.ValidKeys = {};
             if(!dbData.ActivatedUsers) dbData.ActivatedUsers = {};
             if(!dbData.BannedDevices) dbData.BannedDevices = {};
-            if(!dbData.Config) dbData.Config = DEFAULT_JSON.Config;
+            if(!dbData.Config) dbData.Config = DEFAULT_DATA.Config;
         }
 
-        async function saveData() {
-            const targetUrl = getCleanUrl(dbUrl);
-            try { await fetch(targetUrl, { method: 'PUT', body: JSON.stringify(dbData) }); showToast("Saved"); } 
-            catch(e) { showToast("Save Failed"); }
-        }
-
-        // --- 5. RENDERERS ---
-        function render() {
-            const kList = document.getElementById('keyList');
-            kList.innerHTML = "";
-            const searchK = document.getElementById('searchKey').value.toLowerCase();
-            const keys = Object.keys(dbData.ValidKeys).reverse();
-
-            keys.forEach(k => {
-                if(searchK && !k.toLowerCase().includes(searchK)) return;
-                let timeStr = "Manual Key";
-                try { const d = new Date(dbData.ValidKeys[k]); if(!isNaN(d)) timeStr = d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+" "+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); } catch(e){}
-                
-                kList.innerHTML += `
-                <div class="card">
-                    <div class="key-top"><span class="key-text" onclick="copyTxt('${k}')">${k}</span>
-                        <div class="actions"><div class="act-btn" onclick="openEditKey('${k}')"><i class="fas fa-pen"></i></div><div class="act-btn del" onclick="deleteKey('${k}')"><i class="fas fa-trash"></i></div></div>
-                    </div>
-                    <div class="key-meta"><span style="font-size:0.75rem; color:#888;">${timeStr}</span><span style="font-size:0.7rem; color:var(--success); font-weight:600;">ACTIVE</span></div>
-                </div>`;
-            });
-            if(!kList.innerHTML) kList.innerHTML = "<p style='text-align:center; color:var(--text-muted); margin-top:20px'>No keys found</p>";
-
-            const uList = document.getElementById('userList');
-            uList.innerHTML = "";
-            const searchD = document.getElementById('searchDev').value.toLowerCase();
-            const users = [...new Set([...Object.keys(dbData.ActivatedUsers), ...Object.keys(dbData.BannedDevices)])];
-
-            users.forEach(u => {
-                if(u==='placeholder'||u==='test_ban') return;
-                if(searchD && !u.toLowerCase().includes(searchD)) return;
-                const isBanned = dbData.BannedDevices[u] !== undefined;
-                uList.innerHTML += `
-                <div class="card" style="border-left: 3px solid ${isBanned?'var(--danger)':'var(--success)'}">
-                    <div class="user-row"><div class="user-id" onclick="copyTxt('${u}')">${u}</div>
-                        <label class="switch"><input type="checkbox" ${isBanned?'checked':''} onchange="toggleBan('${u}')"><span class="slider"></span></label>
-                    </div>
-                    <div class="key-meta" style="border:none; padding-top:5px; margin-top:0;">
-                        <span style="font-size:0.75rem; color:${isBanned?'var(--danger)':'var(--success)'}"><i class="fas ${isBanned?'fa-ban':'fa-check-circle'}"></i> ${isBanned?'BANNED':'ALLOWED'}</span>
-                    </div>
-                </div>`;
-            });
-
-            if(dbData.Config) {
-                document.getElementById('cfgTitle').value = dbData.Config.Title || "";
-                document.getElementById('cfgSub').value = dbData.Config.Subtitle || "";
-                document.getElementById('cfgAdminUrl').value = dbData.Config.AdminUrl || "";
+        async function syncDB() {
+            const finalUrl = sanitizeUrl(dbUrl);
+            try {
+                await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(dbData) });
+                showToast("Saved");
+            } catch (e) {
+                showToast("Save Failed");
             }
         }
 
-        // --- 6. ACTIONS ---
+        // ==========================================
+        // 4. RENDERERS
+        // ==========================================
+        function renderAll() {
+            renderKeys();
+            renderDevices();
+            // Config
+            document.getElementById('confTitle').value = dbData.Config.Title || "";
+            document.getElementById('confSub').value = dbData.Config.Subtitle || "";
+            document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
+        }
+
+        function renderKeys() {
+            const list = document.getElementById('listKeys');
+            const search = document.getElementById('searchKeys').value.toLowerCase();
+            list.innerHTML = "";
+
+            Object.keys(dbData.ValidKeys).reverse().forEach(key => {
+                if (search && !key.toLowerCase().includes(search)) return;
+                
+                // Date formatting
+                let dateStr = "Manual";
+                try {
+                    const d = new Date(dbData.ValidKeys[key]);
+                    if(!isNaN(d)) dateStr = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                } catch(e){}
+
+                list.innerHTML += `
+                <div class="item-card">
+                    <div class="row-top">
+                        <span class="mono-text" onclick="copy('${key}')">${key}</span>
+                        <div style="display:flex; gap:8px">
+                            <div class="act-btn" onclick="editKey('${key}')"><i class="fas fa-pen"></i></div>
+                            <div class="act-btn del" onclick="delKey('${key}')"><i class="fas fa-trash"></i></div>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <span><i class="far fa-clock"></i> ${dateStr}</span>
+                        <span class="badge">ACTIVE</span>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function renderDevices() {
+            const list = document.getElementById('listDevices');
+            const search = document.getElementById('searchDevs').value.toLowerCase();
+            list.innerHTML = "";
+
+            const allDevs = [...new Set([...Object.keys(dbData.ActivatedUsers), ...Object.keys(dbData.BannedDevices)])];
+
+            allDevs.forEach(dev => {
+                if(dev === "placeholder" || dev === "test_ban") return;
+                if(search && !dev.toLowerCase().includes(search)) return;
+
+                const isBanned = dbData.BannedDevices[dev] !== undefined;
+
+                list.innerHTML += `
+                <div class="item-card" style="border-left: 3px solid ${isBanned ? 'var(--red)' : 'var(--green)'}">
+                    <div class="user-row">
+                        <span class="mono-text" style="color:var(--text); font-size:0.85rem;" onclick="copy('${dev}')">${dev}</span>
+                        <label class="switch">
+                            <input type="checkbox" ${isBanned ? 'checked' : ''} onchange="toggleBan('${dev}')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="meta-row" style="border:none; padding-top:5px;">
+                        <span class="badge ${isBanned?'banned':''}">${isBanned ? 'BANNED' : 'ALLOWED'}</span>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // ==========================================
+        // 5. ACTIONS
+        // ==========================================
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
-            const pre = document.getElementById('keyPrefix').value.toUpperCase() || "KEY";
+            const prefix = document.getElementById('keyPrefix').value.toUpperCase();
+            
             for(let i=0; i<qty; i++) {
-                const rnd = Math.random().toString(36).substring(2,8).toUpperCase();
-                dbData.ValidKeys[`${pre}-${rnd}`] = new Date().toISOString();
+                const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
+                dbData.ValidKeys[`${prefix}-${rnd}`] = new Date().toISOString();
             }
-            closeModal('modalKey'); render(); saveData();
+            
+            closeModal('modalKey');
+            renderAll();
+            syncDB();
         }
 
-        function toggleBan(u) {
-            if(dbData.BannedDevices[u]) { delete dbData.BannedDevices[u]; dbData.ActivatedUsers[u] = "active"; }
-            else { dbData.BannedDevices[u] = "banned"; }
-            saveData(); render();
+        function toggleBan(dev) {
+            if (dbData.BannedDevices[dev]) {
+                delete dbData.BannedDevices[dev];
+                dbData.ActivatedUsers[dev] = "active";
+            } else {
+                dbData.BannedDevices[dev] = "banned";
+            }
+            renderAll();
+            syncDB();
         }
 
         function saveConfig() {
-            dbData.Config.Title = document.getElementById('cfgTitle').value;
-            dbData.Config.Subtitle = document.getElementById('cfgSub').value;
-            dbData.Config.AdminUrl = document.getElementById('cfgAdminUrl').value;
-            saveData();
+            dbData.Config.Title = document.getElementById('confTitle').value;
+            dbData.Config.Subtitle = document.getElementById('confSub').value;
+            dbData.Config.AdminUrl = document.getElementById('confUrl').value;
+            syncDB();
         }
 
-        function saveEditedKey() {
-            const oldK = document.getElementById('editOldKey').value;
-            const newK = document.getElementById('editNewKey').value;
+        function editKey(key) {
+            document.getElementById('editOld').value = key;
+            document.getElementById('editNew').value = key;
+            openModal('modalEdit');
+        }
+
+        function saveKeyEdit() {
+            const oldK = document.getElementById('editOld').value;
+            const newK = document.getElementById('editNew').value;
             if(newK && newK !== oldK) {
                 dbData.ValidKeys[newK] = dbData.ValidKeys[oldK];
                 delete dbData.ValidKeys[oldK];
-                render(); saveData();
+                renderAll();
+                syncDB();
             }
             closeModal('modalEdit');
         }
-        function deleteKey(k) { if(confirm("Delete?")) { delete dbData.ValidKeys[k]; render(); saveData(); } }
 
-        function switchTab(t) { 
-            document.querySelectorAll('.hidden').forEach(e=>e.classList.add('hidden')); 
-            document.getElementById('mainContent').classList.remove('hidden');
-            document.getElementById(t==='keys'?'tabKeys':(t==='devices'?'tabDevices':'tabSettings')).classList.remove('hidden');
-            document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
-            document.getElementById(t==='keys'?'navKeys':(t==='devices'?'navDev':'navSet')).classList.add('active');
+        function delKey(key) {
+            if(confirm("Delete Key?")) {
+                delete dbData.ValidKeys[key];
+                renderAll();
+                syncDB();
+            }
         }
 
-        // --- 7. THEME & ANIMATION ---
-        function setTheme(t) { 
-            currentTheme=t; document.documentElement.setAttribute('data-theme',t); 
-            localStorage.setItem('theme',t); toggleThemeMenu(false); 
-            const s = getComputedStyle(document.documentElement);
-            pColor = s.getPropertyValue('--primary').trim();
+        // ==========================================
+        // 6. UTILITIES
+        // ==========================================
+        function hardReset() {
+            localStorage.removeItem("dbUrl");
+            location.reload();
         }
-        function toggleThemeMenu(f) { const m=document.getElementById('themeMenu'); if(f!==undefined) m.classList.toggle('show',f); else m.classList.toggle('show'); }
 
-        function resize(){cvs.width=window.innerWidth; cvs.height=window.innerHeight;} window.addEventListener('resize',resize); resize();
-        class P{ constructor(){this.reset()} reset(){this.x=Math.random()*cvs.width; this.y=Math.random()*cvs.height; this.v=(Math.random()*0.5)+0.2; this.s=Math.random()*2} up(){this.y-=this.v; if(this.y<0)this.reset()} dr(){ctx.fillStyle=pColor; ctx.globalAlpha=0.3; ctx.beginPath(); ctx.arc(this.x,this.y,this.s,0,Math.PI*2); ctx.fill()} }
-        for(let i=0;i<50;i++) parts.push(new P());
-        function anim(){ctx.clearRect(0,0,cvs.width,cvs.height); parts.forEach(p=>{p.up();p.dr()}); requestAnimationFrame(anim)} 
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.querySelector('span').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
 
-        // --- 8. STARTUP ---
-        // Run strictly in order
-        setTheme(currentTheme);
-        anim();
-        init(); 
+        function copy(txt) {
+            navigator.clipboard.writeText(txt);
+            showToast("Copied");
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function switchTab(tab) {
+            ['Keys', 'Devices', 'Config'].forEach(t => {
+                document.getElementById(`tab${t}`).classList.add('hidden');
+            });
+            ['Key', 'Dev', 'Conf'].forEach(n => {
+                document.getElementById(`nav${n}`).classList.remove('active');
+            });
+
+            if(tab === 'keys') {
+                document.getElementById('tabKeys').classList.remove('hidden');
+                document.getElementById('navKey').classList.add('active');
+            } else if(tab === 'devices') {
+                document.getElementById('tabDevices').classList.remove('hidden');
+                document.getElementById('navDev').classList.add('active');
+            } else {
+                document.getElementById('tabConfig').classList.remove('hidden');
+                document.getElementById('navConf').classList.add('active');
+            }
+        }
+
+        // ==========================================
+        // 7. VISUALS (THEME & PARTICLES)
+        // ==========================================
+        function toggleTheme() {
+            curThemeIdx = (curThemeIdx + 1) % themes.length;
+            const theme = themes[curThemeIdx];
+            document.documentElement.setAttribute('data-theme', theme);
+            
+            // Update Particle Color based on CSS variable
+            const style = getComputedStyle(document.documentElement);
+            accentColor = style.getPropertyValue('--primary').trim();
+        }
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<50; i++) {
+                parts.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    v: (Math.random() * 0.5) + 0.2,
+                    s: Math.random() * 2
+                });
+            }
+            animate();
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = accentColor;
+            ctx.globalAlpha = 0.3;
+            
+            parts.forEach(p => {
+                p.y -= p.v;
+                if(p.y < 0) p.y = canvas.height;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // ==========================================
+        // 8. STARTUP
+        // ==========================================
+        document.documentElement.setAttribute('data-theme', 'cyberpunk'); // Default theme
+        initParticles();
+        appInit(); // Start App
+
     </script>
 </body>
 </html>
