@@ -18,10 +18,10 @@
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
         header { background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 15px 20px; position: sticky; top: 0; z-index: 50; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.1rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; letter-spacing: 0.5px; }
         .logo i { color: var(--primary); }
         .head-btn { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .head-btn:active { transform: scale(0.95); }
+        .head-btn:active { transform: scale(0.95); background: var(--border); }
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         
@@ -31,13 +31,13 @@
         .search-input { width: 100%; background: var(--bg-card); border: 1px solid var(--border); padding: 12px 12px 12px 42px; color: var(--text-main); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
         .btn-gen { background: var(--primary); color: #000; border: none; padding: 0 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s; }
         .key-top { display: flex; justify-content: space-between; align-items: center; }
         .key-text { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; word-break: break-all; }
         .key-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
         .actions { display: flex; gap: 8px; }
         .act-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .act-btn.del:hover { border-color: var(--danger); color: var(--danger); }
+        .act-btn.del:hover { background: rgba(255,0,85,0.1); color: var(--danger); border-color: var(--danger); }
 
         .user-row { display: flex; justify-content: space-between; align-items: center; }
         .switch { position: relative; width: 44px; height: 24px; }
@@ -166,9 +166,8 @@
     </div>
 
     <script>
-        // --- 1. INITIALIZATION SAFETY BLOCK ---
-        
-        // Define ALL variables first to prevent "ReferenceError"
+        // --- 1. DEFINITIONS (Prevent ReferenceError) ---
+        // Your Exact URL
         const USER_PROVIDED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_JSON = { "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" }, "BannedDevices": { "test_ban": "banned" }, "ActivatedUsers": { "placeholder": "active" }, "ValidKeys": { "VIP-DEMO": new Date().toISOString() } };
 
@@ -176,39 +175,28 @@
         const cvs = document.getElementById('particles');
         const ctx = cvs.getContext('2d');
         let parts = [];
-        let pColor = "rgba(0, 229, 255, 0.2)"; // Initialized immediately to stop crash
-        let dbUrl = localStorage.getItem("dbUrl");
+        let pColor = "rgba(0, 229, 255, 0.2)"; // DEFINED HERE FIRST
+        let dbUrl = localStorage.getItem("dbUrl") || USER_PROVIDED_URL;
         let dbData = null;
         let currentTheme = localStorage.getItem('theme') || 'cyberpunk';
 
-        // --- 2. URL SANITIZER ---
+        // --- 2. HELPERS ---
         function getCleanUrl(url) {
             let clean = url ? url.trim() : "";
             if(!clean) return "";
-            // Strip everything after .com or .json recursively
-            // This fixes the issue where you had .json.json
-            if(clean.includes("firebaseio.com")) {
-                clean = clean.split("firebaseio.com")[0] + "firebaseio.com";
-            }
-            return clean + ".json";
+            if(clean.indexOf("firebaseio.com") === -1) return clean; 
+            // Only keep up to .com, strip rest to avoid double .json
+            let base = clean.split("firebaseio.com")[0] + "firebaseio.com";
+            return base + ".json";
         }
 
-        // AUTO-CORRECT URL LOGIC
-        // If the stored URL looks broken or is missing, force the user provided one
-        if(!dbUrl || dbUrl.includes("/.json")) {
+        // Auto-fix bad URL in storage on load
+        if(dbUrl && (dbUrl.includes(".json.json") || !dbUrl.includes("appurl-8eec4"))) {
             dbUrl = USER_PROVIDED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
 
-        // --- 3. HELPER FUNCTIONS ---
-        function showToast(m) { const t=document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
-        function copyTxt(t) { navigator.clipboard.writeText(t); showToast("Copied"); }
-        function openKeyModal() { document.getElementById('modalKey').style.display='flex'; }
-        function openEditKey(k) { document.getElementById('editOldKey').value=k; document.getElementById('editNewKey').value=k; document.getElementById('modalEdit').style.display='flex'; }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function resetApp() { localStorage.removeItem("dbUrl"); location.reload(); }
-
-        // --- 4. CORE LOGIC ---
+        // --- 3. DATABASE ---
         async function init() {
             document.getElementById('loader').style.display = 'block';
             document.getElementById('mainContent').classList.add('hidden');
@@ -217,24 +205,33 @@
             const targetUrl = getCleanUrl(dbUrl);
             document.getElementById('debugUrl').innerText = targetUrl;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s
+
             try {
-                // Fetch with explicit CORS mode
-                const res = await fetch(targetUrl, { mode: 'cors' });
-                
+                // REMOVED 'mode: cors' to fix "Failed to fetch" on some networks
+                const res = await fetch(targetUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if(res.status === 401 || res.status === 403) throw new Error("Permission Denied (401). Check Database Rules.");
+                if(res.status === 404) throw new Error("Database Not Found (404).");
                 if(!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                
+
                 let data = await res.json();
-                if(!data) {
+                
+                // Initialize if empty
+                if(data === null) {
                     await fetch(targetUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_JSON) });
                     data = DEFAULT_JSON;
                 }
-                
+
                 dbData = data;
                 ensureStructure();
                 render();
 
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('mainContent').classList.remove('hidden');
+
             } catch(e) {
                 console.error(e);
                 document.getElementById('loader').style.display = 'none';
@@ -256,7 +253,7 @@
             catch(e) { showToast("Save Failed"); }
         }
 
-        // --- 5. RENDERERS ---
+        // --- 4. RENDERERS ---
         function render() {
             const kList = document.getElementById('keyList');
             kList.innerHTML = "";
@@ -273,7 +270,7 @@
                     <div class="key-top"><span class="key-text" onclick="copyTxt('${k}')">${k}</span>
                         <div class="actions"><div class="act-btn" onclick="openEditKey('${k}')"><i class="fas fa-pen"></i></div><div class="act-btn del" onclick="deleteKey('${k}')"><i class="fas fa-trash"></i></div></div>
                     </div>
-                    <div class="key-meta"><div class="time-tag"><i class="far fa-clock"></i> ${timeStr}</div><span style="font-size:0.7rem; color:var(--success); font-weight:600;">ACTIVE</span></div>
+                    <div class="key-meta"><span style="font-size:0.75rem; color:#888;">${timeStr}</span><span style="font-size:0.7rem; color:var(--success); font-weight:600;">ACTIVE</span></div>
                 </div>`;
             });
             if(!kList.innerHTML) kList.innerHTML = "<p style='text-align:center; color:var(--text-muted); margin-top:20px'>No keys found</p>";
@@ -305,7 +302,7 @@
             }
         }
 
-        // --- 6. ACTIONS ---
+        // --- 5. LOGIC & UI ---
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const pre = document.getElementById('keyPrefix').value.toUpperCase() || "KEY";
@@ -341,6 +338,13 @@
         }
         function deleteKey(k) { if(confirm("Delete?")) { delete dbData.ValidKeys[k]; render(); saveData(); } }
 
+        function showToast(m) { const t=document.getElementById('toast'); document.getElementById('toastMsg').innerText=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+        function copyTxt(t) { navigator.clipboard.writeText(t); showToast("Copied"); }
+        function openKeyModal() { document.getElementById('modalKey').style.display='flex'; }
+        function openEditKey(k) { document.getElementById('editOldKey').value=k; document.getElementById('editNewKey').value=k; document.getElementById('modalEdit').style.display='flex'; }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+        function resetApp() { localStorage.removeItem("dbUrl"); location.reload(); }
+        
         function switchTab(t) { 
             document.querySelectorAll('.hidden').forEach(e=>e.classList.add('hidden')); 
             document.getElementById('mainContent').classList.remove('hidden');
@@ -349,7 +353,7 @@
             document.getElementById(t==='keys'?'navKeys':(t==='devices'?'navDev':'navSet')).classList.add('active');
         }
 
-        // --- 7. THEME & ANIMATION ---
+        // --- 6. THEME & STARTUP ---
         function setTheme(t) { 
             currentTheme=t; document.documentElement.setAttribute('data-theme',t); 
             localStorage.setItem('theme',t); toggleThemeMenu(false); 
@@ -363,10 +367,10 @@
         for(let i=0;i<50;i++) parts.push(new P());
         function anim(){ctx.clearRect(0,0,cvs.width,cvs.height); parts.forEach(p=>{p.up();p.dr()}); requestAnimationFrame(anim)} 
 
-        // --- 8. STARTUP ---
+        // Start (Order Guaranteed)
         setTheme(currentTheme);
         anim();
-        init(); 
+        init();
     </script>
 </body>
 </html>
