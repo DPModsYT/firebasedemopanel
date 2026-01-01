@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V2</title>
+    <title>Gateway Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -15,19 +15,15 @@
             --border: rgba(255, 255, 255, 0.08); 
             --green: #00ff9d; --red: #ff0055;
         }
-        /* Themes */
         [data-theme="blood"] { --bg:#1a0505; --card:#2b0a0a; --nav:#360000; --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
         [data-theme="matrix"] { --bg:#000000; --card:#051a05; --nav:#001100; --accent:#00ff00; --green:#00ff00; --red:#008800; }
         [data-theme="cherry"] { --bg:#1a0f14; --card:#26161c; --nav:#331e26; --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
 
-        /* --- GLOBAL RESETS --- */
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
         
-        /* --- PARTICLES CANVAS --- */
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
-        /* --- HEADER --- */
         header { 
             position: sticky; top: 0; z-index: 50; 
             background: rgba(0,0,0,0.7); backdrop-filter: blur(12px);
@@ -43,11 +39,10 @@
         }
         .icon-btn:active { transform: scale(0.95); }
 
-        /* --- LAYOUT --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
 
-        /* --- CONTROLS --- */
+        /* Controls */
         .controls { display: flex; gap: 10px; margin-bottom: 15px; }
         .search { position: relative; flex: 1; }
         .search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
@@ -62,7 +57,7 @@
             display: flex; align-items: center; gap: 8px; white-space: nowrap;
         }
 
-        /* --- CARDS --- */
+        /* Cards */
         .item-card { 
             background: var(--card); border: 1px solid var(--border); 
             border-radius: 16px; padding: 16px; margin-bottom: 12px; 
@@ -77,7 +72,7 @@
         .badge { color: var(--green); font-weight: 700; text-transform: uppercase; }
         .badge.banned { color: var(--red); }
 
-        /* --- SWITCH --- */
+        /* Switch */
         .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #333; border-radius: 24px; transition: .3s; }
@@ -85,7 +80,7 @@
         input:checked + .slider { background: var(--red); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- NAV BAR --- */
+        /* Nav */
         .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
         .nav-inner { 
             background: var(--nav); border: 1px solid var(--border); 
@@ -97,7 +92,7 @@
         .nav-btn.active { color: var(--accent); transform: translateY(-2px); text-shadow: 0 0 10px rgba(0,229,255,0.3); }
         .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; }
 
-        /* --- ERROR SCREEN --- */
+        /* Error Screen */
         .error-box { 
             text-align: center; padding: 30px 20px; border: 1px solid var(--red); 
             border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px; 
@@ -108,13 +103,12 @@
             color: #ddd; font-size: 0.8rem; 
         }
 
-        /* --- MODAL --- */
+        /* Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: var(--card); width: 90%; max-width: 320px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
         .btn-block { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-weight: 700; margin-top: 10px; }
         .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; }
 
-        /* --- TOAST --- */
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--card); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 30px; z-index: 300; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
@@ -235,7 +229,7 @@
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
         };
 
-        // Global State
+        // Global State - DEFINED FIRST TO AVOID CRASHES
         let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
         let dbData = null;
         let themes = ['cyberpunk', 'blood', 'matrix', 'cherry'];
@@ -252,7 +246,7 @@
         // ==========================================
         function sanitizeUrl(url) {
             let clean = url.trim();
-            // Remove all instances of .json or trailing slashes
+            // Remove trailing slashes or .json
             while(clean.endsWith('/') || clean.endsWith('.json')) {
                 if(clean.endsWith('/')) clean = clean.slice(0, -1);
                 if(clean.endsWith('.json')) clean = clean.slice(0, -5);
@@ -260,8 +254,7 @@
             return clean + ".json";
         }
 
-        // FORCE CORRECTION ON LOAD
-        // This fixes the issue seen in your screenshot where it was ".json.json"
+        // FORCE FIX ON LOAD
         if (!dbUrl.includes("appurl-8eec4") || dbUrl.includes(".json.json")) {
             dbUrl = HARDCODED_URL;
             localStorage.setItem("dbUrl", dbUrl);
@@ -271,7 +264,6 @@
         // 3. CORE LOGIC
         // ==========================================
         async function appInit() {
-            // UI Reset
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewError').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
@@ -284,7 +276,7 @@
             const timeoutId = setTimeout(() => controller.abort(), 10000);
 
             try {
-                // Fetch Request (Standard Mode)
+                // Fetch Request (Standard Mode to fix CORS issues)
                 const response = await fetch(finalUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
@@ -339,7 +331,6 @@
         function renderAll() {
             renderKeys();
             renderDevices();
-            // Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
@@ -353,7 +344,6 @@
             Object.keys(dbData.ValidKeys).reverse().forEach(key => {
                 if (search && !key.toLowerCase().includes(search)) return;
                 
-                // Date formatting
                 let dateStr = "Manual";
                 try {
                     const d = new Date(dbData.ValidKeys[key]);
@@ -365,8 +355,8 @@
                     <div class="row-top">
                         <span class="mono-text" onclick="copy('${key}')">${key}</span>
                         <div style="display:flex; gap:8px">
-                            <div class="act-btn" onclick="editKey('${key}')"><i class="fas fa-pen"></i></div>
-                            <div class="act-btn del" onclick="delKey('${key}')"><i class="fas fa-trash"></i></div>
+                            <div class="icon-btn" style="width:30px; height:30px;" onclick="editKey('${key}')"><i class="fas fa-pen" style="font-size:0.8rem"></i></div>
+                            <div class="icon-btn" style="width:30px; height:30px; border-color:var(--red);" onclick="delKey('${key}')"><i class="fas fa-trash" style="font-size:0.8rem; color:var(--red)"></i></div>
                         </div>
                     </div>
                     <div class="meta-row">
@@ -511,14 +501,13 @@
         }
 
         // ==========================================
-        // 7. VISUALS (THEME & PARTICLES)
+        // 7. VISUALS
         // ==========================================
         function toggleTheme() {
             curThemeIdx = (curThemeIdx + 1) % themes.length;
             const theme = themes[curThemeIdx];
             document.documentElement.setAttribute('data-theme', theme);
             
-            // Update Particle Color based on CSS variable
             const style = getComputedStyle(document.documentElement);
             accentColor = style.getPropertyValue('--primary').trim();
         }
@@ -558,11 +547,11 @@
         });
 
         // ==========================================
-        // 8. STARTUP
+        // 8. STARTUP SEQUENCE
         // ==========================================
-        document.documentElement.setAttribute('data-theme', 'cyberpunk'); // Default theme
+        document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
-        appInit(); // Start App
+        appInit(); 
 
     </script>
 </body>
