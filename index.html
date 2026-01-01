@@ -89,8 +89,8 @@
             <p style="color: var(--muted); margin: 10px 0;" id="errorText">Network Error</p>
             
             <div class="debug-box">
-                <strong>TARGET:</strong><br>
-                <span id="debugUrl">...</span>
+                <strong>TARGET (CHECK SLASH):</strong><br>
+                <span id="debugUrl" style="color: var(--accent);">...</span>
             </div>
 
             <button class="btn-block" style="background: #333; color: white;" onclick="hardReset()">HARD RESET URL</button>
@@ -169,8 +169,9 @@
     </div>
 
     <script>
-        // --- 1. SAFE VARIABLE DEFINITIONS ---
-        // Prevents initialization errors by declaring everything first
+        // ==========================================
+        // 1. SAFE INIT VARIABLES
+        // ==========================================
         const HARDCODED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_DATA = { 
             "Config": { "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "" }, 
@@ -179,55 +180,54 @@
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
         };
 
-        let dbUrl = localStorage.getItem("dbUrl");
+        // Global State
+        let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
         let dbData = null;
         let themes = ['cyberpunk', 'blood', 'matrix', 'cherry'];
         let curThemeIdx = 0;
-        
-        // Canvas Setup
+
+        // Canvas
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         let accentColor = "rgba(0, 229, 255, 0.3)";
 
-        // --- 2. URL CLEANER & AUTO-REPAIR ---
-        function getSafeUrl(inputUrl) {
-            let url = inputUrl ? inputUrl.trim() : "";
-            
-            // If completely empty, use hardcoded default
-            if (!url) return HARDCODED_URL + ".json";
-
-            // Strip everything after .com or .json recursively
-            if (url.includes("firebaseio.com")) {
-                url = url.split("firebaseio.com")[0] + "firebaseio.com";
+        // ==========================================
+        // 2. URL FIXER (CRITICAL FIX FOR FETCH)
+        // ==========================================
+        function sanitizeUrl(url) {
+            let clean = url ? url.trim() : "";
+            // Strip everything to get base domain
+            if (clean.includes("firebaseio.com")) {
+                clean = clean.split("firebaseio.com")[0] + "firebaseio.com";
             }
-            
-            // Add single json extension
-            return url + ".json";
+            // IMPORTANT: Append /.json (The Slash is vital)
+            return clean + "/.json";
         }
 
-        // AUTO-FIX: If stored URL is garbage, reset it immediately
-        if (!dbUrl || !dbUrl.includes("appurl-8eec4")) {
+        // AUTO-RESET IF STORED URL IS BAD
+        if (!dbUrl.includes("appurl-8eec4")) {
             dbUrl = HARDCODED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
 
-        // --- 3. CORE APP LOGIC ---
+        // ==========================================
+        // 3. CORE LOGIC
+        // ==========================================
         async function appInit() {
-            // UI State: Loading
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewError').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
 
-            const finalUrl = getSafeUrl(dbUrl) + "?t=" + Date.now(); // Cache Buster
+            const finalUrl = sanitizeUrl(dbUrl) + "?t=" + Date.now(); // Cache Bust
             document.getElementById('debugUrl').innerText = finalUrl;
 
-            // 15 Second Timeout
+            // 15s Timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
 
             try {
-                // Fetch request
+                // Fetch
                 const response = await fetch(finalUrl, { signal: controller.signal });
                 clearTimeout(timeoutId);
 
@@ -235,9 +235,11 @@
 
                 let data = await response.json();
 
-                // Initialize empty DB
                 if (!data) {
-                    await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(DEFAULT_DATA) });
+                    await fetch(sanitizeUrl(dbUrl), {
+                        method: 'PUT',
+                        body: JSON.stringify(DEFAULT_DATA)
+                    });
                     data = DEFAULT_DATA;
                 }
 
@@ -245,7 +247,6 @@
                 ensureDataStructure();
                 renderAll();
 
-                // UI State: Success
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewDashboard').classList.remove('hidden');
 
@@ -265,7 +266,7 @@
         }
 
         async function syncDB() {
-            const finalUrl = getSafeUrl(dbUrl);
+            const finalUrl = sanitizeUrl(dbUrl);
             try {
                 await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(dbData) });
                 showToast("Saved");
@@ -274,7 +275,9 @@
             }
         }
 
-        // --- 4. RENDERERS ---
+        // ==========================================
+        // 4. RENDERERS
+        // ==========================================
         function renderAll() {
             renderKeys();
             renderDevices();
@@ -302,8 +305,8 @@
                     <div class="row-top">
                         <span class="mono-text" onclick="copy('${key}')">${key}</span>
                         <div style="display:flex; gap:8px">
-                            <div class="icon-btn" style="width:30px; height:30px;" onclick="editKey('${key}')"><i class="fas fa-pen" style="font-size:0.8rem"></i></div>
-                            <div class="icon-btn" style="width:30px; height:30px; border-color:var(--red);" onclick="delKey('${key}')"><i class="fas fa-trash" style="font-size:0.8rem; color:var(--red)"></i></div>
+                            <div class="act-btn" onclick="editKey('${key}')"><i class="fas fa-pen"></i></div>
+                            <div class="act-btn del" onclick="delKey('${key}')"><i class="fas fa-trash"></i></div>
                         </div>
                     </div>
                     <div class="meta-row">
@@ -343,14 +346,18 @@
             });
         }
 
-        // --- 5. ACTIONS ---
+        // ==========================================
+        // 5. ACTIONS
+        // ==========================================
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const prefix = document.getElementById('keyPrefix').value.toUpperCase();
+            
             for(let i=0; i<qty; i++) {
                 const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
                 dbData.ValidKeys[`${prefix}-${rnd}`] = new Date().toISOString();
             }
+            
             closeModal('modalKey');
             renderAll();
             syncDB();
@@ -400,7 +407,9 @@
             }
         }
 
-        // --- 6. UTILS ---
+        // ==========================================
+        // 6. UTILITIES
+        // ==========================================
         function hardReset() {
             localStorage.removeItem("dbUrl");
             location.reload();
@@ -413,13 +422,21 @@
             setTimeout(() => t.classList.remove('show'), 2000);
         }
 
-        function copy(txt) { navigator.clipboard.writeText(txt); showToast("Copied"); }
+        function copy(txt) {
+            navigator.clipboard.writeText(txt);
+            showToast("Copied");
+        }
+
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function switchTab(tab) {
-            ['Keys', 'Devices', 'Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
-            ['Key', 'Dev', 'Conf'].forEach(n => document.getElementById(`nav${n}`).classList.remove('active'));
+            ['Keys', 'Devices', 'Config'].forEach(t => {
+                document.getElementById(`tab${t}`).classList.add('hidden');
+            });
+            ['Key', 'Dev', 'Conf'].forEach(n => {
+                document.getElementById(`nav${n}`).classList.remove('active');
+            });
 
             if(tab === 'keys') {
                 document.getElementById('tabKeys').classList.remove('hidden');
@@ -433,11 +450,14 @@
             }
         }
 
-        // --- 7. VISUALS (THEME & PARTICLES) ---
+        // ==========================================
+        // 7. VISUALS
+        // ==========================================
         function toggleTheme() {
             curThemeIdx = (curThemeIdx + 1) % themes.length;
             const theme = themes[curThemeIdx];
             document.documentElement.setAttribute('data-theme', theme);
+            
             const style = getComputedStyle(document.documentElement);
             accentColor = style.getPropertyValue('--primary').trim();
         }
@@ -471,12 +491,17 @@
             requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
 
-        // --- 8. STARTUP ---
+        // ==========================================
+        // 8. STARTUP
+        // ==========================================
         document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
-        appInit(); // Start the app immediately
+        appInit(); // Start App
 
     </script>
 </body>
