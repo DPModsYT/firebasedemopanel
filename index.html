@@ -3,83 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V3</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <title>Gateway Admin V4</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --bg: #050508; --card: #0e0e14; --nav: #161621; --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; --border: rgba(255, 255, 255, 0.08); --green: #00ff9d; --red: #ff0055; }
-        [data-theme="blood"] { --bg:#1a0505; --card:#2b0a0a; --nav:#360000; --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
-        [data-theme="matrix"] { --bg:#000000; --card:#051a05; --nav:#001100; --accent:#00ff00; --green:#00ff00; --red:#008800; }
+        /* --- CSS VARIABLES --- */
+        :root {
+            --bg: #050508; --card: rgba(14, 14, 20, 0.7); --nav: rgba(22, 22, 33, 0.8); 
+            --accent: #00e5ff; --text: #ffffff; --muted: #94a3b8; 
+            --border: rgba(255, 255, 255, 0.08); 
+            --green: #00ff9d; --red: #ff0055;
+            --glass: blur(12px) saturate(180%);
+        }
+
+        /* --- THEMES --- */
+        [data-theme="blood"] { --bg:#1a0505; --card:rgba(43, 10, 10, 0.7); --nav:rgba(54, 0, 0, 0.8); --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
+        [data-theme="matrix"] { --bg:#000000; --card:rgba(5, 26, 5, 0.7); --nav:rgba(0, 17, 0, 0.8); --accent:#00ff00; --green:#00ff00; --red:#008800; }
+        [data-theme="cherry"] { --bg:#1a0f14; --card:rgba(38, 22, 28, 0.7); --nav:rgba(51, 30, 38, 0.8); --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
         
+        /* ANIME THEMES */
+        [data-theme="naruto"] { --bg:#0a0500; --card:rgba(40, 20, 0, 0.7); --nav:rgba(60, 30, 0, 0.8); --accent:#ff9100; --green:#ffae00; --red:#ff4500; }
+        [data-theme="itachi"] { --bg:#080000; --card:rgba(30, 0, 0, 0.8); --nav:rgba(40, 0, 0, 0.9); --accent:#ff0000; --green:#ff3333; --red:#880000; }
+        [data-theme="demonslayer"] { --bg:#000805; --card:rgba(0, 30, 20, 0.7); --nav:rgba(0, 40, 30, 0.8); --accent:#00ffaa; --green:#00e676; --red:#ff0055; }
+
+        /* --- GLOBAL RESETS --- */
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; transition: background 0.3s; }
+        
         #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
-        header { position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
-        .brand i { color: var(--accent); }
-        .icon-btn { width: 40px; height: 40px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .icon-btn:active { transform: scale(0.95); }
+        /* --- HEADER --- */
+        header { 
+            position: sticky; top: 0; z-index: 50; 
+            background: rgba(0,0,0,0.6); backdrop-filter: var(--glass);
+            border-bottom: 1px solid var(--border); padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+        .brand i { color: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
+        
+        .icon-btn { 
+            width: 40px; height: 40px; border-radius: 12px; 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.9); background: var(--accent); color: #000; }
+        .icon-btn.pulse { animation: spinPulse 0.5s ease-out; background: var(--accent); color: #000; }
+        @keyframes spinPulse { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
 
+        /* --- LAYOUT --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
 
-        /* Stats Row */
-        .stats-row { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat-card { flex: 1; background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 16px; text-align: center; }
-        .stat-val { font-size: 1.5rem; font-weight: 800; color: var(--accent); display: block; }
-        .stat-lbl { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; }
-
-        /* Controls */
+        /* --- CONTROLS --- */
         .controls { display: flex; gap: 10px; margin-bottom: 15px; }
         .search { position: relative; flex: 1; }
         .search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
-        .input-std { width: 100%; background: var(--card); border: 1px solid var(--border); padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; font-family: 'Inter', sans-serif; font-size: 0.9rem; }
-        .btn-main { background: var(--accent); color: #000; border: none; padding: 0 20px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .input-std { 
+            width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border); 
+            padding: 12px 12px 12px 42px; color: var(--text); border-radius: 12px; 
+            font-family: 'Inter', sans-serif; font-size: 0.9rem; backdrop-filter: blur(5px);
+        }
+        .input-std:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        
+        .btn-main { 
+            background: var(--accent); color: #000; border: none; padding: 0 20px; 
+            border-radius: 12px; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
 
-        /* Cards */
-        .item-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s; }
+        /* --- FILTER CHIPS --- */
+        .chips { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .chip { padding: 6px 16px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+        /* --- CARDS --- */
+        .item-card { 
+            background: var(--card); border: 1px solid var(--border); 
+            border-radius: 16px; padding: 16px; margin-bottom: 12px; 
+            display: flex; flex-direction: column; gap: 10px;
+            backdrop-filter: blur(10px); transition: transform 0.2s;
+        }
+        .item-card:active { transform: scale(0.98); }
+        
         .row-top { display: flex; justify-content: space-between; align-items: center; }
         .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--accent); font-size: 0.95rem; word-break: break-all; }
-        .meta-row { border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); align-items: center; }
-        .badge { font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
-        .badge.active { background: rgba(0, 255, 157, 0.1); color: var(--green); }
-        .badge.banned { background: rgba(255, 0, 85, 0.1); color: var(--red); }
+        .meta-row { 
+            border-top: 1px solid var(--border); padding-top: 10px; 
+            display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted);
+            align-items: center;
+        }
+        .badge { font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; font-size: 0.65rem; letter-spacing: 0.5px; }
+        .badge.active { background: rgba(0, 255, 157, 0.15); color: var(--green); border: 1px solid rgba(0, 255, 157, 0.3); }
+        .badge.banned { background: rgba(255, 0, 85, 0.15); color: var(--red); border: 1px solid rgba(255, 0, 85, 0.3); }
 
-        /* Material Toggle Switch */
+        /* --- SWITCH --- */
         .user-row { display: flex; justify-content: space-between; align-items: center; }
-        .switch { position: relative; width: 48px; height: 26px; }
+        .switch { position: relative; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; border-radius: 34px; transition: .3s; border: 1px solid var(--border); }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s; }
-        /* Checked = Banned (Red) */
-        input:checked + .slider { background-color: var(--red); border-color: var(--red); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        /* Not Checked = Allowed (Greenish) */
-        input:not(:checked) + .slider { background-color: rgba(0, 255, 157, 0.2); border-color: var(--green); }
-        input:not(:checked) + .slider:before { background-color: var(--green); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #222; border-radius: 24px; transition: .3s; border: 1px solid var(--border); }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #666; border-radius: 50%; transition: .3s; }
+        
+        input:checked + .slider { background: rgba(255, 0, 85, 0.2); border-color: var(--red); }
+        input:checked + .slider:before { transform: translateX(20px); background: var(--red); box-shadow: 0 0 10px var(--red); }
+        
+        input:not(:checked) + .slider { background: rgba(0, 255, 157, 0.2); border-color: var(--green); }
+        input:not(:checked) + .slider:before { background: var(--green); box-shadow: 0 0 10px var(--green); }
 
-        /* Nav */
-        .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; }
-        .nav-inner { background: var(--nav); border: 1px solid var(--border); padding: 0 15px; height: 65px; border-radius: 20px; width: 90%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; }
-        .nav-btn.active { color: var(--accent); transform: translateY(-2px); text-shadow: 0 0 10px rgba(0,229,255,0.3); }
-        .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; }
+        /* --- NAV BAR --- */
+        .nav-fixed { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; pointer-events: none; }
+        .nav-inner { 
+            background: var(--nav); border: 1px solid var(--border); 
+            padding: 0 20px; height: 70px; border-radius: 24px; width: 90%; max-width: 400px;
+            display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: var(--glass);
+            pointer-events: auto;
+        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.2rem; transition: 0.3s; cursor: pointer; }
+        .nav-btn.active { color: var(--accent); transform: translateY(-3px); text-shadow: 0 0 15px var(--accent); }
+        .nav-lbl { font-size: 0.65rem; margin-top: 4px; font-weight: 700; letter-spacing: 0.5px; }
 
-        /* Error & Modal */
-        .error-box { text-align: center; padding: 30px 20px; border: 1px solid var(--red); border-radius: 16px; background: rgba(255, 0, 85, 0.05); margin-top: 50px; }
-        .debug-box { background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; color: #ddd; font-size: 0.8rem; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--card); width: 90%; max-width: 320px; padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        /* --- ERROR SCREEN --- */
+        .error-box { 
+            text-align: center; padding: 40px 20px; border: 1px solid var(--red); 
+            border-radius: 24px; background: rgba(255, 0, 85, 0.08); margin-top: 50px; 
+            backdrop-filter: blur(10px);
+        }
+        .debug-box { 
+            background: rgba(0,0,0,0.6); padding: 15px; border-radius: 12px; 
+            margin: 20px 0; text-align: left; word-break: break-all; font-family: monospace; 
+            color: #ddd; font-size: 0.75rem; border: 1px solid var(--border);
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--card); width: 90%; max-width: 340px; padding: 30px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
         
         .inp-group { margin-bottom: 15px; }
-        .inp-label { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inp-label { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
         
-        .btn-block { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 10px; font-weight: 700; margin-top: 10px; cursor: pointer; }
-        .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; cursor: pointer; }
+        .btn-block { width: 100%; padding: 14px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 800; margin-top: 10px; cursor: pointer; letter-spacing: 0.5px; }
+        .btn-text { background: transparent; color: var(--muted); margin-top: 10px; width: 100%; border: none; padding: 10px; cursor: pointer; font-weight: 600; }
 
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--card); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 30px; z-index: 300; transition: 0.4s; display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* --- TOAST --- */
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--nav); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 50px; z-index: 300; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 0.85rem; }
         .toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -88,10 +157,10 @@
     <canvas id="bgCanvas"></canvas>
 
     <header>
-        <div class="brand"><i class="fas fa-cube"></i> GATEWAY V3</div>
+        <div class="brand"><i class="fas fa-cube"></i> GATEWAY V4</div>
         <div style="display:flex; gap:10px">
-            <div class="icon-btn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
-            <div class="icon-btn" onclick="appInit()"><i class="fas fa-sync-alt"></i></div>
+            <div class="icon-btn" id="themeBtn" onclick="toggleTheme()"><i class="fas fa-palette"></i></div>
+            <div class="icon-btn" id="reloadBtn" onclick="manualReload()"><i class="fas fa-sync-alt"></i></div>
         </div>
     </header>
 
@@ -99,30 +168,32 @@
         
         <div id="viewLoader" style="text-align: center; padding: 100px 0;">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--accent);"></i>
-            <p style="color: var(--muted); margin-top: 20px; font-weight: 600;">SYNCING DATABASE...</p>
+            <p style="color: var(--muted); margin-top: 20px; font-weight: 600; letter-spacing: 1px;">ESTABLISHING UPLINK...</p>
         </div>
 
         <div id="viewError" class="hidden error-box">
             <i class="fas fa-wifi" style="font-size: 3rem; color: var(--red); margin-bottom: 15px;"></i>
             <h3 style="color: var(--red); margin: 0;">Connection Failed</h3>
-            <p style="color: var(--muted); margin: 10px 0;" id="errorText">Network Error</p>
+            <p style="color: var(--muted); margin: 10px 0;">Database Unreachable</p>
+            
             <div class="debug-box">
                 <strong>TARGET:</strong><br>
                 <span id="debugUrl" style="color: var(--accent);">...</span>
             </div>
-            <button class="btn-block" style="background: #333; color: white;" onclick="hardReset()">HARD RESET URL</button>
+
+            <button class="btn-block" style="background: #222; color: white; border:1px solid #444;" onclick="hardReset()">HARD RESET URL</button>
         </div>
 
         <div id="viewDashboard" class="hidden">
             
-            <div class="stats-row">
-                <div class="stat-card">
-                    <span class="stat-val" id="statKeys">0</span>
-                    <span class="stat-lbl">Valid Keys</span>
+            <div class="stats-row" style="display:flex; gap:10px; margin-bottom:20px;">
+                <div class="item-card" style="flex:1; align-items:center; padding:15px; margin:0;">
+                    <span style="font-size:1.8rem; font-weight:800; color:var(--accent);" id="statKeys">0</span>
+                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Total Keys</span>
                 </div>
-                <div class="stat-card">
-                    <span class="stat-val" id="statDevs">0</span>
-                    <span class="stat-lbl">Active Devices</span>
+                <div class="item-card" style="flex:1; align-items:center; padding:15px; margin:0;">
+                    <span style="font-size:1.8rem; font-weight:800; color:var(--green);" id="statDevs">0</span>
+                    <span style="font-size:0.7rem; font-weight:700; color:var(--muted); text-transform:uppercase;">Active Users</span>
                 </div>
             </div>
 
@@ -138,39 +209,27 @@
                 <div class="controls">
                     <div class="search"><i class="fas fa-search"></i><input type="text" class="input-std" id="searchDevs" placeholder="Search Devices..." onkeyup="renderDevices()"></div>
                 </div>
+                <div class="chips">
+                    <div class="chip active" onclick="setDevFilter('all', this)">All</div>
+                    <div class="chip" onclick="setDevFilter('allowed', this)">Allowed</div>
+                    <div class="chip" onclick="setDevFilter('banned', this)">Banned</div>
+                </div>
                 <div id="listDevices"></div>
             </div>
 
             <div id="tabConfig" class="hidden">
-                <h3 style="margin-bottom:15px; color:var(--muted);">App Settings</h3>
+                <h3 style="margin-bottom:15px; color:var(--text); font-weight:800;">System Config</h3>
                 <div class="item-card">
-                    
-                    <div class="inp-group">
-                        <label class="inp-label">APP TITLE</label>
-                        <input type="text" class="input-std" id="confTitle">
-                    </div>
-                    
-                    <div class="inp-group">
-                        <label class="inp-label">SUBTITLE / STATUS</label>
-                        <input type="text" class="input-std" id="confSub">
-                    </div>
-                    
-                    <div class="inp-group">
-                        <label class="inp-label">ADMIN CONTACT URL</label>
-                        <input type="text" class="input-std" id="confUrl">
-                    </div>
+                    <div class="inp-group"><label class="inp-label">APP TITLE</label><input type="text" class="input-std" id="confTitle"></div>
+                    <div class="inp-group"><label class="inp-label">SUBTITLE</label><input type="text" class="input-std" id="confSub"></div>
+                    <div class="inp-group"><label class="inp-label">ADMIN CONTACT</label><input type="text" class="input-std" id="confUrl"></div>
 
-                    <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+                    <div style="height:1px; background:var(--border); margin:20px 0;"></div>
                     
-                    <div class="inp-group">
-                        <label class="inp-label">API BASE URL</label>
-                        <input type="text" class="input-std" id="confApiUrl">
-                    </div>
-
-                    <div class="inp-group">
-                        <label class="inp-label">API TOKEN</label>
-                        <input type="text" class="input-std" id="confApiToken">
-                    </div>
+                    <h4 style="margin:0 0 15px 0; color:var(--accent);">API Configuration</h4>
+                    <div class="inp-group"><label class="inp-label">API BASE URL</label><input type="text" class="input-std" id="confApiUrl" placeholder="https://api.example.com"></div>
+                    <div class="inp-group"><label class="inp-label">API TOKEN</label><input type="text" class="input-std" id="confApiToken" placeholder="sk_live_..."></div>
+                    <div class="inp-group"><label class="inp-label">ENCRYPTION / SECRET KEY</label><input type="text" class="input-std" id="confApiSecret" placeholder="Secret Key"></div>
 
                     <button class="btn-block" onclick="saveConfig()">SAVE CHANGES</button>
                     <button class="btn-text" onclick="hardReset()">RESET CONNECTION</button>
@@ -183,14 +242,8 @@
     <div id="modalKey" class="modal-overlay hidden">
         <div class="modal-content">
             <h3 style="margin-top:0;">Generate Keys</h3>
-            <div class="inp-group">
-                <label class="inp-label">PREFIX</label>
-                <input type="text" class="input-std" id="keyPrefix" value="VIP">
-            </div>
-            <div class="inp-group">
-                <label class="inp-label">QUANTITY</label>
-                <input type="number" class="input-std" id="keyQty" value="1">
-            </div>
+            <div class="inp-group"><label class="inp-label">PREFIX</label><input type="text" class="input-std" id="keyPrefix" value="VIP"></div>
+            <div class="inp-group"><label class="inp-label">QUANTITY</label><input type="number" class="input-std" id="keyQty" value="1"></div>
             <button class="btn-block" onclick="generateKeys()">GENERATE</button>
             <button class="btn-text" onclick="closeModal('modalKey')">CANCEL</button>
         </div>
@@ -200,13 +253,13 @@
         <div class="modal-content">
             <h3 style="margin-top:0;">Edit Key</h3>
             <input type="hidden" id="editOld">
-            <input type="text" class="input-std" id="editNew">
+            <div class="inp-group"><label class="inp-label">KEY STRING</label><input type="text" class="input-std" id="editNew"></div>
             <button class="btn-block" onclick="saveKeyEdit()">SAVE</button>
             <button class="btn-text" onclick="closeModal('modalEdit')">CANCEL</button>
         </div>
     </div>
 
-    <div id="toast" class="toast"><i class="fas fa-check-circle"></i><span>Action Successful</span></div>
+    <div id="toast" class="toast"><i class="fas fa-check-circle" style="color:var(--green)"></i><span>Action Successful</span></div>
 
     <div class="nav-fixed">
         <div class="nav-inner">
@@ -218,23 +271,24 @@
 
     <script>
         // ==========================================
-        // 1. SAFE VARIABLE DEFINITIONS
+        // 1. INIT & VARIABLES (SAFE ORDER)
         // ==========================================
         const HARDCODED_URL = "https://appurl-8eec4-default-rtdb.firebaseio.com";
         const DEFAULT_DATA = { 
             "Config": { 
                 "Title": "Gateway VIP", "Subtitle": "ONLINE", "AdminUrl": "", "UpdateUrl": "",
-                "Api": { "BaseUrl": "", "Token": "" } 
+                "Api": { "BaseUrl": "", "Token": "", "Secret": "" } 
             }, 
             "BannedDevices": { "test_ban": "banned" }, 
             "ActivatedUsers": { "placeholder": "active" }, 
             "ValidKeys": { "VIP-DEMO": new Date().toISOString() } 
         };
 
-        // State Variables
+        // Globals
         let dbUrl = localStorage.getItem("dbUrl") || HARDCODED_URL;
         let dbData = null;
-        let themes = ['cyberpunk', 'blood', 'matrix', 'cherry'];
+        let devFilter = 'all';
+        let themes = ['cyberpunk', 'blood', 'matrix', 'cherry', 'naruto', 'itachi', 'demonslayer'];
         let curThemeIdx = 0;
 
         // Canvas
@@ -244,29 +298,32 @@
         let accentColor = "rgba(0, 229, 255, 0.3)";
 
         // ==========================================
-        // 2. URL FIXER (CRITICAL)
+        // 2. URL LOGIC
         // ==========================================
         function sanitizeUrl(url) {
             let clean = url ? url.trim() : "";
             if (!clean) return HARDCODED_URL + "/.json";
-            
-            // Strip everything to base then add /.json
             if (clean.includes("firebaseio.com")) {
                 clean = clean.split("firebaseio.com")[0] + "firebaseio.com";
             }
             return clean + "/.json";
         }
 
-        // AUTO-RESET IF BAD
+        // Auto-fix storage
         if (!dbUrl.includes("appurl-8eec4")) {
             dbUrl = HARDCODED_URL;
             localStorage.setItem("dbUrl", dbUrl);
         }
 
         // ==========================================
-        // 3. CORE LOGIC
+        // 3. CORE APP LOGIC
         // ==========================================
-        async function appInit() {
+        async function appInit(isManual = false) {
+            if(isManual) {
+                document.getElementById('reloadBtn').classList.add('pulse');
+                setTimeout(() => document.getElementById('reloadBtn').classList.remove('pulse'), 500);
+            }
+
             document.getElementById('viewLoader').classList.remove('hidden');
             document.getElementById('viewError').classList.add('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
@@ -296,6 +353,8 @@
 
                 document.getElementById('viewLoader').classList.add('hidden');
                 document.getElementById('viewDashboard').classList.remove('hidden');
+                
+                if(!isManual) showToast("System Auto-Reloaded");
 
             } catch (err) {
                 console.error(err);
@@ -310,18 +369,22 @@
             if(!dbData.ActivatedUsers) dbData.ActivatedUsers = {};
             if(!dbData.BannedDevices) dbData.BannedDevices = {};
             if(!dbData.Config) dbData.Config = DEFAULT_DATA.Config;
-            if(!dbData.Config.Api) dbData.Config.Api = { BaseUrl: "", Token: "" };
+            if(!dbData.Config.Api) dbData.Config.Api = { BaseUrl: "", Token: "", Secret: "" };
         }
 
         async function syncDB() {
             const finalUrl = sanitizeUrl(dbUrl);
             try {
                 await fetch(finalUrl, { method: 'PUT', body: JSON.stringify(dbData) });
-                showToast("Saved");
-                renderAll(); // Refresh UI
+                showToast("Data Saved");
+                renderAll();
             } catch (e) {
                 showToast("Save Failed");
             }
+        }
+
+        function manualReload() {
+            appInit(true);
         }
 
         // ==========================================
@@ -331,16 +394,19 @@
             renderKeys();
             renderDevices();
             
+            // Stats
+            document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
+            document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length;
+
             // Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
+            
+            // 3-Section API
             document.getElementById('confApiUrl').value = dbData.Config.Api.BaseUrl || "";
             document.getElementById('confApiToken').value = dbData.Config.Api.Token || "";
-
-            // Stats
-            document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
-            document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length;
+            document.getElementById('confApiSecret').value = dbData.Config.Api.Secret || "";
         }
 
         function renderKeys() {
@@ -351,17 +417,10 @@
             Object.keys(dbData.ValidKeys).reverse().forEach(key => {
                 if (search && !key.toLowerCase().includes(search)) return;
                 
-                // Readable Time
-                let dateStr = "Manual Entry";
-                const val = dbData.ValidKeys[key];
+                let dateStr = "Manual";
                 try {
-                    const d = new Date(val);
-                    if(!isNaN(d.getTime())) {
-                        dateStr = d.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) + 
-                                  " " + d.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' });
-                    } else if(val === "placeholder") {
-                        dateStr = "System Key";
-                    }
+                    const d = new Date(dbData.ValidKeys[key]);
+                    if(!isNaN(d)) dateStr = d.toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) + ", " + d.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit' });
                 } catch(e){}
 
                 list.innerHTML += `
@@ -394,6 +453,10 @@
 
                 const isBanned = dbData.BannedDevices[dev] !== undefined;
 
+                // Filter Logic
+                if (devFilter === 'allowed' && isBanned) return;
+                if (devFilter === 'banned' && !isBanned) return;
+
                 list.innerHTML += `
                 <div class="item-card" style="border-left: 3px solid ${isBanned ? 'var(--red)' : 'var(--green)'}">
                     <div class="user-row">
@@ -404,9 +467,8 @@
                         </label>
                     </div>
                     <div class="meta-row" style="border:none; padding-top:5px;">
-                        <span style="display:flex; align-items:center; gap:5px; color:${isBanned?'var(--red)':'var(--green)'}; font-size:0.75rem; font-weight:700;">
-                            <i class="fas ${isBanned?'fa-ban':'fa-check-circle'}"></i> 
-                            ${isBanned ? 'DEVICE BANNED' : 'DEVICE BOUND'}
+                        <span class="badge ${isBanned?'banned':'active'}">
+                            ${isBanned ? 'BANNED' : 'ALLOWED'}
                         </span>
                     </div>
                 </div>`;
@@ -419,7 +481,6 @@
         function generateKeys() {
             const qty = document.getElementById('keyQty').value;
             const prefix = document.getElementById('keyPrefix').value.toUpperCase();
-            
             for(let i=0; i<qty; i++) {
                 const rnd = Math.random().toString(36).substring(2, 8).toUpperCase();
                 dbData.ValidKeys[`${prefix}-${rnd}`] = new Date().toISOString();
@@ -442,15 +503,13 @@
             dbData.Config.Title = document.getElementById('confTitle').value;
             dbData.Config.Subtitle = document.getElementById('confSub').value;
             dbData.Config.AdminUrl = document.getElementById('confUrl').value;
+            
+            // 3 API Fields
             dbData.Config.Api.BaseUrl = document.getElementById('confApiUrl').value;
             dbData.Config.Api.Token = document.getElementById('confApiToken').value;
+            dbData.Config.Api.Secret = document.getElementById('confApiSecret').value;
+            
             syncDB();
-        }
-
-        function editKey(key) {
-            document.getElementById('editOld').value = key;
-            document.getElementById('editNew').value = key;
-            openModal('modalEdit');
         }
 
         function saveKeyEdit() {
@@ -472,13 +531,32 @@
         }
 
         // ==========================================
-        // 6. UTILS & STARTUP
+        // 6. UI UTILS
         // ==========================================
-        function hardReset() { localStorage.removeItem("dbUrl"); location.reload(); }
-        function showToast(msg) { const t = document.getElementById('toast'); t.querySelector('span').innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+        function setDevFilter(f, el) {
+            devFilter = f;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            renderDevices();
+        }
+
+        function hardReset() {
+            localStorage.removeItem("dbUrl");
+            location.reload();
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.querySelector('span').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
         function copy(txt) { navigator.clipboard.writeText(txt); showToast("Copied"); }
+        function openKeyModal() { document.getElementById('modalKey').classList.remove('hidden'); }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function editKey(key) { document.getElementById('editOld').value=key; document.getElementById('editNew').value=key; openModal('modalEdit'); }
 
         function switchTab(tab) {
             ['Keys', 'Devices', 'Config'].forEach(t => document.getElementById(`tab${t}`).classList.add('hidden'));
@@ -494,13 +572,22 @@
             document.documentElement.setAttribute('data-theme', theme);
             const style = getComputedStyle(document.documentElement);
             accentColor = style.getPropertyValue('--accent').trim();
+            showToast(`Theme: ${theme.toUpperCase()}`);
         }
 
+        // ==========================================
+        // 7. ANIMATION
+        // ==========================================
         function initParticles() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            for(let i=0; i<50; i++) {
-                parts.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: (Math.random()*0.5)+0.2, s: Math.random()*2 });
+            for(let i=0; i<60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    v: (Math.random() * 0.5) + 0.2,
+                    s: Math.random() * 2
+                });
             }
             animate();
         }
@@ -508,18 +595,19 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = accentColor;
-            ctx.globalAlpha = 0.3;
-            parts.forEach(p => {
+            ctx.globalAlpha = 0.4;
+            particles.forEach(p => {
                 p.y -= p.v; if(p.y < 0) p.y = canvas.height;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2); ctx.fill();
             });
             requestAnimationFrame(animate);
         }
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // START
+        // STARTUP
         document.documentElement.setAttribute('data-theme', 'cyberpunk'); 
         initParticles();
-        appInit();
+        appInit(); // Auto-start
 
     </script>
 </body>
