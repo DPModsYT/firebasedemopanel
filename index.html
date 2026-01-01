@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gateway Admin V5.3</title>
+    <title>Gateway Admin V7.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,26 +19,45 @@
         }
 
         /* --- THEMES --- */
-        /* Standard */
         [data-theme="cyberpunk"] { --bg:#050508; --accent:#00e5ff; }
+        [data-theme="matrix"] { --bg:#000000; --card:rgba(0, 20, 0, 0.85); --nav:rgba(0, 30, 0, 0.95); --accent:#00ff00; --green:#00ff00; --red:#008800; }
         [data-theme="blood"] { --bg:#0f0202; --card:rgba(30, 5, 5, 0.7); --nav:rgba(40, 5, 5, 0.9); --accent:#ff0033; --green:#ff3333; --red:#ff0033; }
-        [data-theme="matrix"] { --bg:#000000; --card:rgba(0, 20, 0, 0.8); --nav:rgba(0, 30, 0, 0.95); --accent:#00ff00; --green:#00ff00; --red:#008800; }
-        [data-theme="cherry"] { --bg:#1a0f14; --card:rgba(38, 22, 28, 0.7); --nav:rgba(51, 30, 38, 0.9); --accent:#ff66b2; --green:#ff99cc; --red:#ff3366; }
-        
-        /* Anime */
-        [data-theme="naruto"] { --bg:#0a0500; --card:rgba(40, 20, 0, 0.7); --nav:rgba(60, 30, 0, 0.9); --accent:#ff9100; --green:#ffae00; --red:#ff4500; }
         [data-theme="itachi"] { --bg:#050000; --card:rgba(20, 0, 0, 0.8); --nav:rgba(30, 0, 0, 0.95); --accent:#ff0000; --green:#ff3333; --red:#880000; }
-        
-        /* New Animated Contexts */
-        [data-theme="ocean"] { --bg:#00111a; --card:rgba(0, 20, 30, 0.7); --nav:rgba(0, 30, 40, 0.9); --accent:#00aaff; --green:#00ffcc; --red:#ff0066; }
-        [data-theme="galaxy"] { --bg:#070014; --card:rgba(20, 10, 40, 0.7); --nav:rgba(30, 20, 60, 0.9); --accent:#d400ff; --green:#00ff9d; --red:#ff0055; }
-        [data-theme="sunset"] { --bg: linear-gradient(45deg, #2b0b30, #1a0820); --card:rgba(40, 10, 30, 0.7); --accent:#ffaa00; --nav:rgba(50, 20, 40, 0.9); }
+        [data-theme="gojo"] { --bg:#0a0014; --card:rgba(20, 0, 40, 0.7); --nav:rgba(30, 10, 50, 0.9); --accent:#c400ff; --green:#d633ff; --red:#ff0066; }
+        [data-theme="luffy"] { --bg:#1a1a1a; --card:rgba(40, 40, 40, 0.7); --nav:rgba(50, 50, 50, 0.9); --accent:#ffffff; --green:#dddddd; --red:#ff3333; color: #fff; }
+        [data-theme="demon"] { --bg:#00080a; --card:rgba(0, 20, 30, 0.7); --nav:rgba(0, 30, 40, 0.9); --accent:#00ffcc; --green:#00ff9d; --red:#ff0055; }
 
         /* --- GLOBAL RESETS --- */
         * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 110px; overflow-x: hidden; transition: background 0.4s ease, color 0.4s ease; }
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 110px; overflow-x: hidden; transition: background 0.4s ease; }
         
-        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        #bgCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        
+        /* --- ANIMATION OVERLAYS --- */
+        #themeOverlay { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; z-index: -1; pointer-events: none; display: flex; align-items: center; justify-content: center; opacity: 0.3; overflow: hidden; }
+        
+        /* Sharingan */
+        .sharingan {
+            width: 300px; height: 300px; border-radius: 50%; border: 8px solid #000; background: #a80000;
+            position: relative; animation: spin 4s linear infinite; box-shadow: 0 0 50px #ff0000; display: none;
+        }
+        .sharingan::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; height: 60%; border-radius: 50%; border: 4px solid #000; }
+        .tomoe { position: absolute; width: 30px; height: 30px; background: #000; border-radius: 50%; }
+        .tomoe:nth-child(1) { top: 10%; left: 50%; transform: translateX(-50%); }
+        .tomoe:nth-child(2) { bottom: 20%; right: 15%; }
+        .tomoe:nth-child(3) { bottom: 20%; left: 15%; }
+        .tomoe::after { content:''; position: absolute; top: -10px; left: 5px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 20px solid #000; transform: rotate(15deg); border-radius: 50%; }
+        [data-theme="itachi"] .sharingan { display: block; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Gojo Void */
+        .void-circle {
+            width: 400px; height: 400px; border-radius: 50%; 
+            background: radial-gradient(circle, rgba(196,0,255,0.4) 0%, rgba(0,0,0,0) 70%);
+            animation: pulse 3s ease-in-out infinite; display: none;
+        }
+        [data-theme="gojo"] .void-circle { display: block; }
+        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 0.8; } 100% { transform: scale(0.8); opacity: 0.5; } }
 
         /* --- HEADER --- */
         header { 
@@ -49,14 +68,13 @@
         }
         .brand { font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
         .brand i { color: var(--accent); filter: drop-shadow(0 0 8px var(--accent)); transition: 0.3s; }
-        
         .icon-btn { 
             width: 38px; height: 38px; border-radius: 10px; 
             background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--muted);
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
         }
         .icon-btn:active { transform: scale(0.92); background: var(--accent); color: #000; }
-        
+
         /* --- LAYOUT --- */
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
         .hidden { display: none !important; }
@@ -70,20 +88,14 @@
         .input-std { 
             width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border); 
             padding: 12px 12px 12px 40px; color: var(--text); border-radius: 12px; 
-            font-family: 'Inter', sans-serif; font-size: 0.9rem; backdrop-filter: blur(5px);
-            transition: 0.3s;
+            font-family: 'Inter', sans-serif; font-size: 0.9rem; backdrop-filter: blur(5px); transition: 0.3s;
         }
         .input-std:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); box-shadow: 0 0 20px rgba(0,0,0,0.3); }
-        
         .btn-main { 
             background: var(--accent); color: #000; border: none; padding: 0 20px; 
             border-radius: 12px; font-weight: 700; cursor: pointer; 
-            display: flex; align-items: center; gap: 8px; white-space: nowrap;
-            box-shadow: var(--shadow); transition: 0.2s;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap; box-shadow: var(--shadow); transition: 0.2s;
         }
-        .btn-main:active { transform: scale(0.96); opacity: 0.9; }
-
-        /* --- FILTER CHIPS --- */
         .chips { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .chip { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .chip.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
@@ -96,34 +108,22 @@
             backdrop-filter: blur(10px); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative; overflow: hidden;
         }
-        .item-card::before { content:''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--border); transition: 0.3s; }
-        .item-card.active-card::before { background: var(--green); box-shadow: 2px 0 10px var(--green); }
-        .item-card.banned-card::before { background: var(--red); box-shadow: 2px 0 10px var(--red); }
+        .item-card.active-card::before { content:''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--green); box-shadow: 2px 0 10px var(--green); }
+        .item-card.banned-card::before { content:''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--red); box-shadow: 2px 0 10px var(--red); }
         
         .row-top { display: flex; justify-content: space-between; align-items: center; padding-left: 10px; }
         .mono-text { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); font-size: 0.95rem; word-break: break-all; opacity: 0.9; }
-        .meta-row { 
-            border-top: 1px solid var(--border); padding: 10px 0 0 10px; 
-            display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted);
-            align-items: center;
-        }
+        .meta-row { border-top: 1px solid var(--border); padding: 10px 0 0 10px; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); align-items: center; }
         .badge { font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; font-size: 0.6rem; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 5px; }
         .badge.active { background: rgba(0, 255, 157, 0.1); color: var(--green); border: 1px solid rgba(0, 255, 157, 0.2); }
         .badge.banned { background: rgba(255, 0, 85, 0.1); color: var(--red); border: 1px solid rgba(255, 0, 85, 0.2); }
-
+        
         /* --- DEVICE SPECIFIC --- */
         .device-info { display: flex; align-items: center; gap: 12px; }
-        .device-icon { 
-            width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.03); 
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--muted); 
-            border: 1px solid var(--border);
-        }
+        .device-icon { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--muted); border: 1px solid var(--border); }
         .active-card .device-icon { color: var(--green); border-color: rgba(0,255,157,0.3); }
         .banned-card .device-icon { color: var(--red); border-color: rgba(255,0,85,0.3); }
-        .time-badge {
-            background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border);
-            display: inline-flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace;
-        }
+        .time-badge { background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); display: inline-flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; }
 
         /* --- SWITCH --- */
         .switch { position: relative; width: 48px; height: 26px; }
@@ -137,58 +137,37 @@
 
         /* --- NAV BAR --- */
         .nav-fixed { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; z-index: 99; pointer-events: none; }
-        .nav-inner { 
-            background: var(--nav); border: 1px solid var(--border); 
-            padding: 0 10px; height: 65px; border-radius: 20px; width: 90%; max-width: 380px;
-            display: flex; justify-content: space-around; align-items: center; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); backdrop-filter: var(--glass);
-            pointer-events: auto;
-        }
-        .nav-btn { 
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            color: var(--muted); font-size: 1.1rem; transition: 0.3s; cursor: pointer; height: 100%; border-radius: 12px;
-        }
+        .nav-inner { background: var(--nav); border: 1px solid var(--border); padding: 0 10px; height: 65px; border-radius: 20px; width: 90%; max-width: 380px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); backdrop-filter: var(--glass); pointer-events: auto; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 1.1rem; transition: 0.3s; cursor: pointer; height: 100%; border-radius: 12px; }
         .nav-btn:hover { color: #fff; }
         .nav-btn.active { color: var(--accent); transform: translateY(-2px); }
         .nav-lbl { font-size: 0.6rem; margin-top: 4px; font-weight: 700; letter-spacing: 0.5px; opacity: 0.8; }
 
-        /* --- SETUP / ERROR SCREENS --- */
-        .setup-box { 
-            text-align: center; padding: 40px 25px; border: 1px solid var(--border); 
-            border-radius: 24px; background: var(--card); margin-top: 40px; 
-            backdrop-filter: blur(10px); box-shadow: var(--shadow);
-            animation: fadeIn 0.5s ease;
-        }
+        /* --- SETUP / TOAST / MODALS --- */
+        .setup-box { text-align: center; padding: 40px 25px; border: 1px solid var(--border); border-radius: 24px; background: var(--card); margin-top: 40px; backdrop-filter: blur(10px); box-shadow: var(--shadow); animation: fadeIn 0.5s ease; }
         .btn-block { width: 100%; padding: 15px; background: var(--accent); color: #000; border: none; border-radius: 12px; font-weight: 800; margin-top: 15px; cursor: pointer; letter-spacing: 0.5px; font-size: 0.9rem; transition: 0.2s; }
         .btn-block:active { transform: scale(0.98); }
-
-        /* --- MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); transition: 0.3s; opacity: 0; pointer-events: none; }
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-content { background: #111; width: 90%; max-width: 340px; padding: 30px; border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 0 40px rgba(0,0,0,0.8); transform: scale(0.9); transition: 0.3s; }
         .modal-overlay.open .modal-content { transform: scale(1); }
         .inp-group { margin-bottom: 18px; text-align: left; }
         .inp-label { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* --- TOAST --- */
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--nav); border: 1px solid var(--accent); color: var(--text); padding: 12px 25px; border-radius: 50px; z-index: 300; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 10px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 0.85rem; white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
         /* --- DPMODS PANEL --- */
-        .dp-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid var(--border); border-radius: 18px; padding: 25px; 
-            text-align: center; margin-top: 20px; position: relative; overflow: hidden;
-        }
-        .dp-card::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:4px; 
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-        }
+        .dp-card { background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid var(--border); border-radius: 18px; padding: 25px; text-align: center; margin-top: 20px; position: relative; overflow: hidden; }
+        .dp-card::after { content: ''; position: absolute; top:0; left:0; width:100%; height:4px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
     </style>
 </head>
 <body>
 
     <canvas id="bgCanvas"></canvas>
+    <div id="themeOverlay">
+        <div class="sharingan"><div class="tomoe"></div><div class="tomoe"></div><div class="tomoe"></div></div>
+        <div class="void-circle"></div>
+    </div>
 
     <header>
         <div class="brand"><i class="fas fa-cube"></i> <span id="brandName">...</span></div>
@@ -209,10 +188,7 @@
                 <i class="fas fa-database" style="font-size: 1.5rem; color: var(--accent);"></i>
             </div>
             <h2 style="margin: 0 0 10px 0;">Connect Database</h2>
-            <div class="inp-group">
-                <label class="inp-label">FIREBASE URL</label>
-                <input type="text" class="input-std" id="inputDbUrl" placeholder="https://..." style="padding-left: 15px;">
-            </div>
+            <div class="inp-group"><label class="inp-label">FIREBASE URL</label><input type="text" class="input-std" id="inputDbUrl" placeholder="https://..." style="padding-left: 15px;"></div>
             <button class="btn-block" onclick="saveUrlAndConnect()">ESTABLISH CONNECTION</button>
         </div>
 
@@ -252,22 +228,39 @@
                 <h3 style="margin-bottom:20px; color:var(--text); font-weight:800; display:flex; align-items:center; gap:10px;">
                     <i class="fas fa-cogs" style="color:var(--accent)"></i> System Config
                 </h3>
+                
                 <div class="item-card">
+                    <h4 style="margin:0 0 15px 0; color:var(--accent); font-size:0.85rem; border-bottom:1px solid var(--border); padding-bottom:10px;">APP SETTINGS</h4>
                     <div class="inp-group"><label class="inp-label">APP TITLE</label><input type="text" class="input-std" id="confTitle" style="padding-left:15px"></div>
                     <div class="inp-group"><label class="inp-label">SUBTITLE</label><input type="text" class="input-std" id="confSub" style="padding-left:15px"></div>
-                    <div class="inp-group"><label class="inp-label">ADMIN CONTACT</label><input type="text" class="input-std" id="confUrl" style="padding-left:15px"></div>
-                    <div style="height:1px; background:var(--border); margin:15px 0 20px 0;"></div>
-                    <h4 style="margin:0 0 15px 0; color:var(--accent); font-size:0.85rem;">EXTERNAL API LINKAGE</h4>
+                    <div class="inp-group"><label class="inp-label">APP VERSION</label><input type="number" class="input-std" id="confVer" style="padding-left:15px" placeholder="1"></div>
+                    <div class="inp-group"><label class="inp-label">UPDATE URL</label><input type="text" class="input-std" id="confUpdateUrl" style="padding-left:15px" placeholder="https://..."></div>
+                    <div class="inp-group"><label class="inp-label">ADMIN CONTACT URL</label><input type="text" class="input-std" id="confUrl" style="padding-left:15px"></div>
+                </div>
+
+                <div class="item-card">
+                    <h4 style="margin:0 0 15px 0; color:var(--accent); font-size:0.85rem; border-bottom:1px solid var(--border); padding-bottom:10px;">UI CUSTOMIZATION</h4>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div class="inp-group"><label class="inp-label">BTN ADMIN</label><input type="text" class="input-std" id="confBtnAdmin" style="padding-left:15px"></div>
+                        <div class="inp-group"><label class="inp-label">BTN KEY</label><input type="text" class="input-std" id="confBtnKey" style="padding-left:15px"></div>
+                    </div>
+                    <div class="inp-group"><label class="inp-label">BTN LOGIN</label><input type="text" class="input-std" id="confBtnLogin" style="padding-left:15px"></div>
+                    <div class="inp-group"><label class="inp-label">INPUT HINT</label><input type="text" class="input-std" id="confHint" style="padding-left:15px"></div>
+                    <div class="inp-group"><label class="inp-label">KEY DURATION (HOURS)</label><input type="number" class="input-std" id="confDuration" style="padding-left:15px" value="24"></div>
+                </div>
+
+                <div class="item-card">
+                    <h4 style="margin:0 0 15px 0; color:var(--accent); font-size:0.85rem; border-bottom:1px solid var(--border); padding-bottom:10px;">API CONNECTION</h4>
                     <div class="inp-group"><label class="inp-label">API BASE URL</label><input type="text" class="input-std" id="confApiUrl" placeholder="https://api.example.com" style="padding-left:15px"></div>
                     <div class="inp-group"><label class="inp-label">API TOKEN</label><input type="text" class="input-std" id="confApiToken" placeholder="sk_live_..." style="padding-left:15px"></div>
+                    
                     <button class="btn-block" onclick="saveConfig()">SAVE CONFIGURATION</button>
                 </div>
 
                 <div class="dp-card" id="aboutPanel">
                     <i class="fas fa-code-branch" style="font-size:2rem; color:var(--accent); margin-bottom:15px;"></i>
                     <h4 style="margin:0; font-size:1.1rem; color:var(--text);" id="panelTitle">...</h4>
-                    <p style="color:var(--muted); font-size:0.8rem; margin:5px 0 20px 0;">Secure Device Management System</p>
-                    <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:12px; border:1px solid var(--border); display:inline-block; min-width: 200px;">
+                    <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:12px; border:1px solid var(--border); display:inline-block; margin-top:15px; min-width: 200px;">
                         <span style="font-size:0.65rem; color:var(--muted); font-weight:800; letter-spacing:1px; text-transform:uppercase;">Developed By</span><br>
                         <span style="font-size:1.3rem; font-weight:800; color:var(--accent); text-shadow: 0 0 15px var(--accent); letter-spacing:-0.5px;" id="panelDev">...</span>
                     </div>
@@ -335,18 +328,25 @@
         let dbUrl = localStorage.getItem("gateway_db_url") || "";
         let dbData = null;
         let devFilter = 'all';
-        
-        // Themes list
-        let themes = [
-            'cyberpunk', 'matrix', 'blood', 'ocean', 
-            'galaxy', 'sunset', 'cherry', 'naruto', 'itachi'
-        ];
+        let themes = ['cyberpunk', 'itachi', 'gojo', 'luffy', 'matrix', 'demon', 'blood'];
         let curThemeIdx = 0;
 
+        // UPDATED DEFAULT DATA STRUCTURE TO MATCH SCREENSHOT
         const DEFAULT_DATA = { 
             "Config": { 
-                "Title": "Gateway Panel", "Subtitle": "ONLINE", "AdminUrl": "", 
-                "Api": { "BaseUrl": "", "Token": "" } 
+                "Title": "DPMods VIP", 
+                "Subtitle": "GATEWAY V7.0 // ONLINE", 
+                "AdminUrl": "https://t.me/dpmods", 
+                "UpdateUrl": "",
+                "AppVersion": 1,
+                "KeyDurationHours": 24,
+                "Api": { "BaseUrl": "", "Token": "" },
+                "Texts": {
+                    "BtnAdmin": "ADMIN SUPPORT",
+                    "BtnKey": "GET KEY",
+                    "BtnLogin": "ACTIVATE SYSTEM",
+                    "Hint": "ENTER ACCESS KEY"
+                }
             }, 
             "BannedDevices": {}, "ActivatedUsers": {}, "ValidKeys": {} 
         };
@@ -356,21 +356,19 @@
         let particles = [];
         let animationId;
 
-        // ENCRYPTED STRINGS (To protect credits)
-        // Base64 Encoded to prevent casual editing
-        const _s1 = "R2F0ZXdheSBQYW5lbCBWNS4z"; // Gateway Panel V5.3
-        const _s2 = "RFBNb2Rz"; // DPMods
+        // ENCRYPTED CREDITS
+        const _s1 = "R2F0ZXdheSBQYW5lbCBWNy4w"; 
+        const _s2 = "RFBNb2Rz";
 
         // ==========================================
         // 2. MAIN APP
         // ==========================================
         function initDecryption() {
-            // Decrypts and injects the text at runtime
             try {
                 document.getElementById('brandName').innerText = atob(_s1);
                 document.getElementById('panelTitle').innerText = atob(_s1);
                 document.getElementById('panelDev').innerText = atob(_s2);
-            } catch(e) { console.log("Integrity Check Failed"); }
+            } catch(e) {}
         }
 
         async function appInit(isManual = false) {
@@ -435,8 +433,14 @@
             if(!dbData.ValidKeys) dbData.ValidKeys = {};
             if(!dbData.ActivatedUsers) dbData.ActivatedUsers = {};
             if(!dbData.BannedDevices) dbData.BannedDevices = {};
+            
+            // Ensure Config matches new V7 structure
             if(!dbData.Config) dbData.Config = DEFAULT_DATA.Config;
             if(!dbData.Config.Api) dbData.Config.Api = { BaseUrl: "", Token: "" };
+            if(!dbData.Config.Texts) dbData.Config.Texts = DEFAULT_DATA.Config.Texts;
+            if(dbData.Config.AppVersion === undefined) dbData.Config.AppVersion = 1;
+            if(dbData.Config.KeyDurationHours === undefined) dbData.Config.KeyDurationHours = 24;
+            if(dbData.Config.UpdateUrl === undefined) dbData.Config.UpdateUrl = "";
         }
 
         async function syncDB() {
@@ -457,11 +461,26 @@
         function renderAll() {
             renderKeys();
             renderDevices();
+            
+            // Stats
             document.getElementById('statKeys').innerText = Object.keys(dbData.ValidKeys).length;
             document.getElementById('statDevs').innerText = Object.keys(dbData.ActivatedUsers).length + Object.keys(dbData.BannedDevices).length;
+            
+            // General Config
             document.getElementById('confTitle').value = dbData.Config.Title || "";
             document.getElementById('confSub').value = dbData.Config.Subtitle || "";
             document.getElementById('confUrl').value = dbData.Config.AdminUrl || "";
+            document.getElementById('confVer').value = dbData.Config.AppVersion || 1;
+            document.getElementById('confUpdateUrl').value = dbData.Config.UpdateUrl || "";
+            document.getElementById('confDuration').value = dbData.Config.KeyDurationHours || 24;
+
+            // UI Texts
+            document.getElementById('confBtnAdmin').value = dbData.Config.Texts.BtnAdmin || "";
+            document.getElementById('confBtnKey').value = dbData.Config.Texts.BtnKey || "";
+            document.getElementById('confBtnLogin').value = dbData.Config.Texts.BtnLogin || "";
+            document.getElementById('confHint').value = dbData.Config.Texts.Hint || "";
+
+            // API
             document.getElementById('confApiUrl').value = dbData.Config.Api.BaseUrl || "";
             document.getElementById('confApiToken').value = dbData.Config.Api.Token || "";
         }
@@ -502,7 +521,10 @@
                 if (devFilter === 'allowed' && isBanned) return;
                 if (devFilter === 'banned' && !isBanned) return;
 
-                const timeStr = formatDate(isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev]);
+                const rawTime = isBanned ? dbData.BannedDevices[dev] : dbData.ActivatedUsers[dev];
+                let timeStr = formatDate(rawTime);
+                if(timeStr === "Unknown" && !isBanned) timeStr = "Active";
+
                 const statusClass = isBanned ? 'banned-card' : 'active-card';
                 const statusText = isBanned ? 'BANNED' : 'AUTHORIZED';
                 const badgeClass = isBanned ? 'banned' : 'active';
@@ -562,21 +584,37 @@
         function toggleBan(dev) {
             const now = new Date().toISOString();
             if (dbData.BannedDevices[dev]) {
-                dbData.ActivatedUsers[dev] = dbData.BannedDevices[dev] || now;
+                const oldTime = dbData.BannedDevices[dev];
                 delete dbData.BannedDevices[dev];
+                dbData.ActivatedUsers[dev] = (oldTime && oldTime.length > 5) ? oldTime : now;
             } else {
-                dbData.BannedDevices[dev] = dbData.ActivatedUsers[dev] || now;
+                const oldTime = dbData.ActivatedUsers[dev];
+                dbData.BannedDevices[dev] = (oldTime && oldTime.length > 5) ? oldTime : now;
                 delete dbData.ActivatedUsers[dev];
             }
             syncDB();
         }
 
         function saveConfig() {
+            // General
             dbData.Config.Title = document.getElementById('confTitle').value;
             dbData.Config.Subtitle = document.getElementById('confSub').value;
             dbData.Config.AdminUrl = document.getElementById('confUrl').value;
+            dbData.Config.AppVersion = parseInt(document.getElementById('confVer').value) || 1;
+            dbData.Config.UpdateUrl = document.getElementById('confUpdateUrl').value;
+            dbData.Config.KeyDurationHours = parseInt(document.getElementById('confDuration').value) || 24;
+
+            // UI Texts
+            if(!dbData.Config.Texts) dbData.Config.Texts = {};
+            dbData.Config.Texts.BtnAdmin = document.getElementById('confBtnAdmin').value;
+            dbData.Config.Texts.BtnKey = document.getElementById('confBtnKey').value;
+            dbData.Config.Texts.BtnLogin = document.getElementById('confBtnLogin').value;
+            dbData.Config.Texts.Hint = document.getElementById('confHint').value;
+
+            // API
             dbData.Config.Api.BaseUrl = document.getElementById('confApiUrl').value;
             dbData.Config.Api.Token = document.getElementById('confApiToken').value;
+            
             syncDB();
         }
 
@@ -611,7 +649,7 @@
         function delKey(key) { if(confirm("Delete key?")) { delete dbData.ValidKeys[key]; syncDB(); } }
 
         // ==========================================
-        // 5. UI & THEME ANIMATIONS
+        // 5. UI & ANIMATION
         // ==========================================
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -619,7 +657,6 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2000);
         }
-
         function copy(txt) { navigator.clipboard.writeText(txt).then(() => showToast("Copied")); }
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -643,7 +680,6 @@
             else if(tab === 'devices') { document.getElementById('tabDevices').classList.remove('hidden'); document.getElementById('navDev').classList.add('active'); }
             else { document.getElementById('tabConfig').classList.remove('hidden'); document.getElementById('navConf').classList.add('active'); }
         }
-
         function toggleTheme() {
             curThemeIdx = (curThemeIdx + 1) % themes.length;
             const theme = themes[curThemeIdx];
@@ -651,82 +687,49 @@
             showToast(`Theme: ${theme.toUpperCase()}`);
             setAnimation(theme);
         }
-
-        // ==========================================
-        // 6. ANIMATION ENGINE
-        // ==========================================
         function setAnimation(theme) {
             if(animationId) cancelAnimationFrame(animationId);
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
             if (theme === 'matrix') initMatrix();
-            else if (theme === 'galaxy') initStars();
+            else if (theme === 'demon') initDemonParticles();
+            else if (theme === 'luffy') initLuffyParticles();
             else initParticles(theme);
         }
-
-        // Standard Particles
         function initParticles(theme) {
             particles = [];
             const color = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-            for(let i=0; i<60; i++) {
-                particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.5+0.1, s: Math.random()*2 });
-            }
+            for(let i=0; i<50; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.4+0.1, s: Math.random()*2 });
             function loop() {
                 ctx.clearRect(0,0,canvas.width,canvas.height);
-                ctx.fillStyle = color;
-                ctx.globalAlpha = 0.4;
-                particles.forEach(p => {
-                    p.y -= p.v;
-                    if(p.y < 0) p.y = canvas.height;
-                    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-                });
+                ctx.fillStyle = color; ctx.globalAlpha = 0.3;
+                particles.forEach(p => { p.y -= p.v; if(p.y < 0) p.y = canvas.height; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill(); });
                 animationId = requestAnimationFrame(loop);
             }
             loop();
         }
-
-        // Matrix Rain
         function initMatrix() {
-            const fontSize = 14;
-            const columns = canvas.width / fontSize;
-            const drops = Array(Math.floor(columns)).fill(1);
-            ctx.font = fontSize + "px monospace";
-            
+            const fontSize = 14; const columns = canvas.width / fontSize; const drops = Array(Math.floor(columns)).fill(1);
+            ctx.font = fontSize + "px monospace"; let frame = 0;
             function loop() {
-                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#0F0";
-                drops.forEach((y, i) => {
-                    const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-                    ctx.fillText(text, i * fontSize, y * fontSize);
-                    if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                });
-                animationId = requestAnimationFrame(loop);
+                if (frame % 3 === 0) {
+                    ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = "#0F0";
+                    drops.forEach((y, i) => { const text = String.fromCharCode(0x30A0 + Math.random() * 96); ctx.fillText(text, i * fontSize, y * fontSize); if (y * fontSize > canvas.height && Math.random() > 0.98) drops[i] = 0; drops[i]++; });
+                }
+                frame++; animationId = requestAnimationFrame(loop);
             }
             loop();
         }
-
-        // Galaxy Stars
-        function initStars() {
-            particles = [];
-            for(let i=0; i<100; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5 });
-            function loop() {
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                ctx.fillStyle = "#FFF";
-                particles.forEach(p => {
-                    ctx.globalAlpha = Math.random();
-                    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
-                });
-                animationId = requestAnimationFrame(loop);
-            }
-            loop();
+        function initLuffyParticles() {
+            particles = []; for(let i=0; i<40; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, v: Math.random()*0.8+0.2, s: Math.random()*4+1 });
+            function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#ffffff"; ctx.globalAlpha = 0.2; particles.forEach(p => { p.y -= p.v; if(p.y < 0) p.y = canvas.height; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill(); }); animationId = requestAnimationFrame(loop); } loop();
+        }
+        function initDemonParticles() {
+            particles = []; for(let i=0; i<60; i++) particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx: Math.random()*2-1, vy: Math.random()*2-1 });
+            function loop() { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = "#00ffcc"; ctx.globalAlpha = 0.4; particles.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>canvas.width) p.vx*=-1; if(p.y<0||p.y>canvas.height) p.vy*=-1; ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill(); }); animationId = requestAnimationFrame(loop); } loop();
         }
 
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-        
-        // BOOT
         document.documentElement.setAttribute('data-theme', 'cyberpunk');
         setAnimation('cyberpunk');
         appInit();
